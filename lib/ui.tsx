@@ -164,9 +164,6 @@ export function Entree({ lang, p, compact = false, sansCommune = false }: { lang
         <p dir="auto" className={`mt-2 leading-snug ${compact ? "" : "text-lg"}`}>{p.adresse}</p>
       )}
       <dl className="mt-3">
-        {p.horaires && (
-          <Ligne lang={lang} label={d.horaires}><span dir="auto" className="font-mono text-sm">{p.horaires}</span></Ligne>
-        )}
         {(p.tel || p.tel2 || p.tel3) && (
           <Ligne lang={lang} label={d.telephone}>
             <span className="flex flex-wrap gap-x-5">

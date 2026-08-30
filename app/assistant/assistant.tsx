@@ -2,87 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { analyser } from "@/lib/match";
 import type { Wilaya } from "@/lib/wilayas";
-import type { Fiche, ParWilaya } from "@/lib/fiches";
-import { type Lang, dir, lien, nomWilaya, t } from "@/lib/i18n";
-import { WILAYAS } from "@/lib/wilayas";
+import type { ParWilaya } from "@/lib/fiches";
+import { type Lang, dir, nomWilaya, t } from "@/lib/i18n";
+import { type Reponse, couvertes, repondre } from "@/lib/reponse";
 import { Avertissement, Bande, Barre, Entree, Silence, btnContour, puceVive } from "@/lib/ui";
 
-/**
- * Invariant 1 : espace de sortie fermé. Un message est soit un texte écrit dans lib/i18n.ts,
- * soit des fiches du dataset. Aucune génération.
- */
-type Reponse = {
-  texte: string;
-  urgences?: true;
-  wilaya?: Wilaya;
-  fiches?: Fiche[];
-  silence?: true;
-  lien?: { href: string; label: string };
-  /** Messages proposés après cette réponse : l'étape suivante en un geste. */
-  propositions: string[];
-};
 type Message = { role: "user"; texte: string } | ({ role: "assistant" } & Reponse);
-
-/** Wilayas couvertes, comme propositions quand on ne sait pas encore où est la personne. */
-const couvertes = (lang: Lang, par: ParWilaya) =>
-  WILAYAS.filter((w) => par[w.code]).slice(0, 6).map((w) => nomWilaya(lang, w));
-
-/**
- * `memo` : la wilaya du message précédent. « 15 » puis « quoi donner » → réponse pour Tizi Ouzou.
- * Une wilaya citée dans le message courant remplace toujours la mémoire.
- */
-function repondre(lang: Lang, q: string, par: ParWilaya, memo: Wilaya | null): Reponse & { wilaya?: Wilaya } {
-  const d = t(lang);
-  const a = analyser(q);
-  const wilaya = a.wilaya ?? memo ?? undefined;
-  const intention = a.intention;
-  const nom = wilaya ? nomWilaya(lang, wilaya) : "";
-  const fiches = wilaya ? (par[wilaya.code] ?? []) : [];
-  const versWilaya = wilaya ? { href: lien(lang, `/${wilaya.code}`), label: d.pageWilaya(nom) } : undefined;
-  const sansWilaya = (texte: string): Reponse => ({ texte, propositions: [...couvertes(lang, par), ...d.propGenerales().slice(0, 1)] });
-
-  const points = (): Reponse => {
-    if (!wilaya) return sansWilaya(d.demandeWilaya);
-    if (!fiches.length) return { texte: d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() };
-    return { texte: d.pointsA(fiches.length, nom), wilaya, fiches, lien: versWilaya, propositions: d.propApresPoints(nom) };
-  };
-
-  // « urgence » est testée en premier : « le feu chez moi » reçoit le 14, pas une liste.
-  switch (intention) {
-    case "urgence":
-      return { texte: d.urgenceReponse, urgences: true, wilaya, propositions: wilaya ? d.propWilaya(nom).slice(0, 2) : couvertes(lang, par) };
-
-    case "quoi": {
-      // Pas de colonne besoins dans les données : conseil général, puis les points de la wilaya.
-      if (wilaya && fiches.length) return { ...points(), texte: d.quoiGenerique + d.pointsA(fiches.length, nom), propositions: d.propApresPoints(nom).slice(1) };
-      return wilaya
-        ? { texte: d.quoiGenerique + d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() }
-        : sansWilaya(d.quoiGenerique + d.demandeWilaya);
-    }
-
-    case "argent":
-      return { texte: d.argent, wilaya, propositions: wilaya ? d.propWilaya(nom) : d.propGenerales() };
-
-    case "sang":
-      return { texte: d.sang, wilaya, propositions: wilaya ? d.propWilaya(nom) : d.propGenerales() };
-
-    case "benevole": {
-      const base = wilaya ? points() : sansWilaya(d.demandeWilaya);
-      return { ...base, texte: d.benevole + base.texte };
-    }
-
-    case "ajouter":
-      return { texte: d.ajouter, wilaya, lien: { href: lien(lang, "/signaler"), label: d.signalerPoint }, propositions: wilaya ? d.propWilaya(nom).slice(0, 2) : [] };
-
-    case "ou":
-    case null:
-    default:
-      // Wilaya seule (« 15 », « بجاية ») : on montre les points et on propose la suite.
-      return points();
-  }
-}
 
 /** Messages proposés : un geste au lieu d'une phrase. Le texte est renvoyé tel quel dans le matching. */
 function Propositions({ items, onChoix }: { items: string[]; onChoix: (s: string) => void }) {
@@ -90,9 +16,7 @@ function Propositions({ items, onChoix }: { items: string[]; onChoix: (s: string
     <ul className="mt-4 flex flex-wrap gap-2">
       {items.map((s) => (
         <li key={s}>
-          <button type="button" onClick={() => onChoix(s)} className={puceVive}>
-            {s}
-          </button>
+          <button type="button" onClick={() => onChoix(s)} className={puceVive}>{s}</button>
         </li>
       ))}
     </ul>
@@ -140,9 +64,9 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
       {/* min-h-0 : sans ça le fil pousse la saisie hors écran dès quelques messages. */}
       <div role="log" aria-live="polite" className="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-8">
         {messages.length === 0 && (
-          <div className="pt-6">
+          <div className="pt-4">
             <h1 className="text-lg font-extrabold tracking-tight">{d.assistant}</h1>
-            <p className="mt-2 max-w-prose leading-relaxed text-muted">{d.introAssistant}</p>
+            <p className="mt-1 text-sm text-muted">{d.demandeWilaya}</p>
             <Propositions items={[...couvertes(lang, par), ...d.suggestions]} onChoix={envoyer} />
           </div>
         )}
@@ -171,7 +95,7 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
                     {m.fiches.map((p, j) => <li key={j} className="py-4"><Entree lang={lang} p={p} compact /></li>)}
                   </ol>
                 )}
-                {m.silence && m.wilaya && <div className="mt-3"><Silence lang={lang} nom={nomWilaya(lang, m.wilaya)} /></div>}
+                {m.silence && m.wilaya && <div className="mt-3"><Silence lang={lang} nom={m.commune ? `${m.commune} (${nomWilaya(lang, m.wilaya)})` : nomWilaya(lang, m.wilaya)} /></div>}
                 {m.lien && <Link href={m.lien.href} className={`mt-3 text-sm ${btnContour}`}>{m.lien.label} →</Link>}
                 {i === messages.length - 1 && m.propositions.length > 0 && <Propositions items={m.propositions} onChoix={envoyer} />}
               </li>

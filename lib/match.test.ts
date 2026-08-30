@@ -31,6 +31,25 @@ describe("findWilaya", () => {
     ["2026", null],
     // le nom l'emporte sur un nombre
     ["5 rue placeholder a bejaia", "06"],
+    // « 15ème », « wil 15 », « willaya 06 »
+    ["la 15eme wilaya", "15"],
+    ["wil 15", "15"],
+    ["willaya 06", "06"],
+    // alias
+    ["bougie", "06"],
+    ["دزاير", "16"],
+    ["العاصمة", "16"],
+    ["تيزي", "15"],
+    ["cirta", "25"],
+    // fautes de frappe : une lettre à partir de 5 caractères, deux à partir de 8
+    ["tlemcenn", "13"],
+    ["constantin", "25"],
+    ["bejaiaa", "06"],
+    ["jelfa", "17"],
+    ["bordj bou areridj", "34"],
+    ["algeria", null],
+    ["iran", null],
+    ["media", "26"],
     // chiffres arabes-indiens et persans
     ["١٥", "15"],
     ["ولاية ٠٦", "06"],
@@ -59,6 +78,22 @@ describe("detectIntent", () => {
     ["واش نتبرع", "quoi"],
     ["نحب نتطوع", "benevole"],
     ["وين نودع", "ou"],
+    ["وقتاش يحلو", "horaires"],
+    // darija en lettres latines
+    ["win nrouh", "ou"],
+    ["wach n3ti", "quoi"],
+    ["nhab n3awen", "benevole"],
+    ["kayen nar", "urgence"],
+    ["wa9tach y7elou", "horaires"],
+    // nuances
+    ["il y a le feu a bejaia, où déposer", "urgence"],
+    ["pas d urgence je veux juste donner", "ou"],
+    ["je compte venir demain", null],
+    ["quel est le numero du point de collecte", "ou"],
+    ["je veux donner des vetements", "ou"],
+    ["a quelle heure c est ouvert", "horaires"],
+    ["merci", null],
+    ["salam", null],
   ];
   for (const [q, intention] of cas) {
     test(`${JSON.stringify(q)} → ${intention}`, () => {

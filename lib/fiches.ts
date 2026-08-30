@@ -26,7 +26,7 @@ export function dedoublonner(points: Fiche[]): { fiches: Fiche[]; doublons: numb
     }
     const commun = tels(deja).find((n) => nums.includes(n));
     fusions.push({ gardee: deja.ligne, doublure: p.ligne, nom: deja.nom, raison: commun ? `même numéro ${commun}` : "même nom et même commune" });
-    for (const k of ["adresse", "horaires", "maps", "source", "commune"] as const) if (!deja[k] && p[k]) deja[k] = p[k];
+    for (const k of ["adresse", "maps", "source", "commune"] as const) if (!deja[k] && p[k]) deja[k] = p[k];
     for (const n of nums) {
       if (tels(deja).includes(n)) continue;
       if (!deja.tel) deja.tel = n;

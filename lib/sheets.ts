@@ -40,7 +40,7 @@ async function jetonAcces(email: string, cle: string) {
 
 const API = "https://sheets.googleapis.com/v4/spreadsheets";
 export const ONGLET = "signalements";
-export const ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "horaires", "contact_nom", "contact_tel", "statut", "lang"];
+export const ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "contact_nom", "contact_tel", "statut", "lang"];
 
 /** Ajoute une ligne à l'onglet `signalements` ; crée l'onglet avec sa ligne d'en-têtes s'il n'existe pas. */
 export async function ajouterSignalement(ligne: (string | number)[]) {

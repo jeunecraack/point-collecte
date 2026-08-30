@@ -26,7 +26,6 @@ const PointSchema = z.object({
   tel3: str().transform(normaliserTel),
   // Lien Google Maps : hôtes explicites, ancrés jusqu'au « / ». `google\.[a-z.]+` acceptait google.evil.com.
   maps: str().transform((v) => (MAPS.test(v) ? v : "")),
-  horaires: str(),
   // Colonne `agree` (ou `agréé`) : toute valeur sauf vide / non / no / 0 → badge « Agréé par l'État ».
   agree: str().transform((v) => v !== "" && !/^(non|no|false|0|-)$/i.test(v)),
   // Décision du 2026-08-30 : le Sheet des bénévoles n'a ni date ni source.

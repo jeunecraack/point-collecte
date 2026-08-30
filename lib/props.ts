@@ -10,7 +10,7 @@ import type { Lang } from "./i18n";
  */
 export type PropsWilaya = { w: Wilaya; points: Fiche[]; lang: Lang };
 export type Couverte = { w: Wilaya; n: number; maj: string; f: Fiche["f"] };
-export type PropsAccueil = { couvertes: Couverte[]; total: number; recentes: number; lang: Lang };
+export type PropsAccueil = { couvertes: Couverte[]; lang: Lang };
 
 export const propsWilaya =
   (lang: Lang): GetStaticProps<PropsWilaya> =>
@@ -28,9 +28,5 @@ export const propsAccueil =
       const fiches = par[w.code];
       return { w, n: fiches.length, maj: fiches[0].maj, f: fiches[0].f };
     });
-    const toutes = Object.values(par).flat();
-    return {
-      props: { couvertes, total: toutes.length, recentes: toutes.filter((p) => p.f.jours >= 0 && p.f.jours <= 1).length, lang },
-      revalidate: 60,
-    };
+    return { props: { couvertes, lang }, revalidate: 60 };
   };

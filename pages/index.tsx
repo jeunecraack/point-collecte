@@ -4,15 +4,15 @@ import Link from "next/link";
 import { WILAYAS } from "@/lib/wilayas";
 import { propsAccueil, type PropsAccueil as Props } from "@/lib/props";
 import { dir, etq, etqLarge, lien, nomWilaya, t } from "@/lib/i18n";
-import { Avertissement, Bande, BandeauUrgence, Barre, Pastille } from "@/lib/ui";
+import { SIGNALER_ACTIF } from "@/lib/config";
+import { Avertissement, Bande, BandeauUrgence, Barre, Pastille, btnContour, btnPlein } from "@/lib/ui";
 
 export const config: PageConfig = { unstable_runtimeJS: false };
 
 export const getStaticProps = propsAccueil("ar");
 
-export default function Accueil({ couvertes, total, recentes, lang }: Props) {
+export default function Accueil({ couvertes, lang }: Props) {
   const d = t(lang);
-  const part = total ? Math.round((100 * recentes) / total) : 0;
   return (
     <div lang={lang} dir={dir(lang)}>
       <Head>
@@ -39,13 +39,16 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
       <BandeauUrgence lang={lang} />
 
       <main className="mx-auto max-w-2xl px-4 pb-16">
-        <p className="max-w-prose pt-6 pb-8 leading-relaxed">{d.lede}</p>
+        <nav aria-label={d.poserQuestion} className="grid gap-3 py-6 sm:grid-cols-2">
+          <Link href={lien(lang, "/assistant")} className={`${btnPlein} text-center`}>{d.poserQuestion}</Link>
+          <a href="#toutes" className={`${btnContour} text-center`}>{d.toutes58}</a>
+        </nav>
 
         <section aria-labelledby="couvertes">
           <h2 id="couvertes" className={`text-xs text-muted ${etq(lang)}`}>{d.couvertes(couvertes.length)}</h2>
           {couvertes.length === 0 ? (
             <p className="mt-3 max-w-prose">
-              {d.aucuneCouverte} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>.
+              {d.aucuneCouverte}{SIGNALER_ACTIF && <> <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>.</>}
             </p>
           ) : (
             <ol className="mt-2 divide-y divide-rule border-y border-rule">
@@ -65,29 +68,19 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
               ))}
             </ol>
           )}
-          {total > 0 && (
-            <div className="mt-4">
-              <div className="h-1.5 w-full bg-surface" role="img" aria-label={d.jauge(part, recentes, total)}>
-                <div className="h-full bg-vert" style={{ width: `${part}%` }} />
-              </div>
-              <p className="mt-2 text-xs text-muted tabular-nums">{d.jauge(part, recentes, total)}</p>
-            </div>
-          )}
         </section>
 
-        <section className="mt-10 grid gap-3 sm:grid-cols-2">
-          <Link href={lien(lang, "/assistant")} className="block border-2 border-signal-text p-4 hover:bg-signal hover:text-white [&:hover_span]:text-white">
-            <span className="block font-semibold">{d.poserQuestion}</span>
-            <span className="mt-1 block text-sm text-muted">{d.poserQuestionNote}</span>
-          </Link>
-          <Link href={lien(lang, "/signaler")} className="block border-2 border-vert p-4 hover:bg-vert-pale">
-            <span className="block font-semibold">{d.signalerPoint}</span>
-            <span className="mt-1 block text-sm text-muted">{d.signalerPointNote}</span>
-          </Link>
-        </section>
+        {SIGNALER_ACTIF && (
+          <section className="mt-10">
+            <Link href={lien(lang, "/signaler")} className="block border-2 border-vert p-4 hover:bg-vert-pale">
+              <span className="block font-semibold">{d.signalerPoint}</span>
+              <span className="mt-1 block text-sm text-muted">{d.signalerPointNote}</span>
+            </Link>
+          </section>
+        )}
 
-        <details className="mt-10">
-          <summary className={`inline-block cursor-pointer border-b-2 border-signal-text pb-1 text-xs text-ink ${etq(lang)}`}>{d.toutes58}</summary>
+        <section id="toutes" aria-labelledby="toutes-titre" className="mt-10 scroll-mt-4">
+          <h2 id="toutes-titre" className={`inline-block border-b-2 border-signal-text pb-1 text-xs text-ink ${etq(lang)}`}>{d.toutes58}</h2>
           <ul className="mt-3 grid grid-cols-2 gap-x-4 sm:grid-cols-3">
             {WILAYAS.map((w) => (
               <li key={w.code}>
@@ -98,7 +91,7 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
               </li>
             ))}
           </ul>
-        </details>
+        </section>
         <Avertissement lang={lang} />
       </main>
     </div>

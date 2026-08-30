@@ -53,10 +53,6 @@ export function Formulaire({ lang, sp }: { lang: Lang; sp: Record<string, string
             <label htmlFor="tel" className={label}>{d.telPoint} <span className="font-normal text-muted">{d.facultatif}</span></label>
             <input id="tel" name="tel" type="tel" inputMode="tel" dir="ltr" className={champ} />
           </div>
-          <div>
-            <label htmlFor="horaires" className={label}>{d.horaires}</label>
-            <input id="horaires" name="horaires" className={champ} autoComplete="off" />
-          </div>
           <fieldset className="border-t-2 border-signal-text pt-4">
             <legend className={`text-xs text-muted ${etq(lang)}`}>{d.personneSurPlace}</legend>
             <p className="mt-1 text-sm text-muted">{d.personneNote}</p>

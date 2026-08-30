@@ -43,13 +43,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
   const sheets = configSheets();
   const idSheet = idDepuisUrl(process.env.SHEET_CSV_URL);
   const toutes = Object.values(par).flat();
-  const nonDatees = toutes.filter((p) => p.f.niveau === "inconnu").length;
-  const recentes = toutes.filter((p) => p.f.jours >= 0 && p.f.jours <= 1).length;
-  const part = toutes.length ? Math.round((100 * recentes) / toutes.length) : 0;
-  const parWilaya = WILAYAS.filter((w) => par[w.code]).map((w) => {
-    const fs = par[w.code];
-    return { w, n: fs.length, nonDatees: fs.filter((p) => p.f.niveau === "inconnu").length, recentes: fs.filter((p) => p.f.jours >= 0 && p.f.jours <= 1).length };
-  });
+  const parWilaya = WILAYAS.filter((w) => par[w.code]).map((w) => ({ w, n: par[w.code].length }));
 
   return (
     <div lang="fr" dir="ltr">
@@ -91,21 +85,14 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         {sp.revalide === "echec" && <p role="alert" className="mt-3 text-warm">Échec de /api/revalidate — voir les logs serveur.</p>}
         {sp.revalide === "sans-secret" && <p role="alert" className="mt-3 text-warm">REVALIDATE_SECRET n'est pas configuré.</p>}
 
-        <h2 className="mt-10 text-lg font-extrabold tracking-tight">Fraîcheur</h2>
-        <p className="mt-1 text-sm text-muted">L'indicateur qui compte : la part des fiches vérifiées depuis moins de 48 h. Sous 70 %, relancer les vérificateurs avant toute autre chose.</p>
-        <div className="mt-3">
-          <div className="h-1.5 w-full bg-surface" role="img" aria-label={`${part} % vérifiées depuis moins de 48 h`}><div className="h-full bg-vert" style={{ width: `${part}%` }} /></div>
-          <p className="mt-2 font-mono text-xs text-muted">{part} % vérifiées &lt; 48 h ({recentes}/{toutes.length}) · {nonDatees} sans date</p>
-        </div>
+        <h2 className="mt-10 text-lg font-extrabold tracking-tight">Fiches par wilaya</h2>
         <table className="mt-4 w-full border-collapse text-sm">
-          <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Wilaya</th><th className="py-2 pr-4 text-right">Fiches</th><th className="py-2 pr-4 text-right">&lt; 48 h</th><th className="py-2 text-right">Sans date</th></tr></thead>
+          <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Wilaya</th><th className="py-2 text-right">Fiches</th></tr></thead>
           <tbody>
-            {parWilaya.map(({ w, n, recentes: r, nonDatees: nd }) => (
+            {parWilaya.map(({ w, n }) => (
               <tr key={w.code} className="border-b border-rule">
                 <td className="py-2 pr-4"><a href={`/fr/${w.code}`} className="text-vert underline"><span className="font-mono">{w.code}</span> {w.nom}</a></td>
-                <td className="py-2 pr-4 text-right font-mono">{n}</td>
-                <td className={`py-2 pr-4 text-right font-mono ${r ? "text-fresh" : "text-muted"}`}>{r}</td>
-                <td className={`py-2 text-right font-mono ${nd ? "text-warm" : "text-muted"}`}>{nd}</td>
+                <td className="py-2 text-right font-mono">{n}</td>
               </tr>
             ))}
           </tbody>

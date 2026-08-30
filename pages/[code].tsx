@@ -5,6 +5,7 @@ import { WILAYAS } from "@/lib/wilayas";
 import type { Fiche } from "@/lib/fiches";
 import { propsWilaya, type PropsWilaya as Props } from "@/lib/props";
 import { dateLoc, dir, etq, lien, nomWilaya, t } from "@/lib/i18n";
+import { SIGNALER_ACTIF } from "@/lib/config";
 import { Avertissement, Bande, BandeauUrgence, Barre, Entree, Silence, btnContour, puceVive } from "@/lib/ui";
 
 // Page servie sans un octet de JavaScript : adresses lisibles dès le premier paquet.
@@ -60,7 +61,6 @@ export default function PageWilaya({ w, points, lang }: Props) {
         },
         telephone: [p.tel, p.tel2, p.tel3].filter(Boolean),
         hasMap: p.maps || undefined,
-        openingHours: p.horaires || undefined,
       },
     })),
   };
@@ -109,8 +109,12 @@ export default function PageWilaya({ w, points, lang }: Props) {
           <section className="py-8">
             <h2 className="mb-3 text-xl font-extrabold tracking-tight">{d.rienVerifie(nom)}</h2>
             <Silence lang={lang} nom={nom} />
-            <p className="mt-6"><Link href={lien(lang, "/signaler")} className={btnContour}>{d.signalerA(nom)}</Link></p>
-            <p className="mt-3 text-sm text-muted">{d.rappelAvantPublication}</p>
+            {SIGNALER_ACTIF && (
+              <>
+                <p className="mt-6"><Link href={lien(lang, "/signaler")} className={btnContour}>{d.signalerA(nom)}</Link></p>
+                <p className="mt-3 text-sm text-muted">{d.rappelAvantPublication}</p>
+              </>
+            )}
           </section>
         ) : (
           <>
@@ -148,9 +152,11 @@ export default function PageWilaya({ w, points, lang }: Props) {
         )}
         <footer>
           <Avertissement lang={lang} />
-          <p className="mt-3 text-sm text-muted">
-            {d.footerFiche} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>. {d.rienSansAppel}
-          </p>
+          {SIGNALER_ACTIF && (
+            <p className="mt-3 text-sm text-muted">
+              {d.footerFiche} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>. {d.rienSansAppel}
+            </p>
+          )}
         </footer>
       </main>
     </div>

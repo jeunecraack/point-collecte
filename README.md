@@ -53,10 +53,19 @@ pas de bundle).
 
 ### Assistant
 
-Matching déterministe (`lib/match.ts`) : nom de wilaya en français, arabe
-ou alias, `w15`, `wilaya 15`, ou simplement `15`. L'assistant retient la
-wilaya d'un message à l'autre et propose l'étape suivante en boutons
-(wilayas couvertes, « quoi donner à … », « bénévole à … », « signaler »).
+Matching déterministe (`lib/match.ts`) : nom de wilaya en français, arabe,
+alias (Bougie, دزاير, العاصمة…), `w15`, `wilaya 15`, `15ème`, `١٥` ou
+simplement `15` ; fautes de frappe tolérées (une lettre à partir de 5
+caractères) ; darija en lettres latines (win, wach, n3awen, nar…). Un mot
+d'urgence l'emporte sur tout le reste, sauf « pas d'urgence ». La logique
+de réponse est dans `lib/reponse.ts` (pure, testée) : mémoire de la wilaya
+d'un message à l'autre, reconnaissance des **communes** présentes dans les
+données (« je suis à Baraki » → les points de Baraki), politesse, horaires
+(« non recensés, appelez »), et propositions à chaque étape.
+
+`lib/config.ts` : `SIGNALER_ACTIF = false` masque le formulaire de
+signalement partout tant que l'admin et le compte de service ne sont pas
+en place (la route reste accessible par URL).
 
 ### Doublons
 
@@ -78,7 +87,7 @@ le runtime App Router). L'interactif reste dans `app/`.
 Un seul CSV, en-têtes en minuscules :
 
 ```
-code, nom, type, commune, adresse, tel, horaires, agree, maj, source
+code, nom, type, commune, adresse, tel, agree, maj, source
 ```
 
 Les en-têtes des bénévoles sont aussi acceptés : `Wilaya` (nom ou numéro)
@@ -149,13 +158,12 @@ ou le bouton de `/admin`.
 
 Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
 
-1. La personne remplit le formulaire (wilaya, lieu, adresse, horaires,
-   et surtout le nom et le téléphone de quelqu'un qui répond sur
+1. La personne remplit le formulaire (wilaya, lieu, adresse, et surtout le nom et le téléphone de quelqu'un qui répond sur
    place). Un champ caché piège les robots.
 2. Le serveur valide les champs (zod) et **ajoute une ligne à l'onglet
    `signalements`** du Sheet (créé automatiquement avec ses en-têtes :
-   `recu, code, wilaya, commune, nom, adresse, tel, horaires, contact_nom,
-   contact_tel, statut, lang`). Sans compte de service, il
+   `recu, code, wilaya, commune, nom, adresse, tel, contact_nom, contact_tel,
+   statut, lang`). Sans compte de service, il
    passe par `SIGNALEMENT_WEBHOOK_URL` ; sans webhook, par les logs Vercel.
 3. Un bénévole **appelle** la personne indiquée, confirme l'adresse et les
    horaires.
@@ -199,7 +207,7 @@ pas possible :
 function doPost(e) {
   const feuille = SpreadsheetApp.openById("ID_DU_SHEET_PRIVE").getSheetByName("signalements");
   const d = JSON.parse(e.postData.contents);
-  feuille.appendRow([d.recu, d.code, d.commune, d.nom, d.adresse, d.tel, d.horaires, d.contact_nom, d.contact_tel, "à rappeler"]);
+  feuille.appendRow([d.recu, d.code, d.commune, d.nom, d.adresse, d.tel, d.contact_nom, d.contact_tel, "à rappeler"]);
   return ContentService.createTextOutput("ok");
 }
 ```

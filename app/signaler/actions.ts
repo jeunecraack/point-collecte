@@ -11,7 +11,6 @@ const Signalement = z.object({
   nom: z.string().trim().min(3).max(120),
   adresse: z.string().trim().min(5).max(240),
   tel: z.string().trim().max(30),
-  horaires: z.string().trim().max(120),
   contact_nom: z.string().trim().min(2).max(80),
   contact_tel: z.string().trim().min(8).max(30),
 });
@@ -33,7 +32,7 @@ export async function signaler(form: FormData) {
 
   // 1. Onglet `signalements` du Sheet (compte de service). 2. Webhook. 3. Logs Vercel, à défaut.
   if (configSheets()) {
-    const ligne = [recu, d.code, wilayaParCode(d.code)?.nom ?? "", d.commune, d.nom, d.adresse, d.tel, d.horaires, d.contact_nom, d.contact_tel, "à rappeler", String(form.get("lang") ?? "ar")];
+    const ligne = [recu, d.code, wilayaParCode(d.code)?.nom ?? "", d.commune, d.nom, d.adresse, d.tel, d.contact_nom, d.contact_tel, "à rappeler", String(form.get("lang") ?? "ar")];
     if (ligne.length !== ENTETES.length) throw new Error("colonnes signalements désalignées");
     try {
       await ajouterSignalement(ligne);
