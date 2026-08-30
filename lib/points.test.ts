@@ -29,3 +29,30 @@ test("fraicheur : 11 jours → perime, donc exclue du rendu", () => {
   expect(fraicheur(iso(2)).niveau).toBe("frais");
   expect(fraicheur("n'importe quoi").niveau).toBe("inconnu");
 });
+
+test("en-têtes du Sheet des bénévoles → modèle (Wilaya en nom, Num1..3, Maps, Agree)", () => {
+  const csv =
+    "Wilaya,Commune,Adresse,Localisation Maps,Association,Num1,Num2,Num3,Agree ,maj,source\n" +
+    "BEJAIA,PLACEHOLDER,PLACEHOLDER ADRESSE,https://maps.app.goo.gl/PLACEHOLDER,PLACEHOLDER ASSO,555000000,,23000000,OUI,2026-08-30,PLACEHOLDER\n" +
+    "AIN TIMOUNCHENT,,,,PLACEHOLDER ASSO,,,,NON,2026-08-30,PLACEHOLDER\n" +
+    "NULLE PART,,,,PLACEHOLDER ASSO,,,,,2026-08-30,PLACEHOLDER\n" +
+    "ALGER,,,,PLACEHOLDER ASSO,,,,,,\n";
+  const r = parserCsv(csv, "sheet");
+  expect(r.total).toBe(2);
+  const b = r.points["06"]?.[0];
+  expect(b?.nom).toBe("PLACEHOLDER ASSO");
+  expect(b?.tel).toBe("0555000000");
+  expect(b?.tel2).toBe("");
+  expect(b?.tel3).toBe("023000000");
+  expect(b?.maps).toBe("https://maps.app.goo.gl/PLACEHOLDER");
+  expect(b?.agree).toBe(true);
+  expect(r.points["46"]?.[0]?.agree).toBe(false);
+  expect(r.rejets.map((x) => x.ligne)).toEqual([4, 5]);
+  expect(r.rejets[0].raison).toMatch(/^code/);
+  expect(r.rejets[1].raison).toMatch(/^maj/);
+});
+
+test("lien Maps hors domaine Google → vidé", () => {
+  const csv = "code,nom,maps,maj,source\n06,PLACEHOLDER,javascript:alert(1),2026-08-30,PLACEHOLDER\n";
+  expect(parserCsv(csv, "repo").points["06"]?.[0]?.maps).toBe("");
+});

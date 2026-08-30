@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Papa from "papaparse";
 import { z } from "zod";
+import { findWilaya } from "./match";
 
 const str = (d = "") => z.string().trim().default(d);
 
@@ -17,6 +18,10 @@ const PointSchema = z.object({
   commune: str(),
   adresse: str(),
   tel: str().transform(normaliserTel),
+  tel2: str().transform(normaliserTel),
+  tel3: str().transform(normaliserTel),
+  // Lien Google Maps : accepté seulement sur les domaines Maps, sinon ignoré.
+  maps: str().transform((v) => (/^https:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+)\//i.test(v) ? v : "")),
   horaires: str(),
   besoins: str(),
   // Colonne `agree` (ou `agréé`) : toute valeur sauf vide / non / no / 0 → badge « Agréé par l'État ».
@@ -39,7 +44,7 @@ export type ParDept = Record<string, Point[]>;
 function normaliserTel(raw: string): string {
   const chiffres = raw.replace(/[^\d+]/g, "");
   if (!chiffres) return "";
-  if (/^\d{9}$/.test(chiffres)) return "0" + chiffres;
+  if (/^\d{8,9}$/.test(chiffres)) return "0" + chiffres;
   return chiffres;
 }
 
@@ -49,6 +54,39 @@ export type Rapport = {
   rejets: { ligne: number; raison: string }[];
   origine: "sheet" | "repo";
 };
+
+/**
+ * En-têtes acceptés en plus du modèle, tels que les bénévoles les écrivent.
+ * Clé = en-tête plié (minuscules, sans accent) ; valeur = colonne du modèle.
+ */
+const ALIAS_COLONNES: Record<string, keyof Point> = {
+  wilaya: "code",
+  association: "nom",
+  lieu: "nom",
+  telephone: "tel",
+  num: "tel",
+  num1: "tel",
+  num2: "tel2",
+  num3: "tel3",
+  "localisation maps": "maps",
+  maps: "maps",
+  lien: "maps",
+  date: "maj",
+  "date de verification": "maj",
+  verifie: "source",
+  "verifie par": "source",
+  verificateur: "source",
+};
+
+const COLONNES = Object.keys(PointSchema.shape) as (keyof Point)[];
+
+function remapper(brut: Record<string, string>): Record<string, string> {
+  const r: Record<string, string> = Object.fromEntries(COLONNES.map((c) => [c, ""]));
+  for (const [k, v] of Object.entries(brut)) r[ALIAS_COLONNES[k] ?? k] = v ?? "";
+  // « BEJAIA », « Tizi Ouzou », « بجاية » → code, via le même matching que l'assistant.
+  if (r.code && !/^\s*\d{1,2}\s*$/.test(r.code)) r.code = findWilaya(r.code)?.code ?? r.code;
+  return r;
+}
 
 export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
   const { data } = Papa.parse<Record<string, string>>(texte, {
@@ -63,7 +101,7 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
   let total = 0;
 
   data.forEach((brut, i) => {
-    const r = PointSchema.safeParse(brut);
+    const r = PointSchema.safeParse(remapper(brut));
     if (!r.success) {
       const e = r.error.issues[0];
       rejets.push({ ligne: i + 2, raison: `${e.path.join(".")}: ${e.message}` });

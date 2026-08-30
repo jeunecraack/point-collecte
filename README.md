@@ -55,6 +55,11 @@ Un seul CSV, en-têtes en minuscules :
 code, nom, type, commune, adresse, tel, horaires, besoins, agree, maj, source
 ```
 
+Les en-têtes des bénévoles sont aussi acceptés : `Wilaya` (nom ou numéro)
+→ `code`, `Association` → `nom`, `Num1`/`Num2`/`Num3` → `tel`/`tel2`/`tel3`,
+`Localisation Maps` → `maps`, `Agree` (OUI/NON) → `agree`, `Date` → `maj`,
+`Vérifié par` → `source`. Détail dans [`DONNEES.md`](DONNEES.md).
+
 `agree` : « oui » (ou n'importe quoi sauf vide, `non`, `no`, `0`) affiche le
 badge vert « Agréé par l'État » sur la fiche. `code` 1–58, `nom` ≥ 3 caractères, `maj` en `AAAA-MM-JJ`, `source` ≥ 4
 caractères (qui a vérifié). Une ligne invalide est ignorée et apparaît

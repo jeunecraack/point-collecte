@@ -105,10 +105,21 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
         {p.horaires && (
           <Ligne label="Horaires"><span className="font-mono text-sm">{p.horaires}</span></Ligne>
         )}
-        {p.tel && (
+        {(p.tel || p.tel2 || p.tel3) && (
           <Ligne label="Téléphone">
-            <a href={`tel:${p.tel}`} className="inline-block min-h-11 py-2 font-mono text-lg font-bold underline underline-offset-4">
-              {p.tel}
+            <span className="flex flex-wrap gap-x-5">
+              {[p.tel, p.tel2, p.tel3].filter(Boolean).map((t) => (
+                <a key={t} href={`tel:${t}`} className="inline-block min-h-11 py-2 font-mono text-lg font-bold underline underline-offset-4">
+                  {t}
+                </a>
+              ))}
+            </span>
+          </Ligne>
+        )}
+        {p.maps && (
+          <Ligne label="Itinéraire">
+            <a href={p.maps} rel="noopener" className="inline-block min-h-11 py-2 underline underline-offset-4">
+              Ouvrir dans Google Maps
             </a>
           </Ligne>
         )}

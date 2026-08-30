@@ -51,7 +51,7 @@ const RAW: [string, string, string, string][] = [
   ["43", "Mila", "ميلة", ""],
   ["44", "Aïn Defla", "عين الدفلى", ""],
   ["45", "Naâma", "النعامة", "naama"],
-  ["46", "Aïn Témouchent", "عين تموشنت", ""],
+  ["46", "Aïn Témouchent", "عين تموشنت", "ain timouchent|ain timounchent"],
   ["47", "Ghardaïa", "غرداية", ""],
   ["48", "Relizane", "غليزان", ""],
   ["49", "Timimoun", "تيميمون", ""],

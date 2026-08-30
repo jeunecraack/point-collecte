@@ -19,7 +19,24 @@ Colonnes exactes, en première ligne, en minuscules :
 code, nom, type, commune, adresse, tel, horaires, besoins, agree, maj, source
 ```
 
-Puis Fichier → Partager → Publier sur le web → format CSV.
+Les en-têtes des bénévoles sont acceptés tels quels et remappés :
+
+| Dans le Sheet | Modèle |
+|---|---|
+| `Wilaya` (nom, majuscules ou arabe, ou numéro) | `code` |
+| `Association` / `Lieu` | `nom` |
+| `Num1`, `Num2`, `Num3` / `Téléphone` | `tel`, `tel2`, `tel3` |
+| `Localisation Maps` / `Maps` / `Lien` | `maps` (liens Google Maps seulement) |
+| `Agree` / `Agréé` (OUI / NON) | `agree` |
+| `Date` / `Date de vérification` | `maj` |
+| `Vérifié par` / `Vérificateur` | `source` |
+
+Deux colonnes **doivent** exister, sans elles la ligne est rejetée
+(invariants 2 et 5) : `maj` (date de vérification, `AAAA-MM-JJ`) et
+`source` (qui a appelé et confirmé).
+
+Puis Partager → Accès général → « Tous les utilisateurs disposant du
+lien », Lecteur.
 
 ### Quatre réglages à faire avant d'ouvrir aux bénévoles
 
