@@ -1,5 +1,6 @@
 import { Head, Html, Main, NextScript } from "next/document";
 import { SCRIPT_THEME_TETE } from "@/lib/theme";
+import { siteUrl } from "@/lib/secret";
 
 // Arabe d'abord : la racine est RTL ; les pages /fr posent dir="ltr" lang="fr" sur leur conteneur.
 export default function Document() {
@@ -12,7 +13,7 @@ export default function Document() {
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/og.jpg`} />
+        <meta property="og:image" content={`${siteUrl()}/og.jpg`} />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
       </Head>

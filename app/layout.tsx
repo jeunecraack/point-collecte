@@ -2,8 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { SCRIPT_THEME_TETE } from "@/lib/theme";
+import { siteUrl } from "@/lib/secret";
 
-const site = process.env.NEXT_PUBLIC_SITE_URL;
+const site = siteUrl();
 
 export const metadata: Metadata = {
   metadataBase: site ? new URL(site) : undefined,
