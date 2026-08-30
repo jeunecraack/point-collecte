@@ -9,8 +9,10 @@ import { createSign } from "node:crypto";
  * Le Sheet reste la seule source de vérité : on y ajoute, marque ou supprime des lignes, rien d'autre.
  */
 export type Ecriture = "script" | "compte" | null;
+// Valeurs collées dans Vercel avec un retour à la ligne ou des guillemets : on nettoie.
+const propre = (v?: string) => (v ?? "").trim().replace(/^["']|["']$/g, "");
 export function modeEcriture(): Ecriture {
-  if (process.env.SHEET_SCRIPT_URL && process.env.SHEET_SCRIPT_SECRET) return "script";
+  if (propre(process.env.SHEET_SCRIPT_URL) && propre(process.env.SHEET_SCRIPT_SECRET)) return "script";
   if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY && idPoints()) return "compte";
   return null;
 }
@@ -26,12 +28,11 @@ export type Signalement = Record<Champ, string> & { ligne: number };
 
 // ============================================================ transport « script »
 async function script<T = Record<string, unknown>>(action: string, params: Record<string, unknown> = {}): Promise<T> {
-  const url = process.env.SHEET_SCRIPT_URL!;
-  const res = await fetch(url, {
+  const res = await fetch(propre(process.env.SHEET_SCRIPT_URL), {
     method: "POST",
     // text/plain : Apps Script lit e.postData.contents tel quel ; la réponse arrive après une redirection 302.
     headers: { "content-type": "text/plain;charset=utf-8" },
-    body: JSON.stringify({ secret: process.env.SHEET_SCRIPT_SECRET, action, ...params }),
+    body: JSON.stringify({ secret: propre(process.env.SHEET_SCRIPT_SECRET), action, ...params }),
     redirect: "follow",
   });
   const texte = await res.text();
