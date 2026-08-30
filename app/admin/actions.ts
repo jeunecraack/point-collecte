@@ -60,7 +60,7 @@ export async function publierSignalement(form: FormData) {
   try {
     const sig = (await lireSignalements()).find((s) => s.ligne === ligne);
     if (!sig) throw new Error(`signalement ligne ${ligne} introuvable`);
-    if (sig.statut && sig.statut !== "à rappeler") throw new Error(`déjà traité : ${sig.statut}`);
+    if (sig.statut && sig.statut !== "à traiter" && sig.statut !== "à rappeler") throw new Error(`déjà traité : ${sig.statut}`);
     const entetes = await entetesPoints();
     const { ligne: valeurs, perdues } = ligneSelonEntetes(entetes, {
       wilaya: sig.wilaya.toUpperCase() || sig.code,

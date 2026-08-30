@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { wilayaParCode } from "@/lib/wilayas";
-import { ENTETES, ajouterSignalement, modeEcriture } from "@/lib/sheets";
+import { ajouterSignalement, modeEcriture } from "@/lib/sheets";
 
 const Signalement = z.object({
   code: z.string().regex(/^\d{2}$/),
@@ -11,13 +11,11 @@ const Signalement = z.object({
   nom: z.string().trim().min(3).max(120),
   adresse: z.string().trim().min(5).max(240),
   tel: z.string().trim().max(30),
-  contact_nom: z.string().trim().min(2).max(80),
-  contact_tel: z.string().trim().min(8).max(30),
 });
 
 /**
  * Jamais dans le dataset public : le signalement part dans l'onglet `signalements` (ou un webhook,
- * ou les logs). Un humain rappelle, vérifie, puis recopie la ligne dans l'onglet `points`.
+ * ou les logs). Un bénévole le relit dans /admin puis le publie tel quel, ou le rejette.
  */
 export async function signaler(form: FormData) {
   const page = form.get("lang") === "fr" ? "/fr/signaler" : "/signaler";
@@ -32,10 +30,8 @@ export async function signaler(form: FormData) {
 
   // 1. Onglet `signalements` du Sheet (Apps Script ou compte de service). 2. Webhook. 3. Logs Vercel, à défaut.
   if (modeEcriture()) {
-    const ligne = [recu, d.code, wilayaParCode(d.code)?.nom ?? "", d.commune, d.nom, d.adresse, d.tel, d.contact_nom, d.contact_tel, "à rappeler", String(form.get("lang") ?? "ar")];
-    if (ligne.length !== ENTETES.length) throw new Error("colonnes signalements désalignées");
     try {
-      await ajouterSignalement(ligne);
+      await ajouterSignalement({ recu, code: d.code, wilaya: wilayaParCode(d.code)?.nom ?? "", commune: d.commune, nom: d.nom, adresse: d.adresse, tel: d.tel, statut: "à traiter", lang: String(form.get("lang") ?? "ar") });
     } catch (e) {
       console.error("[signaler] Sheet inaccessible, signalement loggué :", e, JSON.stringify(payload));
     }

@@ -5,7 +5,7 @@ import { WILAYAS } from "@/lib/wilayas";
 import { propsAccueil, type PropsAccueil as Props } from "@/lib/props";
 import { dir, etq, etqLarge, lien, nomWilaya, t } from "@/lib/i18n";
 import { SIGNALER_ACTIF } from "@/lib/config";
-import { Avertissement, Bande, BandeauUrgence, Barre, Pastille, btnContour, btnPlein } from "@/lib/ui";
+import { Avertissement, Bande, BandeauUrgence, Barre, Pastille, btnContour, btnPlein, btnSignaler } from "@/lib/ui";
 
 export const config: PageConfig = { unstable_runtimeJS: false };
 
@@ -39,7 +39,8 @@ export default function Accueil({ couvertes, lang }: Props) {
       <BandeauUrgence lang={lang} />
 
       <main className="mx-auto max-w-2xl px-4 pb-16">
-        <nav aria-label={d.poserQuestion} className="grid gap-3 py-6 sm:grid-cols-2">
+        <nav aria-label={d.poserQuestion} className="grid gap-3 py-6 sm:grid-cols-3">
+          {SIGNALER_ACTIF && <Link href={lien(lang, "/signaler")} className={`${btnSignaler} text-center`}>{d.signalerPoint}</Link>}
           <Link href={lien(lang, "/assistant")} className={`${btnPlein} text-center`}>{d.poserQuestion}</Link>
           <a href="#toutes" className={`${btnContour} text-center`}>{d.toutes58}</a>
         </nav>
@@ -69,15 +70,6 @@ export default function Accueil({ couvertes, lang }: Props) {
             </ol>
           )}
         </section>
-
-        {SIGNALER_ACTIF && (
-          <section className="mt-10">
-            <Link href={lien(lang, "/signaler")} className="block border-2 border-vert p-4 hover:bg-vert-pale">
-              <span className="block font-semibold">{d.signalerPoint}</span>
-              <span className="mt-1 block text-sm text-muted">{d.signalerPointNote}</span>
-            </Link>
-          </section>
-        )}
 
         <section id="toutes" aria-labelledby="toutes-titre" className="mt-10 scroll-mt-4">
           <h2 id="toutes-titre" className={`inline-block border-b-2 border-signal-text pb-1 text-xs text-ink ${etq(lang)}`}>{d.toutes58}</h2>

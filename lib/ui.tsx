@@ -209,6 +209,8 @@ export function Silence({ lang, nom }: { lang: Lang; nom: string }) {
 /** Boutons : un seul plein par écran, les autres en contour. Jamais rouges. */
 export const btnPlein = "inline-block min-h-11 bg-vert px-4 py-3 font-semibold text-paper hover:bg-vert-deep";
 export const btnContour = "inline-block min-h-11 border-[1.5px] border-vert px-4 py-2.5 font-semibold text-vert hover:bg-vert-pale";
+/** Le bouton « Signaler un point » : rouge plein, demandé en évidence en tête de page. */
+export const btnSignaler = "inline-block min-h-11 bg-signal px-4 py-3 font-bold text-white hover:bg-signal/90";
 /** Puce vive : trait rouge, remplissage rouge au survol. Pour les choix (communes, propositions), jamais pour l'urgence. */
 export const puceVive = "inline-flex min-h-11 items-center gap-1.5 rounded-full border-[1.5px] border-signal-text px-4 text-sm font-medium text-ink hover:bg-signal hover:text-white";
 

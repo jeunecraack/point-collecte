@@ -49,7 +49,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
   let erreurSignalements = "";
   if (sheets) {
     try {
-      signalements = (await lireSignalements()).filter((s) => !s.statut || s.statut === "à rappeler");
+      signalements = (await lireSignalements()).filter((s) => !s.statut || s.statut === "à traiter" || s.statut === "à rappeler");
     } catch (e) {
       erreurSignalements = e instanceof Error ? e.message : String(e);
     }
@@ -102,7 +102,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         {sp.echec && <p role="alert" className="mt-3 bg-warm-bg px-3 py-2 text-warm">Rien n'a été fait : {sp.echec}</p>}
 
         <h2 className="mt-10 text-lg font-extrabold tracking-tight">Signalements à traiter</h2>
-        <p className="mt-1 text-sm text-muted">Envoyés par le formulaire. Appelez la personne indiquée ; « Publier » ajoute la ligne dans l'onglet des points du Sheet, « Rejeter » la marque sans rien publier.</p>
+        <p className="mt-1 text-sm text-muted">Envoyés par le formulaire, publiés tels quels. « Publier » ajoute la ligne dans l'onglet des points du Sheet, « Rejeter » la marque sans rien publier.</p>
         {!sheets ? (
           <p className="mt-4 text-sm text-muted">Écriture non configurée (Apps Script ou compte de service, voir README) : la modération se fait directement dans le Sheet, puis « Forcer le rafraîchissement ».</p>
         ) : erreurSignalements ? (
@@ -118,7 +118,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
                   <p dir="auto" className="mt-1 font-semibold">{s.nom || s.adresse} <span className="font-normal text-muted">— {s.wilaya || s.code}{s.commune ? ` · ${s.commune}` : ""}</span></p>
                   {s.adresse && s.nom && <p dir="auto">{s.adresse}</p>}
                   {s.tel && <p className="font-mono">{s.tel}</p>}
-                  <p className="mt-1 text-muted">À rappeler : <span dir="auto" className="text-ink">{s.contact_nom}</span> · <a href={`tel:${s.contact_tel}`} className="font-mono text-vert underline">{s.contact_tel}</a></p>
                 </div>
                 <div className="flex gap-2 sm:flex-col">
                   <form action={publierSignalement}><input type="hidden" name="ligne" value={s.ligne} /><button type="submit" className={btnPetit}>Publier</button></form>

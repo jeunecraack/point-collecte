@@ -22,7 +22,7 @@ export const idPoints = () => idDepuisUrl(process.env.SHEET_CSV_URL);
 const idSignalements = () => process.env.SIGNALEMENTS_SHEET_ID || idPoints();
 
 export const ONGLET = "signalements";
-export const ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "contact_nom", "contact_tel", "statut", "lang"] as const;
+export const ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "statut", "lang"] as const;
 type Champ = (typeof ENTETES)[number];
 export type Signalement = Record<Champ, string> & { ligne: number };
 
@@ -156,10 +156,23 @@ export async function supprimerLignePoints(ligne: number) {
   await apiSupprimer(p.id, p.sheetId, ligne);
 }
 
-export async function ajouterSignalement(valeurs: (string | number)[]) {
-  if (exige() === "script") return void (await script("ajouterSignalement", { ligne: chaines(valeurs) }));
-  const id = (await feuilleSignalements(true))!;
-  await apiAjouter(id, ONGLET, chaines(valeurs));
+/**
+ * Ajoute un signalement en rangeant chaque valeur sous la colonne qui porte son nom : un onglet créé
+ * avec d'anciennes colonnes (contact_nom…) continue de fonctionner, les colonnes inconnues restent vides.
+ */
+export async function ajouterSignalement(sig: Partial<Record<Champ, string>>) {
+  const mode = exige();
+  let entetes: string[] = [];
+  if (mode === "script") entetes = chaines((await script<{ valeurs: unknown[] }>("lireLigne", { onglet: "signalements", ligne: 1 })).valeurs);
+  else {
+    const id = (await feuilleSignalements(true))!;
+    entetes = (await apiLire(id, ONGLET, "A1:Z1"))[0] ?? [];
+  }
+  if (!entetes.length) entetes = [...ENTETES]; // onglet encore absent : le script le crée avec ses en-têtes
+  const cles = entetes.map((h) => h.trim().toLowerCase());
+  const ligne = cles.map((c) => sig[c as Champ] ?? "");
+  if (mode === "script") return void (await script("ajouterSignalement", { ligne }));
+  await apiAjouter((await feuilleSignalements(true))!, ONGLET, ligne);
 }
 
 /** Tous les signalements, avec leur numéro de ligne. Onglet absent → liste vide. */

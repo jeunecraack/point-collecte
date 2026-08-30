@@ -162,8 +162,8 @@ Avec l'écriture configurée (Apps Script — 5 min, voir ci-dessous — ou
 compte de service), `/admin` agit directement sur le Sheet (qui reste la
 seule source de vérité) :
 
-- **Signalements à traiter** : chaque signalement « à rappeler » avec le
-  contact à appeler. **Publier** ajoute la ligne dans l'onglet des points,
+- **Signalements à traiter** : chaque proposition « à traiter ».
+  **Publier** ajoute la ligne dans l'onglet des points,
   rangée selon les en-têtes existants (`Wilaya, Commune, Adresse,
   Association, Num1…`), et marque le signalement « publié » ; **Rejeter** le
   marque « rejeté » sans rien publier.
@@ -177,26 +177,20 @@ doit contenir ce qui était affiché (nom, numéro) ; sinon rien n'est
 supprimé et l'admin le dit. Après chaque écriture, les pages sont
 régénérées immédiatement.
 
-## Signalements — circuit de validation
+## Signalements — circuit
 
-Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
+Le formulaire `/signaler` n'écrit **jamais** dans l'onglet public.
 
-1. La personne remplit le formulaire (wilaya, lieu, adresse, et surtout le nom et le téléphone de quelqu'un qui répond sur
-   place). Un champ caché piège les robots.
-2. Le serveur valide les champs (zod) et **ajoute une ligne à l'onglet
-   `signalements`** du Sheet (créé automatiquement avec ses en-têtes :
-   `recu, code, wilaya, commune, nom, adresse, tel, contact_nom, contact_tel,
-   statut, lang`). Sans compte de service, il
-   passe par `SIGNALEMENT_WEBHOOK_URL` ; sans webhook, par les logs Vercel.
-3. Un bénévole **appelle** la personne indiquée, confirme l'adresse et les
-   horaires.
-4. Si c'est confirmé, le bénévole **copie la ligne dans le Sheet public**.
-   Elle apparaît sur le site en moins d'une minute (ou tout de suite via
-   `/admin` → Forcer le rafraîchissement). Le numéro de la personne à
-   rappeler n'est jamais publié.
-
-Sans appel, rien n'est publié : la vérification humaine est le seul chemin
-vers le site.
+1. La personne remplit le formulaire (wilaya, lieu, adresse, téléphone du
+   point). Un champ caché piège les robots. Aucune coordonnée de contact
+   n'est demandée : le site ne rappelle personne et ne vérifie rien sur
+   place — il le dit sur le formulaire.
+2. Le serveur valide (zod) et ajoute une ligne à l'onglet `signalements`
+   (`recu, code, wilaya, commune, nom, adresse, tel, statut, lang`), rangée
+   par nom de colonne, statut « à traiter ». Sans écriture configurée : webhook,
+   sinon logs Vercel.
+3. Dans `/admin`, un bénévole relit la proposition et **Publie** (ligne
+   ajoutée dans l'onglet des points, en ligne aussitôt) ou **Rejette**.
 
 ### Apps Script — la voie simple (5 min, une fois)
 

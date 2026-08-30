@@ -21,7 +21,7 @@ var SECRET = "CHANGE-MOI";
 var ID_PUBLIC = ""; // script autonome (1b) : ID du Sheet public. Vide si le script est lié au Sheet (1a).
 var ID_PRIVE = ""; // optionnel : ID d'un Sheet privé pour l'onglet « signalements » (recommandé)
 var ONGLET_SIGNALEMENTS = "signalements";
-var ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "contact_nom", "contact_tel", "statut", "lang"];
+var ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "statut", "lang"];
 
 function doPost(e) {
   var d;

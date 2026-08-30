@@ -16,9 +16,7 @@ export function Formulaire({ lang, sp }: { lang: Lang; sp: Record<string, string
       <main className="mx-auto max-w-2xl px-4 pb-16 pt-5">
         <h1 className="text-2xl font-extrabold tracking-tight">{d.titreSignaler}</h1>
 
-        <p className="mt-3 border-s-4 border-vert bg-surface py-2 ps-3 pe-3 leading-relaxed">
-          <strong>{d.rienSansAppel}</strong> {d.encartSignaler}
-        </p>
+        <p className="mt-3 border-s-4 border-vert bg-surface py-2 ps-3 pe-3 leading-relaxed">{d.encartSignaler}</p>
 
         {sp.envoye && <p role="status" className="mt-4 bg-fresh-bg px-3 py-2 text-fresh">{d.recu}</p>}
         {sp.erreur && <p role="alert" className="mt-4 bg-warm-bg px-3 py-2 text-warm">{d.incomplet}</p>}
@@ -53,19 +51,6 @@ export function Formulaire({ lang, sp }: { lang: Lang; sp: Record<string, string
             <label htmlFor="tel" className={label}>{d.telPoint} <span className="font-normal text-muted">{d.facultatif}</span></label>
             <input id="tel" name="tel" type="tel" inputMode="tel" dir="ltr" className={champ} />
           </div>
-          <fieldset className="border-t-2 border-signal-text pt-4">
-            <legend className={`text-xs text-muted ${etq(lang)}`}>{d.personneSurPlace}</legend>
-            <p className="mt-1 text-sm text-muted">{d.personneNote}</p>
-            <div className="mt-3">
-              <label htmlFor="contact_nom" className={label}>{d.nom}</label>
-              <input id="contact_nom" name="contact_nom" required minLength={2} className={champ} autoComplete="name" />
-            </div>
-            <div className="mt-3">
-              <label htmlFor="contact_tel" className={label}>{d.telephone}</label>
-              <input id="contact_tel" name="contact_tel" type="tel" inputMode="tel" dir="ltr" required minLength={8} className={champ} autoComplete="tel" />
-            </div>
-          </fieldset>
-
           <button type="submit" className={`${btnPlein} w-full sm:w-auto`}>{d.envoyerVerif}</button>
         </form>
         <Avertissement lang={lang} />
