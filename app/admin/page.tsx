@@ -98,6 +98,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         {sp.revalide === "ok" && <p role="status" className="mt-3 text-fresh">Fait : accueil, wilayas et assistant régénérés, en arabe et en français.</p>}
         {sp.revalide === "echec" && <p role="alert" className="mt-3 text-warm">Échec de /api/revalidate — voir les logs serveur.</p>}
         {sp.revalide === "sans-secret" && <p role="alert" className="mt-3 text-warm">REVALIDATE_SECRET n'est pas configuré.</p>}
+        {rapport.avertissements.map((a) => <p key={a} role="alert" className="mt-3 bg-warm-bg px-3 py-2 text-sm text-warm">{a}</p>)}
         {sp.fait && <p role="status" className="mt-3 bg-fresh-bg px-3 py-2 text-fresh">{sp.fait}</p>}
         {sp.echec && <p role="alert" className="mt-3 bg-warm-bg px-3 py-2 text-warm">Rien n'a été fait : {sp.echec}</p>}
 

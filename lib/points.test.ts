@@ -93,3 +93,13 @@ test("numérotation : une ligne vide au milieu du Sheet compte", () => {
   expect(r.points["06"]?.map((p) => [p.nom, p.ligne])).toEqual([["PLACEHOLDER A", 2], ["PLACEHOLDER B", 5]]);
   expect(r.rejets.map((x) => x.ligne)).toEqual([6]);
 });
+
+test("ligne 1 sans noms (« Column 1… » ou données) → lecture par position, avertissement", () => {
+  const csv = "Column 1,Column 2,Column 3,Column 4,Column 5,Column 6,Column 7,Column 8,Column 9\nBEJAIA,PLACEHOLDER,PLACEHOLDER LIEU,,PLACEHOLDER ASSO,555000000,,,OUI\n";
+  const r = parserCsv(csv, "sheet");
+  expect(r.total).toBe(1);
+  expect(r.points["06"]?.[0]).toMatchObject({ nom: "PLACEHOLDER ASSO", commune: "PLACEHOLDER", adresse: "PLACEHOLDER LIEU", tel: "0555000000", agree: true, ligne: 2 });
+  expect(r.avertissements[0]).toMatch(/lecture par position/);
+  // avec de vrais en-têtes : aucun avertissement
+  expect(parserCsv("Wilaya,Association\nBEJAIA,PLACEHOLDER ASSO\n", "sheet").avertissements).toEqual([]);
+});

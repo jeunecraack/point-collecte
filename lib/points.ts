@@ -54,7 +54,23 @@ export type Rapport = {
   total: number;
   rejets: { ligne: number; raison: string; apercu: string }[];
   origine: "sheet" | "repo";
+  /** Anomalies non bloquantes, à afficher dans /admin. */
+  avertissements: string[];
 };
+
+/**
+ * Ordre des colonnes du Sheet des bénévoles, utilisé quand la ligne 1 ne porte plus de noms
+ * (« Column 1 », vide, ou une ligne de données) : un « Tableau » Google Sheets aux noms par défaut,
+ * ou une ligne 1 écrasée, ne doit pas faire disparaître le site.
+ */
+export const ENTETES_PAR_DEFAUT = ["wilaya", "commune", "adresse", "localisation maps", "association", "num1", "num2", "num3", "agree"];
+
+const plier = (h: string) => h.trim().toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+/** Vrai si au moins un en-tête est un nom connu (modèle ou alias des bénévoles). */
+export function entetesReconnus(entetes: string[]): boolean {
+  const connus = new Set([...COLONNES_MODELE, ...Object.keys(ALIAS_COLONNES)]);
+  return entetes.some((h) => connus.has(plier(h)));
+}
 
 /**
  * En-têtes acceptés en plus du modèle, tels que les bénévoles les écrivent.
@@ -79,7 +95,8 @@ const ALIAS_COLONNES: Record<string, keyof Point> = {
   verificateur: "source",
 };
 
-const COLONNES = Object.keys(PointSchema.shape) as (keyof Point)[];
+const COLONNES_MODELE = Object.keys(PointSchema.shape) as (keyof Point)[];
+const COLONNES = COLONNES_MODELE;
 
 function remapper(brut: Record<string, string>): Record<string, string> {
   const r: Record<string, string> = Object.fromEntries(COLONNES.map((c) => [c, ""]));
@@ -96,13 +113,19 @@ function remapper(brut: Record<string, string>): Record<string, string> {
 }
 
 export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
+  const avertissements: string[] = [];
+  // Ligne 1 sans noms de colonnes → on impose l'ordre connu des bénévoles.
+  const premiere = Papa.parse<string[]>(texte, { preview: 1 }).data[0] ?? [];
+  const sansEntetes = !entetesReconnus(premiere);
+  if (sansEntetes) avertissements.push(`ligne 1 sans noms de colonnes (${premiere.slice(0, 3).join(", ")}…) : lecture par position, ordre supposé « ${ENTETES_PAR_DEFAUT.join(", ")} » — remettez les en-têtes`);
+
   // skipEmptyLines: false — une ligne vide au milieu du Sheet compte dans la numérotation,
   // sinon « supprimer la ligne 12 » viserait la mauvaise ligne.
   const { data } = Papa.parse<Record<string, string>>(texte, {
     header: true,
     skipEmptyLines: false,
     // « Agréé » → « agree » : les accents des en-têtes sont ignorés.
-    transformHeader: (h) => h.trim().toLowerCase().normalize("NFD").replace(/\p{M}/gu, ""),
+    transformHeader: (h, i) => (sansEntetes ? (ENTETES_PAR_DEFAUT[i] ?? `colonne${i + 1}`) : plier(h)),
   });
 
   const points: ParDept = {};
@@ -128,7 +151,7 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
     total++;
   });
 
-  return { points, total, rejets, origine };
+  return { points, total, rejets, origine, avertissements };
 }
 
 async function lireRepo(): Promise<Rapport> {

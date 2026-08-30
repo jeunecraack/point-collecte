@@ -1,4 +1,5 @@
 import { fold } from "./match";
+import { ENTETES_PAR_DEFAUT, entetesReconnus } from "./points";
 
 /**
  * Écriture d'un point dans l'onglet des bénévoles, selon LEURS en-têtes (Wilaya, Commune, Adresse,
@@ -19,7 +20,9 @@ const CIBLES: Record<string, string[]> = {
   maj: ["maj", "date"],
 };
 
-export function ligneSelonEntetes(entetes: string[], valeurs: Partial<Record<keyof typeof CIBLES, string>>): { ligne: string[]; perdues: string[] } {
+export function ligneSelonEntetes(entetesBrutes: string[], valeurs: Partial<Record<keyof typeof CIBLES, string>>): { ligne: string[]; perdues: string[] } {
+  // Ligne 1 sans noms (« Column 1… ») : même ordre supposé que la lecture.
+  const entetes = entetesReconnus(entetesBrutes) ? entetesBrutes : ENTETES_PAR_DEFAUT.slice(0, Math.max(entetesBrutes.length, ENTETES_PAR_DEFAUT.length));
   const ligne = entetes.map(() => "");
   const perdues: string[] = [];
   for (const [cle, val] of Object.entries(valeurs)) {

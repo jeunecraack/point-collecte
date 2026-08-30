@@ -19,3 +19,8 @@ test("memeLigne : garde-fou avant suppression", () => {
   expect(memeLigne(["ALGER", "AUTRE", "Pharmacie Y"], ["Pharmacie X", "0555000000"])).toBe(false);
   expect(memeLigne(["x"], [])).toBe(false);
 });
+
+test("en-têtes « Column N » → ordre par défaut des bénévoles", () => {
+  const { ligne } = ligneSelonEntetes(["Column 1", "Column 2", "Column 3", "Column 4", "Column 5", "Column 6", "Column 7", "Column 8", "Column 9"], { wilaya: "ALGER", nom: "PLACEHOLDER", tel: "0555000000" });
+  expect(ligne).toEqual(["ALGER", "", "", "", "PLACEHOLDER", "0555000000", "", "", ""]);
+});
