@@ -113,18 +113,20 @@ function Ligne({ label, children }: { label: string; children: ReactNode }) {
 /** Une entrée du registre. Tout ce qui est affiché vient de la fiche, rien d'autre. */
 export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) {
   return (
-    <article dir={estArabe(p.nom + p.adresse) ? "rtl" : undefined}>
+    <article>
       <span className="flex flex-wrap items-center gap-2">
         <Pastille maj={p.maj} f={p.f} />
         {p.agree && <Agree />}
       </span>
-      <h3 className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
+      <h3 dir={estArabe(p.nom) ? "rtl" : undefined} className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
       {(p.commune || p.type !== "Point de collecte") && (
         <p className="text-sm text-muted">
           {[p.type !== "Point de collecte" ? p.type : "", p.commune].filter(Boolean).join(" · ")}
         </p>
       )}
-      {p.adresse && p.adresse !== p.nom && <p className={`mt-2 leading-snug ${compact ? "" : "text-lg"}`}>{p.adresse}</p>}
+      {p.adresse && p.adresse !== p.nom && (
+        <p dir={estArabe(p.adresse) ? "rtl" : undefined} className={`mt-2 leading-snug ${compact ? "" : "text-lg"}`}>{p.adresse}</p>
+      )}
       <dl className="mt-3">
         {p.horaires && (
           <Ligne label="Horaires"><span className="font-mono text-sm">{p.horaires}</span></Ligne>
