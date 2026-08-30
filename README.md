@@ -120,7 +120,8 @@ dans le Sheet. Sans cet appel, rien n'est publié.
    par ISR.
 
 Aucun appel réseau vers un domaine tiers depuis le navigateur : pas de
-police web, pas d'analytics. Seule image : l'emblème (14 Ko).
+police web, pas d'analytics. Seules images : l'emblème couleur (14 Ko) et
+sa version blanche (8 Ko). Mode sombre automatique (`prefers-color-scheme`).
 
 ## Tests
 

@@ -21,7 +21,10 @@ export const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? "s" : "
 export function Marque({ surBande = false, label = "Points de collecte" }: { surBande?: boolean; label?: string }) {
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 hover:underline ${surBande ? "text-white" : ""}`}>
-      <img src={surBande ? "/emblem-white.png" : "/emblem.png"} alt="" width={36} height={42} className="h-[42px] w-auto" />
+      <picture>
+        {!surBande && <source srcSet="/emblem-white.png" media="(prefers-color-scheme: dark)" />}
+        <img src={surBande ? "/emblem-white.png" : "/emblem.png"} alt="" width={36} height={42} className="h-[42px] w-auto" />
+      </picture>
       <span className="text-sm font-semibold leading-tight">{label}</span>
     </Link>
   );

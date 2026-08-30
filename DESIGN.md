@@ -26,19 +26,37 @@ site d'une capture d'écran WhatsApp.
 - Animation d'apparition. Le contenu est là au premier octet.
 - Émoji dans l'interface (rendu variable, sens variable).
 
+## Le drapeau comme système
+
+Vert = vérifié, blanc = papier, rouge = urgence et rien d'autre. Pas de
+croissant ni d'étoile : on prend les couleurs, pas l'emblème d'État.
+
 ## Tokens (`app/globals.css`, `@theme`)
 
-| Token | Valeur | Rôle |
-|---|---|---|
-| `paper` | `#F1F2F0` | fond de page, gris-vert froid — pas le crème |
-| `ink` | `#141412` | texte |
-| `muted` | `#5C5F5A` | texte secondaire, AA sur paper (5,5:1) |
-| `rule` | `#C9CBC5` | filets |
-| `signal` | `#C8102E` | urgence uniquement. Jamais décoratif. |
-| `fresh` / `fresh-bg` | `#1F6E3D` / `#DCEFE2` | vérifié il y a ≤ 2 jours |
-| `warm` / `warm-bg` | `#7A4E00` / `#FBEBC2` | vérifié il y a 3 à 9 jours |
+| Token | Clair | Sombre | Rôle |
+|---|---|---|---|
+| `paper` | `#FFFFFF` | `#0F1913` | fond de page |
+| `surface` | `#F4F7F5` | `#16241C` | surfaces secondaires, survol |
+| `ink` | `#14201A` | `#EAF2EC` | texte |
+| `muted` | `#5B6660` | `#9DB0A4` | texte secondaire, libellés (AA ≥ 5,5:1) |
+| `rule` | `#CBD5CE` | `#2B3D32` | filets |
+| `band` | `#006233` | `#006233` | la bande verte — fixe, texte blanc |
+| `vert` | `#006233` | `#6FCF97` | liens, boutons, numéros, badge |
+| `vert-deep` | `#014A27` | `#9BE0B7` | survol des boutons |
+| `vert-pale` | `#E3F1E8` | `#16412A` | anneau de focus, survol des contours |
+| `signal` | `#D21034` | `#B30E2C` | bandeau d'urgence — le seul rouge |
+| `signal-text` | `#D21034` | `#FF5C72` | numéros d'urgence dans l'assistant |
+| `fresh` / `fresh-bg` | `#014A27` / `#E3F1E8` | `#6FCF97` / `#16412A` | vérifié il y a ≤ 2 jours |
+| `warm` / `warm-bg` | `#8A5A00` / `#FBEBC2` | `#F2C14E` / `#3D2A00` | vérifié il y a 3 à 9 jours |
 
 Au-delà de 9 jours il n'y a pas de couleur : la fiche n'existe plus.
+Le mode sombre suit `prefers-color-scheme`, sans bouton.
+
+## Signature : deux bandes
+
+Blanc (marque) → **vert** (code wilaya énorme en mono, nom, arabe) →
+**rouge** (14 · 16 · 17 · 1055). Sur les pages secondaires la bande verte
+est réduite à un filet de 6 px sous la marque.
 
 ## Typographie
 
@@ -57,14 +75,15 @@ système embarque des fontes arabes correctes sur toutes les plateformes.
 ## Structure d'une page wilaya
 
 ```
-← Toutes les wilayas
+[emblème] Points de collecte              TOUTES LES WILAYAS
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ vert
 06            Béjaïa
               بجاية
 2 points vérifiés · dernière vérification le 30 août
+▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ rouge
+14 Protection civile · 16 SAMU · 17 Police · 1055 Gendarmerie
 ──────────────────────────────────────────────
-URGENCE   14 Protection civile · 16 SAMU · 17 Police · 1055 Gendarmerie
-──────────────────────────────────────────────
-● Vérifié le 30 août — aujourd'hui           (pastille, mono)
+● Vérifié le 30 août — aujourd'hui  ✓ AGRÉÉ PAR L'ÉTAT (plein vert)
 Nom du point
 Commune
 Adresse en gros, lisible à bout de bras
