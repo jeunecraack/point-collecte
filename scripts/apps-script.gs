@@ -1,8 +1,13 @@
 /**
  * Points de collecte — pont d'écriture vers ce Sheet.
  *
- * Installation (5 min) :
- *  1. Dans le Sheet public : Extensions → Apps Script → remplacer tout le contenu par ce fichier.
+ * Installation (5 min) — deux façons :
+ *  1a. Lié au Sheet : dans le Sheet public, Extensions → Apps Script → remplacer tout le contenu par ce fichier.
+ *      (réservé au PROPRIÉTAIRE du fichier : un éditeur ne peut pas déployer.)
+ *  1b. Autonome : depuis n'importe quel compte Gmail ayant le rôle Éditeur sur le Sheet,
+ *      ouvrir https://script.google.com/create, coller ce fichier et renseigner ID_PUBLIC
+ *      (la partie de l'URL du Sheet entre /d/ et /edit). Contourne « vous n'avez pas l'autorisation »
+ *      des comptes d'organisation et des scripts appartenant à quelqu'un d'autre.
  *  2. Remplacer CHANGE-MOI par un mot de passe long (ex. sortie de `openssl rand -base64 32`).
  *  3. Déployer → Nouveau déploiement → type « Application web » →
  *     Exécuter en tant que : Moi · Accès : Tout le monde → Déployer → autoriser → copier l'URL « …/exec ».
@@ -13,6 +18,7 @@
  * refaire « Déployer → Gérer les déploiements → modifier → nouvelle version ».
  */
 var SECRET = "CHANGE-MOI";
+var ID_PUBLIC = ""; // script autonome (1b) : ID du Sheet public. Vide si le script est lié au Sheet (1a).
 var ID_PRIVE = ""; // optionnel : ID d'un Sheet privé pour l'onglet « signalements » (recommandé)
 var ONGLET_SIGNALEMENTS = "signalements";
 var ENTETES = ["recu", "code", "wilaya", "commune", "nom", "adresse", "tel", "contact_nom", "contact_tel", "statut", "lang"];
@@ -30,8 +36,12 @@ function doPost(e) {
   }
 }
 
+function classeurPublic() {
+  return ID_PUBLIC ? SpreadsheetApp.openById(ID_PUBLIC) : SpreadsheetApp.getActiveSpreadsheet();
+}
+
 function executer(d) {
-  var classeur = SpreadsheetApp.getActiveSpreadsheet();
+  var classeur = classeurPublic();
   var points = classeur.getSheets()[0]; // le premier onglet = celui que l'export CSV publie
   switch (d.action) {
     case "info":
@@ -86,7 +96,7 @@ function ajouter(f, valeurs) {
 }
 
 function feuilleSignalements(creer) {
-  var classeur = ID_PRIVE ? SpreadsheetApp.openById(ID_PRIVE) : SpreadsheetApp.getActiveSpreadsheet();
+  var classeur = ID_PRIVE ? SpreadsheetApp.openById(ID_PRIVE) : classeurPublic();
   var f = classeur.getSheetByName(ONGLET_SIGNALEMENTS);
   if (!f && creer) {
     f = classeur.insertSheet(ONGLET_SIGNALEMENTS);

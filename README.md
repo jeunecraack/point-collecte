@@ -200,8 +200,15 @@ vers le site.
 
 ### Apps Script — la voie simple (5 min, une fois)
 
-1. Ouvrir le Sheet public → **Extensions → Apps Script** → remplacer tout le
-   contenu par [`scripts/apps-script.gs`](scripts/apps-script.gs).
+1. Deux façons de créer le script, même code
+   ([`scripts/apps-script.gs`](scripts/apps-script.gs)) :
+   - **lié au Sheet** (réservé au propriétaire du fichier) : Sheet →
+     Extensions → Apps Script → remplacer tout le contenu ;
+   - **autonome** (n'importe quel Gmail ayant le rôle Éditeur sur le Sheet,
+     contourne « Vous n'avez pas l'autorisation d'effectuer cette action ») :
+     [script.google.com/create](https://script.google.com/create) → coller
+     le code → renseigner `ID_PUBLIC` (partie de l'URL du Sheet entre `/d/`
+     et `/edit`).
 2. Dans le script, remplacer `CHANGE-MOI` par un mot de passe long
    (`openssl rand -base64 32`). Optionnel : `ID_PRIVE` = l'ID d'un second
    Sheet privé qui recevra l'onglet `signalements` (recommandé : ils
