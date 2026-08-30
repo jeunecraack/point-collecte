@@ -3,6 +3,7 @@ import { parserCsv } from "./points";
 import { visibles, type ParWilaya } from "./fiches";
 import { repondre, trouverCommune } from "./reponse";
 import { WILAYAS } from "./wilayas";
+import { SIGNALER_ACTIF } from "./config";
 
 const csv =
   "code,nom,commune,tel\n" +
@@ -26,7 +27,7 @@ describe("repondre", () => {
     const x = repondre("fr", "16", par, null);
     expect(x.fiches?.length).toBe(3);
     expect(x.texte).toContain("Alger");
-    expect(x.propositions).toEqual(["Quoi donner à Alger ?", "Je veux être bénévole à Alger"]); // « Signaler » masqué
+    expect(x.propositions).toEqual(SIGNALER_ACTIF ? ["Quoi donner à Alger ?", "Je veux être bénévole à Alger", "Signaler un point"] : ["Quoi donner à Alger ?", "Je veux être bénévole à Alger"]);
   });
 
   test("mémoire : « 15 » puis « quoi donner » répond pour Tizi Ouzou", () => {
@@ -74,10 +75,13 @@ describe("repondre", () => {
     expect(repondre("fr", "salam alger", par, null).fiches?.length).toBe(3);
   });
 
-  test("signalement masqué : « ajouter » répond « bientôt », sans lien", () => {
+  test("« ajouter » : lien vers le formulaire si ouvert, « bientôt » sinon", () => {
     const x = repondre("fr", "je veux signaler un nouveau point", par, null);
-    expect(x.lien).toBeUndefined();
-    expect(x.texte).toMatch(/bientôt/);
+    if (SIGNALER_ACTIF) expect(x.lien?.href).toBe("/fr/signaler");
+    else {
+      expect(x.lien).toBeUndefined();
+      expect(x.texte).toMatch(/bientôt/);
+    }
   });
 
   test("argent et sang : texte fixe, jamais de fiche", () => {
