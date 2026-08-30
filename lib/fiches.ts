@@ -11,9 +11,11 @@ const tels = (p: Point) => [p.tel, p.tel2, p.tel3].filter(Boolean);
  * un numéro de téléphone. La première (datée, ou la plus récente) reste ; ses champs vides
  * sont complétés par la doublure ; « agréé » gagne si l'une des deux l'est.
  */
-export function dedoublonner(points: Fiche[]): { fiches: Fiche[]; doublons: number } {
+export type Fusion = { gardee: number; doublure: number; nom: string; raison: string };
+
+export function dedoublonner(points: Fiche[]): { fiches: Fiche[]; doublons: number; fusions: Fusion[] } {
   const fiches: Fiche[] = [];
-  let doublons = 0;
+  const fusions: Fusion[] = [];
   for (const p of points) {
     const cle = `${fold(p.nom)}|${fold(p.commune)}`;
     const nums = tels(p);
@@ -22,7 +24,8 @@ export function dedoublonner(points: Fiche[]): { fiches: Fiche[]; doublons: numb
       fiches.push(p);
       continue;
     }
-    doublons++;
+    const commun = tels(deja).find((n) => nums.includes(n));
+    fusions.push({ gardee: deja.ligne, doublure: p.ligne, nom: deja.nom, raison: commun ? `même numéro ${commun}` : "même nom et même commune" });
     for (const k of ["adresse", "horaires", "besoins", "maps", "source", "commune"] as const) if (!deja[k] && p[k]) deja[k] = p[k];
     for (const n of nums) {
       if (tels(deja).includes(n)) continue;
@@ -32,7 +35,7 @@ export function dedoublonner(points: Fiche[]): { fiches: Fiche[]; doublons: numb
     }
     deja.agree = deja.agree || p.agree;
   }
-  return { fiches, doublons };
+  return { fiches, doublons: fusions.length, fusions };
 }
 
 /**
@@ -48,15 +51,15 @@ export const visibles = (points: Point[]): Fiche[] =>
   ).fiches;
 
 /** Toutes les fiches visibles, groupées par wilaya. Un seul appel réseau. */
-export async function fichesParWilaya(): Promise<{ par: ParWilaya; rapport: Rapport; doublons: number }> {
+export async function fichesParWilaya(): Promise<{ par: ParWilaya; rapport: Rapport; doublons: number; fusions: Fusion[] }> {
   const rapport = await getPoints();
   const par: ParWilaya = {};
-  let doublons = 0;
+  const fusions: Fusion[] = [];
   for (const [code, pts] of Object.entries(rapport.points)) {
     const tries = pts.map((p) => ({ ...p, f: fraicheur(p.maj) })).filter((p) => p.f.niveau !== "perime").sort((a, b) => b.maj.localeCompare(a.maj));
     const d = dedoublonner(tries);
-    doublons += d.doublons;
+    fusions.push(...d.fusions);
     if (d.fiches.length) par[code] = d.fiches;
   }
-  return { par, rapport, doublons };
+  return { par, rapport, doublons: fusions.length, fusions };
 }

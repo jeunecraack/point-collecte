@@ -10,6 +10,8 @@ test("doublon : même nom et même commune → une seule fiche, champs complét�
       "06,Pharmacie PLACEHOLDER,PLACEHOLDER,,0555000000,\n" +
       "06,PHARMACIE  placeholder,placeholder,PLACEHOLDER ADRESSE,0555000001,oui\n",
   );
+  const brut = dedoublonner(pts.map((p) => ({ ...p, f: { jours: -1, niveau: "inconnu" as const } })));
+  expect(brut.fusions).toEqual([{ gardee: 2, doublure: 3, nom: "Pharmacie PLACEHOLDER", raison: "même nom et même commune" }]);
   const { fiches, doublons } = dedoublonner(visibles(pts));
   expect(doublons).toBe(0); // visibles() a déjà dédoublonné
   expect(fiches).toHaveLength(1);

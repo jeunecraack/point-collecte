@@ -36,7 +36,8 @@ const PointSchema = z.object({
   source: str(),
 });
 
-export type Point = z.infer<typeof PointSchema>;
+/** `ligne` : numéro de ligne dans le CSV (l'en-tête est la ligne 1), pour retrouver la fiche dans le Sheet. */
+export type Point = z.infer<typeof PointSchema> & { ligne: number };
 export type ParDept = Record<string, Point[]>;
 
 /**
@@ -53,7 +54,7 @@ function normaliserTel(raw: string): string {
 export type Rapport = {
   points: ParDept;
   total: number;
-  rejets: { ligne: number; raison: string }[];
+  rejets: { ligne: number; raison: string; apercu: string }[];
   origine: "sheet" | "repo";
 };
 
@@ -117,10 +118,12 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
     const r = PointSchema.safeParse(ligne);
     if (!r.success) {
       const e = r.error.issues[0];
-      rejets.push({ ligne: i + 2, raison: `${e.path.join(".")}: ${e.message}` });
+      // Aperçu pour retrouver la ligne dans le Sheet sans compter : wilaya, commune, premier champ parlant.
+      const apercu = [brut.wilaya ?? ligne.code, ligne.commune, ligne.nom || ligne.adresse].filter(Boolean).join(" · ").slice(0, 80);
+      rejets.push({ ligne: i + 2, raison: `${e.path.join(".")}: ${e.message}`, apercu });
       return;
     }
-    (points[r.data.code] ??= []).push(r.data);
+    (points[r.data.code] ??= []).push({ ...r.data, ligne: i + 2 });
     total++;
   });
 

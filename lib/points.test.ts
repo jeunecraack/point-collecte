@@ -10,6 +10,8 @@ test("data/points.csv : 4 lignes valides + 4 cassées → 4 fiches, 4 rejets", (
   expect(r.total).toBe(4);
   expect(r.rejets).toHaveLength(4);
   expect(r.rejets.map((x) => x.ligne)).toEqual([6, 7, 8, 9]);
+  expect(r.rejets[0].apercu).toBe("99 · PLACEHOLDER A REMPLACER");
+  expect(r.points["06"]?.map((p) => p.ligne)).toEqual([2, 3]);
   // le zéro initial mangé par Sheets est restauré
   expect(r.points["06"]?.[1]?.tel).toBe("0000000000");
   // colonne agree : « oui » → true, vide → false

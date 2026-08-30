@@ -34,3 +34,8 @@ export async function revalider() {
   }).catch(() => null);
   redirect(`/admin?revalide=${res?.ok ? "ok" : "echec"}`);
 }
+
+export async function deconnexion() {
+  (await cookies()).delete({ name: "admin", path: "/admin" });
+  redirect("/admin");
+}
