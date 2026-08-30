@@ -6,6 +6,7 @@ import type { Wilaya } from "@/lib/wilayas";
 import type { ParWilaya } from "@/lib/fiches";
 import { type Lang, dir, nomWilaya, t } from "@/lib/i18n";
 import { type Reponse, couvertes, repondre } from "@/lib/reponse";
+import { envoyerStat } from "@/lib/stat";
 import { Avertissement, Bande, Barre, Entree, Silence, btnContour, puceVive } from "@/lib/ui";
 
 type Message = { role: "user"; texte: string } | ({ role: "assistant" } & Reponse);
@@ -40,6 +41,8 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
     const s = q.trim();
     if (!s) return;
     const r = repondre(lang, s, par, memo);
+    // Indicateur : part des questions sans wilaya reconnue. Un beacon, aucune attente, aucune influence sur la réponse.
+    if (!r.urgences) envoyerStat({ type: "question", sans_wilaya: !r.wilaya, lang, ...(r.wilaya ? {} : { q: s }) });
     if (r.wilaya) setMemo(r.wilaya);
     setMessages((m) => [...m, { role: "user", texte: s }, { role: "assistant", ...r }]);
     setTexte("");

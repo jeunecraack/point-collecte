@@ -233,10 +233,18 @@ sa version blanche (8 Ko). Mode sombre automatique (`prefers-color-scheme`).
 
 Le site n'appelle aucun domaine tiers depuis le navigateur (CSP
 `connect-src 'self'`) : pas de Google Analytics. **Vercel Web Analytics**
-est servi par le domaine du site (`/_vercel/insights/script.js`), sans
-cookie ni bannière de consentement. La balise est dans `pages/_document.tsx`
-et `app/layout.tsx`, active seulement quand `VERCEL` est défini (rien en
-local). Pour l'allumer : projet Vercel → onglet **Analytics** → Enable,
+est servi par le domaine du site, sans cookie ni bannière de consentement :
+`<Analytics />` de `@vercel/analytics` dans `app/layout.tsx`, et une balise
+manuelle dans `pages/_document.tsx` (ces pages n'ont pas de runtime React),
+active seulement quand `VERCEL` est défini.
+
+**Questions sans wilaya reconnue** (indicateur secondaire de `PRODUCT.md`) :
+l'assistant envoie un beacon à `/api/stat` après chaque question ; la route
+écrit une ligne `[stat] {"type":"question","sans_wilaya":true,"lang":"fr","q":"…"}`
+dans les logs. Le texte n'est gardé que sans wilaya, tronqué à 80
+caractères, numéros de téléphone masqués. Pour le taux : Vercel → Logs →
+filtre `[stat]`, comparer `sans_wilaya:true` et `false` ; les `q` listent
+les alias à ajouter dans `lib/wilayas.ts`. Pour l'allumer : projet Vercel → onglet **Analytics** → Enable,
 puis redéployer. Les pages vues, référents (Google, WhatsApp = « direct »),
 pays et appareils apparaissent dans cet onglet ; l'onglet **Observability**
 donne les requêtes, les régénérations ISR et les logs.

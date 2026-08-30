@@ -147,8 +147,8 @@ moins de 48 h.** Sous 70 %, le produit ment poliment et il faut relancer
 les vérificateurs avant d'ajouter la moindre fonctionnalité.
 
 Secondaires : nombre de wilayas couvertes, taux de questions sans wilaya
-détectée (indique les alias manquants), lignes rejetées par semaine
-(indique les frictions de saisie).
+détectée (indique les alias manquants — beacon `/api/stat`, logs `[stat]`),
+lignes rejetées par semaine (indique les frictions de saisie).
 
 ## Hors périmètre v1
 
