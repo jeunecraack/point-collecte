@@ -54,7 +54,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
       erreurSignalements = e instanceof Error ? e.message : String(e);
     }
   }
-  const lienRejet = async (ligne: number) => (sheets ? lienLigne(ligne) : null);
+  const lienRejet = (ligne: number) => lienLigne(ligne);
   const idSheet = idDepuisUrl(process.env.SHEET_CSV_URL);
   const toutes = Object.values(par).flat();
   const parWilaya = WILAYAS.filter((w) => par[w.code]).map((w) => ({ w, n: par[w.code].length }));
@@ -104,7 +104,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         <h2 className="mt-10 text-lg font-extrabold tracking-tight">Signalements à traiter</h2>
         <p className="mt-1 text-sm text-muted">Envoyés par le formulaire. Appelez la personne indiquée ; « Publier » ajoute la ligne dans l'onglet des points du Sheet, « Rejeter » la marque sans rien publier.</p>
         {!sheets ? (
-          <p className="mt-4 bg-warm-bg px-3 py-2 text-sm text-warm">Compte de service non configuré : les signalements vont dans les logs Vercel et ne peuvent pas être traités ici. Voir le README, section « Compte de service Google ».</p>
+          <p className="mt-4 text-sm text-muted">Sans compte de service, la modération se fait directement dans le Sheet : ajoutez, corrigez ou supprimez les lignes, puis « Forcer le rafraîchissement ».</p>
         ) : erreurSignalements ? (
           <p role="alert" className="mt-4 bg-warm-bg px-3 py-2 text-sm text-warm">Lecture impossible : {erreurSignalements}</p>
         ) : signalements.length === 0 ? (

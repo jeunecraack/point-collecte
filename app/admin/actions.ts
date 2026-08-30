@@ -122,14 +122,17 @@ export async function supprimerLignePoints(form: FormData) {
   }
 }
 
-/** Lien qui ouvre le Sheet directement sur une ligne. */
+/** Lien qui ouvre le Sheet directement sur une ligne. Sans compte de service : premier onglet (gid 0). */
 export async function lienLigne(ligne: number) {
   const id = idPoints();
   if (!id) return null;
-  try {
-    const [premier] = await onglets(id);
-    return `https://docs.google.com/spreadsheets/d/${id}/edit#gid=${premier?.sheetId ?? 0}&range=A${ligne}`;
-  } catch {
-    return `https://docs.google.com/spreadsheets/d/${id}/edit#gid=0&range=A${ligne}`;
+  let gid = 0;
+  if (configSheets()) {
+    try {
+      gid = (await onglets(id))[0]?.sheetId ?? 0;
+    } catch {
+      gid = 0;
+    }
   }
+  return `https://docs.google.com/spreadsheets/d/${id}/edit#gid=${gid}&range=A${ligne}`;
 }
