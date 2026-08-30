@@ -18,6 +18,9 @@ export function fold(s: string): string {
     .replace(/[ىی]/g, "ي")
     .replace(/ؤ/g, "و")
     .replace(/ئ/g, "ي")
+    // Chiffres arabes-indiens (١٥) et persans (۱۵) → 15 : la wilaya se tape aussi au clavier arabe.
+    .replace(/[٠-٩]/g, (c) => String(c.charCodeAt(0) - 0x660))
+    .replace(/[۰-۹]/g, (c) => String(c.charCodeAt(0) - 0x6f0))
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
 }

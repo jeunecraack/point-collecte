@@ -31,6 +31,12 @@ describe("findWilaya", () => {
     ["2026", null],
     // le nom l'emporte sur un nombre
     ["5 rue placeholder a bejaia", "06"],
+    // chiffres arabes-indiens et persans
+    ["١٥", "15"],
+    ["ولاية ٠٦", "06"],
+    ["انا في ١٦", "16"],
+    ["۳۴", "34"],
+    ["٩٩", null],
   ];
   for (const [q, code] of cas) {
     test(`${JSON.stringify(q)} → ${code}`, () => {
@@ -59,6 +65,11 @@ describe("detectIntent", () => {
       expect(detectIntent(q)).toBe(intention);
     });
   }
+});
+
+test("fold : chiffres arabes-indiens → ASCII", () => {
+  expect(fold("١٢٣٤٥٦٧٨٩٠")).toBe("1234567890");
+  expect(fold("w١٥")).toBe("w15");
 });
 
 test("priorité : « il y a le feu a bejaia » → urgence ET wilaya 06", () => {
