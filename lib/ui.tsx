@@ -15,21 +15,35 @@ export const dateFr = (iso: string) =>
 
 export const estArabe = (s: string) => /[؀-ۿ]/.test(s);
 
-/** Emblème + retour à l'accueil, en tête des pages secondaires. 14 Ko, servi une fois puis en cache. */
-export function Marque({ label = "Points de collecte" }: { label?: string }) {
+export const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+
+/** Emblème + retour à l'accueil. Couleur sur blanc, blanc sur la bande verte. */
+export function Marque({ surBande = false, label = "Points de collecte" }: { surBande?: boolean; label?: string }) {
   return (
-    <Link href="/" className="inline-flex items-center gap-2.5 hover:underline underline-offset-4">
-      <img src="/emblem.png" alt="" width={36} height={42} className="h-[42px] w-auto" />
+    <Link href="/" className={`inline-flex items-center gap-2.5 hover:underline ${surBande ? "text-white" : ""}`}>
+      <img src={surBande ? "/emblem-white.png" : "/emblem.png"} alt="" width={36} height={42} className="h-[42px] w-auto" />
       <span className="text-sm font-semibold leading-tight">{label}</span>
     </Link>
   );
 }
 
-export const pluriel = (n: number, mot: string) => `${n} ${mot}${n > 1 ? "s" : ""}`;
+/**
+ * La bande verte : la signature. Pleine sur l'accueil et les pages wilaya,
+ * réduite à un filet de 6 px sur les pages secondaires.
+ */
+export function Bande({ children, fine = false }: { children?: ReactNode; fine?: boolean }) {
+  if (fine) return <div aria-hidden="true" className="h-1.5 bg-band" />;
+  return (
+    <div className="bg-band text-white">
+      <div className="mx-auto max-w-2xl px-4 py-4">{children}</div>
+    </div>
+  );
+}
 
+/** Bandeau rouge : le seul élément rouge du site. */
 export function BandeauUrgence({ compact = false }: { compact?: boolean }) {
   return (
-    <section aria-label="Numéros d'urgence" className="border-y border-signal bg-signal text-white">
+    <section aria-label="Numéros d'urgence" className="bg-signal text-white">
       <div className={`mx-auto max-w-2xl px-4 ${compact ? "py-2" : "py-4"}`}>
         {!compact && (
           <p className="mb-2 font-mono text-xs uppercase tracking-widest">Urgence — appeler avant tout</p>
@@ -39,7 +53,7 @@ export function BandeauUrgence({ compact = false }: { compact?: boolean }) {
             <li key={u.num} className="flex items-baseline gap-2">
               <a
                 href={`tel:${u.num}`}
-                className={`font-mono font-bold underline underline-offset-4 decoration-white/50 hover:decoration-white ${compact ? "text-lg" : "text-3xl"}`}
+                className={`font-mono font-bold underline decoration-white/50 hover:decoration-white ${compact ? "text-lg" : "text-3xl"}`}
               >
                 {u.num}
               </a>
@@ -68,10 +82,10 @@ export function Pastille({ maj, f }: Pick<Fiche, "maj" | "f">) {
   );
 }
 
-/** Badge « Agréé par l'État » : uniquement si la colonne `agree` de la fiche est renseignée. */
+/** Badge « Agréé par l'État » : plein vert, uniquement si la colonne `agree` de la fiche est renseignée. */
 export function Agree() {
   return (
-    <span className="inline-flex items-center gap-1.5 border border-fresh px-2 py-1 font-mono text-xs font-bold uppercase tracking-wider text-fresh">
+    <span className="inline-flex items-center gap-1.5 bg-vert px-2 py-1 font-mono text-[11px] font-bold uppercase tracking-wider text-paper">
       <span aria-hidden="true">✓</span> Agréé par l'État
     </span>
   );
@@ -80,7 +94,7 @@ export function Agree() {
 function Ligne({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid grid-cols-[6.5rem_1fr] items-baseline gap-x-3 py-1">
-      <dt className="font-mono text-xs uppercase tracking-wider text-muted">{label}</dt>
+      <dt className="font-mono text-[11px] uppercase tracking-wider text-muted">{label}</dt>
       <dd className="min-w-0">{children}</dd>
     </div>
   );
@@ -109,7 +123,7 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
           <Ligne label="Téléphone">
             <span className="flex flex-wrap gap-x-5">
               {[p.tel, p.tel2, p.tel3].filter(Boolean).map((t) => (
-                <a key={t} href={`tel:${t}`} className="inline-block min-h-11 py-2 font-mono text-lg font-bold underline underline-offset-4">
+                <a key={t} href={`tel:${t}`} className="inline-block min-h-11 py-2 font-mono text-lg font-bold text-vert underline">
                   {t}
                 </a>
               ))}
@@ -118,7 +132,7 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
         )}
         {p.maps && (
           <Ligne label="Itinéraire">
-            <a href={p.maps} rel="noopener" className="inline-block min-h-11 py-2 underline underline-offset-4">
+            <a href={p.maps} rel="noopener" className="inline-block min-h-11 py-2 text-vert underline">
               Ouvrir dans Google Maps
             </a>
           </Ligne>
@@ -149,14 +163,39 @@ export function Silence({ nom }: { nom: string }) {
       <ul className="mt-4 space-y-3">
         <li>
           <span className="font-semibold">Protection civile</span> —{" "}
-          <a href="tel:14" className="font-mono font-bold underline underline-offset-4">14</a> · numéro vert{" "}
-          <a href="tel:1021" className="font-mono font-bold underline underline-offset-4">1021</a>
+          <a href="tel:14" className="font-mono font-bold text-vert underline">14</a> · numéro vert{" "}
+          <a href="tel:1021" className="font-mono font-bold text-vert underline">1021</a>
         </li>
         <li>
           <span className="font-semibold">Comité de wilaya du Croissant-Rouge algérien</span> — le comité de {nom}{" "}
           coordonne les dons localement.
         </li>
       </ul>
+    </>
+  );
+}
+
+/** Boutons : un seul plein par écran, les autres en contour. Jamais rouges. */
+export const btnPlein = "inline-block min-h-11 bg-vert px-4 py-3 font-semibold text-paper hover:bg-vert-deep";
+export const btnContour = "inline-block min-h-11 border-[1.5px] border-vert px-4 py-2.5 font-semibold text-vert hover:bg-vert-pale";
+
+/** Page introuvable, partagée entre pages/404 et app/not-found. Même perdu, on trouve le 14. */
+export function PageIntrouvable() {
+  return (
+    <>
+      <div className="mx-auto max-w-2xl px-4 py-3"><Marque /></div>
+      <Bande>
+        <p className="font-mono text-xs uppercase tracking-widest text-white/80">Erreur 404</p>
+        <h1 className="mt-1 text-2xl font-extrabold tracking-tight">Cette page n'existe pas</h1>
+      </Bande>
+      <BandeauUrgence compact />
+      <main className="mx-auto max-w-2xl px-4 py-8">
+        <p className="max-w-prose leading-relaxed">
+          L'adresse a peut-être été mal copiée. Les pages wilaya s'écrivent avec le code à deux chiffres :{" "}
+          <span className="font-mono">/06</span> pour Béjaïa, <span className="font-mono">/16</span> pour Alger.
+        </p>
+        <p className="mt-6"><Link href="/" className={btnContour}>Toutes les wilayas →</Link></p>
+      </main>
     </>
   );
 }

@@ -3,7 +3,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { WILAYAS, type Wilaya } from "@/lib/wilayas";
 import { fichesParWilaya } from "@/lib/fiches";
-import { BandeauUrgence, Pastille, pluriel } from "@/lib/ui";
+import { Bande, BandeauUrgence, Pastille, pluriel } from "@/lib/ui";
 
 export const config: PageConfig = { unstable_runtimeJS: false };
 
@@ -40,24 +40,22 @@ export default function Accueil({ couvertes, total, recentes }: Props) {
         <link rel="canonical" href="/" />
       </Head>
 
+      <Bande>
+        <div className="flex items-start gap-4">
+          <img src="/emblem-white.png" alt="Points de collecte — incendies Algérie" width={72} height={84} className="h-[84px] w-auto shrink-0" />
+          <div>
+            <p className="font-mono text-xs uppercase tracking-widest text-white/80">Incendies · dons · Algérie</p>
+            <h1 className="mt-1 text-3xl font-extrabold leading-tight tracking-tight">Où déposer vos dons, maintenant.</h1>
+          </div>
+        </div>
+      </Bande>
       <BandeauUrgence />
 
       <main className="mx-auto max-w-2xl px-4 pb-16">
-        <header className="flex items-start gap-4 pt-8 pb-6">
-          <img src="/emblem.png" alt="Points de collecte — incendies Algérie" width={80} height={93} className="h-[93px] w-auto shrink-0" />
-          <div>
-            <p className="font-mono text-xs uppercase tracking-widest text-muted">Incendies · dons · Algérie</p>
-            <h1 className="mt-2 text-3xl font-extrabold leading-tight tracking-tight">
-              Où déposer vos dons, maintenant.
-            </h1>
-          </div>
-        </header>
-        <div className="-mt-4 pb-6">
-          <p className="mt-3 max-w-prose leading-relaxed">
-            Chaque adresse ci-dessous a été confirmée par un appel, et porte sa date. Une fiche de plus de
-            10 jours disparaît d'elle-même. Pas de capture d'écran, pas de « on m'a dit ».
-          </p>
-        </div>
+        <p className="max-w-prose pt-6 pb-8 leading-relaxed">
+          Chaque adresse ci-dessous a été confirmée par un appel, et porte sa date. Une fiche de plus de
+          10 jours disparaît d'elle-même. Pas de capture d'écran, pas de « on m'a dit ».
+        </p>
 
         <section aria-labelledby="couvertes">
           <h2 id="couvertes" className="font-mono text-xs uppercase tracking-wider text-muted">
@@ -66,13 +64,13 @@ export default function Accueil({ couvertes, total, recentes }: Props) {
           {couvertes.length === 0 ? (
             <p className="mt-3 max-w-prose">
               Aucun point vérifié pour l'instant. Si vous tenez un point de collecte,{" "}
-              <Link href="/signaler" className="underline underline-offset-4">signalez-le</Link>.
+              <Link href="/signaler" className="text-vert underline">signalez-le</Link>.
             </p>
           ) : (
             <ol className="mt-2 divide-y divide-rule border-y border-rule">
               {couvertes.map(({ w, n, maj, f }) => (
                 <li key={w.code}>
-                  <Link href={`/${w.code}`} className="flex items-start gap-4 py-3 hover:bg-white/60">
+                  <Link href={`/${w.code}`} className="flex items-start gap-4 border-l-4 border-transparent py-3 pl-2 hover:border-vert hover:bg-surface">
                     <span aria-hidden="true" className="w-12 shrink-0 font-mono text-3xl font-bold leading-none tracking-tighter">
                       {w.code}
                     </span>
@@ -89,21 +87,26 @@ export default function Accueil({ couvertes, total, recentes }: Props) {
             </ol>
           )}
           {total > 0 && (
-            <p className="mt-3 font-mono text-xs text-muted">
-              {part} % des fiches vérifiées depuis moins de 48 h ({recentes}/{total}).
-            </p>
+            <div className="mt-4">
+              <div className="h-1.5 w-full bg-surface" role="img" aria-label={`${part} % des fiches vérifiées depuis moins de 48 heures`}>
+                <div className="h-full bg-vert" style={{ width: `${part}%` }} />
+              </div>
+              <p className="mt-2 font-mono text-xs text-muted">
+                {part} % des fiches vérifiées depuis moins de 48 h ({recentes}/{total}).
+              </p>
+            </div>
           )}
         </section>
 
         <section className="mt-10 grid gap-3 sm:grid-cols-2">
-          <Link href="/assistant" className="block border border-ink p-4 hover:bg-white/60">
+          <Link href="/assistant" className="block border-[1.5px] border-vert p-4 hover:bg-vert-pale">
             <span className="block font-semibold">Poser une question</span>
             <span className="mt-1 block text-sm text-muted">
               « Où déposer à Béjaïa ? », « quoi donner ? ». L'assistant reconnaît votre wilaya et votre
               besoin — sans IA, sans inventer.
             </span>
           </Link>
-          <Link href="/signaler" className="block border border-rule p-4 hover:bg-white/60">
+          <Link href="/signaler" className="block border border-rule p-4 hover:bg-surface">
             <span className="block font-semibold">Signaler un point</span>
             <span className="mt-1 block text-sm text-muted">
               Vous tenez ou connaissez un point de collecte. On vous rappelle avant de publier.
@@ -118,7 +121,7 @@ export default function Accueil({ couvertes, total, recentes }: Props) {
           <ul className="mt-3 grid grid-cols-2 gap-x-4 sm:grid-cols-3">
             {WILAYAS.map((w) => (
               <li key={w.code}>
-                <Link href={`/${w.code}`} className="flex items-baseline gap-2 py-1.5 hover:underline underline-offset-4">
+                <Link href={`/${w.code}`} className="flex items-baseline gap-2 py-1.5 hover:underline">
                   <span className="font-mono text-sm text-muted">{w.code}</span>
                   <span className="truncate">{w.nom}</span>
                 </Link>

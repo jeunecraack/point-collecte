@@ -4,7 +4,7 @@ import Link from "next/link";
 import { WILAYAS, wilayaParCode, type Wilaya } from "@/lib/wilayas";
 import { getPointsWilaya } from "@/lib/points";
 import { visibles, type Fiche } from "@/lib/fiches";
-import { BandeauUrgence, Entree, Marque, Silence, dateFr, pluriel } from "@/lib/ui";
+import { Bande, BandeauUrgence, Entree, Marque, Silence, btnContour, dateFr, pluriel } from "@/lib/ui";
 
 // Page servie sans un octet de JavaScript : adresses lisibles dès le premier paquet.
 export const config: PageConfig = { unstable_runtimeJS: false };
@@ -68,30 +68,32 @@ export default function PageWilaya({ w, points }: Props) {
         />
       </Head>
 
-      <header className="mx-auto max-w-2xl px-4 pt-5 pb-4">
-        <div className="flex items-center justify-between">
+      <header>
+        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <Marque />
           <Link href="/" className="font-mono text-xs uppercase tracking-wider text-muted hover:text-ink">
             Toutes les wilayas
           </Link>
         </div>
-        <div className="mt-3 flex items-end gap-4">
-          <span aria-hidden="true" className="font-mono text-7xl font-bold leading-none tracking-tighter">
-            {w.code}
-          </span>
-          <div className="pb-1">
-            <h1 className="text-2xl font-extrabold leading-tight tracking-tight">
-              <span className="sr-only">Wilaya {w.code} — </span>
-              {w.nom}
-            </h1>
-            <p dir="rtl" lang="ar" className="text-left text-lg text-muted">{w.nomAr}</p>
+        <Bande>
+          <div className="flex items-end gap-4">
+            <span aria-hidden="true" className="font-mono text-7xl font-bold leading-[.85] tracking-tighter">
+              {w.code}
+            </span>
+            <div className="pb-0.5">
+              <h1 className="text-2xl font-extrabold leading-tight tracking-tight">
+                <span className="sr-only">Wilaya {w.code} — </span>
+                {w.nom}
+              </h1>
+              <p dir="rtl" lang="ar" className="text-left text-lg text-white/85">{w.nomAr}</p>
+            </div>
           </div>
-        </div>
-        <p className="mt-3 text-sm text-muted">
-          {n === 0
-            ? "Aucun point de collecte vérifié pour l'instant."
-            : `${pluriel(n, "point")} de collecte vérifié${n > 1 ? "s" : ""} · dernière vérification le ${dateFr(points[0].maj)}`}
-        </p>
+          <p className="mt-3 text-sm text-white/90">
+            {n === 0
+              ? "Aucun point de collecte vérifié pour l'instant."
+              : `${pluriel(n, "point")} de collecte vérifié${n > 1 ? "s" : ""} · dernière vérification le ${dateFr(points[0].maj)}`}
+          </p>
+        </Bande>
       </header>
 
       <BandeauUrgence compact />
@@ -101,11 +103,10 @@ export default function PageWilaya({ w, points }: Props) {
           <section className="py-8">
             <h2 className="mb-3 text-xl font-extrabold tracking-tight">Rien de vérifié à {w.nom} pour l'instant</h2>
             <Silence nom={w.nom} />
-            <p className="mt-6 text-sm text-muted">
-              Vous tenez un point de collecte à {w.nom} ?{" "}
-              <Link href="/signaler" className="text-ink underline underline-offset-4">Signalez-le</Link>, on vous
-              rappelle pour vérifier avant de publier.
+            <p className="mt-6">
+              <Link href="/signaler" className={btnContour}>Signaler un point à {w.nom}</Link>
             </p>
+            <p className="mt-3 text-sm text-muted">On vous rappelle pour vérifier avant de publier.</p>
           </section>
         ) : (
           <ol className="divide-y divide-rule">
@@ -116,7 +117,7 @@ export default function PageWilaya({ w, points }: Props) {
         )}
         <footer className="mt-10 border-t border-rule pt-4 text-sm text-muted">
           Une adresse a changé, un point a fermé ?{" "}
-          <Link href="/signaler" className="text-ink underline underline-offset-4">Signalez-le</Link>. Rien n'est
+          <Link href="/signaler" className="text-vert underline">Signalez-le</Link>. Rien n'est
           publié sans un appel de vérification.
         </footer>
       </main>
