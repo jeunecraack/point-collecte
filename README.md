@@ -27,7 +27,9 @@ Vercel.
 | `REVALIDATE_SECRET` | secret attendu par `POST /api/revalidate` | route désactivée (401) |
 | `ADMIN_SECRET` | mot de passe de `/admin` | page désactivée |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site, pour l'image OG des aperçus WhatsApp | aperçus sans image |
-| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | compte de service qui écrit les signalements dans le Sheet | voir `SIGNALEMENT_WEBHOOK_URL` |
+| `SHEET_SCRIPT_URL` | URL de l'Apps Script collé dans le Sheet (`scripts/apps-script.gs`) — **la voie simple** | voir compte de service, puis webhook |
+| `SHEET_SCRIPT_SECRET` | même valeur que `SECRET` dans le script | idem |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | alternative : compte de service qui écrit dans le Sheet | voir `SIGNALEMENT_WEBHOOK_URL` |
 | `GOOGLE_PRIVATE_KEY` | clé privée PEM du compte de service (`\n` échappés acceptés) | idem |
 | `SIGNALEMENTS_SHEET_ID` | ID du Sheet qui reçoit l'onglet `signalements` | le Sheet public (déconseillé : ses onglets sont lisibles par quiconque a le lien) |
 | `SIGNALEMENT_WEBHOOK_URL` | solution de repli : reçoit les signalements en JSON | sans compte de service ni webhook, les signalements vont dans les logs Vercel, **nom et téléphone compris** — `/admin` l'affiche |
@@ -156,8 +158,9 @@ ou le bouton de `/admin`.
 
 ## Modération dans `/admin`
 
-Avec le compte de service configuré, `/admin` agit directement sur le Sheet
-(qui reste la seule source de vérité) :
+Avec l'écriture configurée (Apps Script — 5 min, voir ci-dessous — ou
+compte de service), `/admin` agit directement sur le Sheet (qui reste la
+seule source de vérité) :
 
 - **Signalements à traiter** : chaque signalement « à rappeler » avec le
   contact à appeler. **Publier** ajoute la ligne dans l'onglet des points,
@@ -195,7 +198,25 @@ Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
 Sans appel, rien n'est publié : la vérification humaine est le seul chemin
 vers le site.
 
-### Compte de service Google (10 min, une fois)
+### Apps Script — la voie simple (5 min, une fois)
+
+1. Ouvrir le Sheet public → **Extensions → Apps Script** → remplacer tout le
+   contenu par [`scripts/apps-script.gs`](scripts/apps-script.gs).
+2. Dans le script, remplacer `CHANGE-MOI` par un mot de passe long
+   (`openssl rand -base64 32`). Optionnel : `ID_PRIVE` = l'ID d'un second
+   Sheet privé qui recevra l'onglet `signalements` (recommandé : ils
+   contiennent nom et téléphone de la personne à rappeler).
+3. **Déployer → Nouveau déploiement** → type **Application web** →
+   Exécuter en tant que **Moi**, accès **Tout le monde** → Déployer →
+   autoriser (le script agit avec votre compte, sur ce classeur seulement)
+   → copier l'URL `…/exec`.
+4. Vercel : `SHEET_SCRIPT_URL` = cette URL, `SHEET_SCRIPT_SECRET` = le mot
+   de passe → Redeploy.
+
+Après toute modification du script : Déployer → Gérer les déploiements →
+modifier → **nouvelle version** (sinon l'ancienne reste active).
+
+### Compte de service Google — alternative (10 min, une fois)
 
 1. [console.cloud.google.com](https://console.cloud.google.com) → un projet
    → « API et services » → activer **Google Sheets API**.

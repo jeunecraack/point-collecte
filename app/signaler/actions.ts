@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { wilayaParCode } from "@/lib/wilayas";
-import { ENTETES, ajouterSignalement, configSheets } from "@/lib/sheets";
+import { ENTETES, ajouterSignalement, modeEcriture } from "@/lib/sheets";
 
 const Signalement = z.object({
   code: z.string().regex(/^\d{2}$/),
@@ -30,8 +30,8 @@ export async function signaler(form: FormData) {
   const d = r.data;
   const payload = { ...d, recu };
 
-  // 1. Onglet `signalements` du Sheet (compte de service). 2. Webhook. 3. Logs Vercel, à défaut.
-  if (configSheets()) {
+  // 1. Onglet `signalements` du Sheet (Apps Script ou compte de service). 2. Webhook. 3. Logs Vercel, à défaut.
+  if (modeEcriture()) {
     const ligne = [recu, d.code, wilayaParCode(d.code)?.nom ?? "", d.commune, d.nom, d.adresse, d.tel, d.contact_nom, d.contact_tel, "à rappeler", String(form.get("lang") ?? "ar")];
     if (ligne.length !== ENTETES.length) throw new Error("colonnes signalements désalignées");
     try {

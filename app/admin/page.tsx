@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { fichesParWilaya } from "@/lib/fiches";
 import { WILAYAS } from "@/lib/wilayas";
 import { Bande, Marque, btnContour, btnPlein } from "@/lib/ui";
-import { ONGLET, configSheets, idDepuisUrl, lireSignalements, type Signalement } from "@/lib/sheets";
+import { ONGLET, idDepuisUrl, lireSignalements, modeEcriture, type Signalement } from "@/lib/sheets";
 import { connexion, deconnexion, estAdmin, lienLigne, publierSignalement, rejeterSignalement, revalider, supprimerLignePoints } from "./actions";
 
 const btnPetit = "min-h-9 border-[1.5px] border-vert px-3 text-xs font-semibold text-vert hover:bg-vert-pale";
@@ -44,7 +44,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
   }
 
   const { par, rapport, fusions } = await fichesParWilaya();
-  const sheets = configSheets();
+  const sheets = modeEcriture();
   let signalements: Signalement[] = [];
   let erreurSignalements = "";
   if (sheets) {
@@ -79,7 +79,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
           <dt className="font-mono text-muted">Signalements</dt>
           <dd>
             {sheets ? (
-              <Etat ok>onglet « {ONGLET} »{sheets.id === idSheet ? " du Sheet public — lisible par quiconque a le lien" : " d'un Sheet séparé"}</Etat>
+              <Etat ok>onglet « {ONGLET} » via {sheets === "script" ? "Apps Script" : "compte de service"}{!process.env.SIGNALEMENTS_SHEET_ID && sheets === "compte" ? " — dans le Sheet public, lisible par quiconque a le lien" : ""}</Etat>
             ) : process.env.SIGNALEMENT_WEBHOOK_URL ? (
               <Etat ok>webhook branché</Etat>
             ) : (
@@ -104,7 +104,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         <h2 className="mt-10 text-lg font-extrabold tracking-tight">Signalements à traiter</h2>
         <p className="mt-1 text-sm text-muted">Envoyés par le formulaire. Appelez la personne indiquée ; « Publier » ajoute la ligne dans l'onglet des points du Sheet, « Rejeter » la marque sans rien publier.</p>
         {!sheets ? (
-          <p className="mt-4 text-sm text-muted">Sans compte de service, la modération se fait directement dans le Sheet : ajoutez, corrigez ou supprimez les lignes, puis « Forcer le rafraîchissement ».</p>
+          <p className="mt-4 text-sm text-muted">Écriture non configurée (Apps Script ou compte de service, voir README) : la modération se fait directement dans le Sheet, puis « Forcer le rafraîchissement ».</p>
         ) : erreurSignalements ? (
           <p role="alert" className="mt-4 bg-warm-bg px-3 py-2 text-sm text-warm">Lecture impossible : {erreurSignalements}</p>
         ) : signalements.length === 0 ? (
@@ -195,7 +195,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
                         <button type="submit" className={btnDanger}>Supprimer la ligne {f.doublure}, garder {f.gardee}</button>
                       </form>
                     ) : (
-                      <span className="text-xs text-muted">compte de service requis</span>
+                      <span className="text-xs text-muted">écriture non configurée</span>
                     )}
                   </td>
                 </tr>

@@ -3,7 +3,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { egal, jetonAdmin, origineSite } from "@/lib/secret";
-import { ONGLET, configSheets, idPoints, lireLigne, lireOnglet, lireSignalements, ajouterLigne, marquerSignalement, onglets, supprimerLigne as supprimerDansSheet } from "@/lib/sheets";
+import { ajouterPoint, entetesPoints, gidPoints, idPoints, lireLignePoints, lireSignalements, marquerSignalement, modeEcriture, supprimerLignePoints as supprimerDansSheet } from "@/lib/sheets";
 import { ligneSelonEntetes, memeLigne } from "@/lib/moderation";
 import { invaliderCache } from "@/lib/points";
 
@@ -53,15 +53,6 @@ async function apresEcriture(message: string) {
 
 const echec = (e: unknown) => redirect(`/admin?echec=${encodeURIComponent(e instanceof Error ? e.message : String(e))}`);
 
-/** Onglet des points = le premier onglet du Sheet public (celui que l'export CSV publie). */
-async function ongletPoints() {
-  const id = idPoints();
-  if (!id) throw new Error("SHEET_CSV_URL sans identifiant de Sheet");
-  const [premier] = await onglets(id);
-  if (!premier) throw new Error("Sheet sans onglet");
-  return { id, ...premier };
-}
-
 /** Un signalement validé devient une ligne de l'onglet des points, rangée selon les en-têtes des bénévoles. */
 export async function publierSignalement(form: FormData) {
   if (!(await estAdmin())) redirect("/admin?refuse=1");
@@ -70,8 +61,7 @@ export async function publierSignalement(form: FormData) {
     const sig = (await lireSignalements()).find((s) => s.ligne === ligne);
     if (!sig) throw new Error(`signalement ligne ${ligne} introuvable`);
     if (sig.statut && sig.statut !== "à rappeler") throw new Error(`déjà traité : ${sig.statut}`);
-    const pts = await ongletPoints();
-    const entetes = await lireLigne(pts.id, pts.title, 1);
+    const entetes = await entetesPoints();
     const { ligne: valeurs, perdues } = ligneSelonEntetes(entetes, {
       wilaya: sig.wilaya.toUpperCase() || sig.code,
       commune: sig.commune,
@@ -81,9 +71,11 @@ export async function publierSignalement(form: FormData) {
       maj: new Date().toISOString().slice(0, 10),
       source: "admin",
     });
-    await ajouterLigne(pts.id, pts.title, valeurs);
+    await ajouterPoint(valeurs);
     await marquerSignalement(ligne, "publié");
-    await apresEcriture(`Publié : ${sig.nom || sig.adresse}${perdues.length ? ` (colonnes absentes du Sheet : ${perdues.join(", ")})` : ""}`);
+    // maj/source n'existent pas dans le Sheet des bénévoles : leur absence n'est pas une anomalie.
+    const manquantes = perdues.filter((c) => !["maj", "source"].includes(c));
+    await apresEcriture(`Publié : ${sig.nom || sig.adresse}${manquantes.length ? ` — non recopié, colonne absente du Sheet : ${manquantes.join(", ")}` : ""}`);
   } catch (e) {
     if (e && typeof e === "object" && "digest" in e) throw e; // redirect()
     echec(e);
@@ -111,10 +103,9 @@ export async function supprimerLignePoints(form: FormData) {
   const attendus = String(form.get("attendus") ?? "").split("\u0001").filter(Boolean);
   try {
     if (!Number.isInteger(ligne) || ligne < 2) throw new Error("ligne invalide");
-    const pts = await ongletPoints();
-    const relue = await lireLigne(pts.id, pts.title, ligne);
+    const relue = await lireLignePoints(ligne);
     if (!memeLigne(relue, attendus)) throw new Error(`la ligne ${ligne} du Sheet ne correspond plus à ce qui était affiché — rien n'a été supprimé, rafraîchissez`);
-    await supprimerDansSheet(pts.id, pts.sheetId, ligne);
+    await supprimerDansSheet(ligne);
     await apresEcriture(`Ligne ${ligne} supprimée`);
   } catch (e) {
     if (e && typeof e === "object" && "digest" in e) throw e;
@@ -127,9 +118,9 @@ export async function lienLigne(ligne: number) {
   const id = idPoints();
   if (!id) return null;
   let gid = 0;
-  if (configSheets()) {
+  if (modeEcriture()) {
     try {
-      gid = (await onglets(id))[0]?.sheetId ?? 0;
+      gid = await gidPoints();
     } catch {
       gid = 0;
     }
