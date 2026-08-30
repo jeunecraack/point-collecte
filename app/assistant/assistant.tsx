@@ -131,7 +131,7 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
     <div lang={lang} dir={dir(lang)} className="mx-auto flex h-dvh max-w-2xl flex-col">
       <header>
         <Barre lang={lang} chemin="/assistant">
-          <span className="text-xs text-muted">{d.sansIA}</span>
+          <span className="hidden text-xs text-muted sm:inline">{d.sansIA}</span>
         </Barre>
         <Bande fine />
       </header>
