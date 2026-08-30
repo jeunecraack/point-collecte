@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   openGraph: { type: "website", images: [{ url: "/og.jpg", width: 1200, height: 630 }] },
   title: "نقاط جمع التبرعات — حرائق الجزائر",
-  description: "أين تودع تبرعاتك، الآن، في ولايتك. عناوين مؤكدة ومؤرخة.",
+  description: "أين تودع تبرعاتك، الآن، في ولايتك. عناوين سجلها متطوعون. أرقام الطوارئ.",
 };
 
 export const viewport: Viewport = {

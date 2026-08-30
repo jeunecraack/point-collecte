@@ -58,9 +58,7 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
     // 100dvh, pas 100 % : le clavier mobile casse la mise en page sinon.
     <div lang={lang} dir={dir(lang)} className="mx-auto flex h-dvh max-w-2xl flex-col">
       <header>
-        <Barre lang={lang} chemin="/assistant">
-          <span className="hidden text-xs text-muted sm:inline">{d.sansIA}</span>
-        </Barre>
+        <Barre lang={lang} chemin="/assistant" />
         <Bande fine />
       </header>
 
