@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { WILAYAS } from "@/lib/wilayas";
-import { Marque } from "@/lib/ui";
+import { Bande, Marque, btnPlein } from "@/lib/ui";
 import { signaler } from "./actions";
 
 export const metadata: Metadata = {
@@ -8,17 +8,19 @@ export const metadata: Metadata = {
   description: "Proposez un point de collecte ou une correction. Rien n'est publié sans un appel de vérification.",
 };
 
-const champ = "mt-1 block w-full border border-rule bg-white px-3 py-2.5 text-[16px] focus:border-ink";
+const champ = "mt-1 block w-full border border-rule bg-paper px-3 py-2.5 text-[16px] outline-none focus:border-vert focus:ring-[3px] focus:ring-vert-pale";
 const label = "block text-sm font-semibold";
 
 export default async function Signaler({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
   const sp = await searchParams;
   return (
+    <>
+    <div className="mx-auto max-w-2xl px-4 py-3"><Marque /></div>
+    <Bande fine />
     <main className="mx-auto max-w-2xl px-4 pb-16 pt-5">
-      <Marque />
-      <h1 className="mt-3 text-2xl font-extrabold tracking-tight">Signaler un point de collecte</h1>
+      <h1 className="text-2xl font-extrabold tracking-tight">Signaler un point de collecte</h1>
 
-      <p className="mt-3 border-l-4 border-ink pl-3 leading-relaxed">
+      <p className="mt-3 border-l-4 border-vert bg-surface py-2 pl-3 pr-3 leading-relaxed">
         <strong>Rien n'est publié sans un appel de vérification.</strong> Un bénévole rappelle la personne
         indiquée ci-dessous, confirme l'adresse et les horaires, puis seulement la fiche apparaît sur le site.
       </p>
@@ -80,10 +82,11 @@ export default async function Signaler({ searchParams }: { searchParams: Promise
           </div>
         </fieldset>
 
-        <button type="submit" className="min-h-11 w-full bg-ink px-4 py-3 font-semibold text-white sm:w-auto">
+        <button type="submit" className={`${btnPlein} w-full sm:w-auto`}>
           Envoyer pour vérification
         </button>
       </form>
     </main>
+    </>
   );
 }

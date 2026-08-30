@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 
 import { analyser } from "@/lib/match";
 import type { Wilaya } from "@/lib/wilayas";
 import type { Fiche, ParWilaya } from "@/lib/fiches";
-import { Entree, Marque, Silence, URGENCES, estArabe } from "@/lib/ui";
+import { Bande, Entree, Marque, Silence, URGENCES, btnContour, estArabe } from "@/lib/ui";
 
 /**
  * Invariant 1 : espace de sortie fermé. Un message est soit un texte écrit ici,
@@ -120,10 +120,13 @@ export default function Assistant({ par }: { par: ParWilaya }) {
   return (
     // 100dvh, pas 100 % : le clavier mobile casse la mise en page sinon.
     <div className="mx-auto flex h-dvh max-w-2xl flex-col">
-      <header className="flex items-baseline justify-between border-b border-rule px-4 py-3">
-        <Marque />
-        <h1 className="text-sm font-semibold">Assistant</h1>
-        <span className="font-mono text-xs text-muted">sans IA</span>
+      <header>
+        <div className="flex items-center justify-between px-4 py-3">
+          <Marque />
+          <h1 className="text-sm font-semibold">Assistant</h1>
+          <span className="font-mono text-xs text-muted">sans IA</span>
+        </div>
+        <Bande fine />
       </header>
 
       {/* min-h-0 : sans ça le fil pousse la saisie hors écran dès quelques messages. */}
@@ -140,7 +143,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
                   <button
                     type="button"
                     onClick={() => envoyer(s)}
-                    className="min-h-11 rounded-full border border-rule bg-white px-4 text-sm hover:border-ink"
+                    className="min-h-11 rounded-full border-[1.5px] border-vert px-4 text-sm font-medium text-vert hover:bg-vert-pale"
                   >
                     {s}
                   </button>
@@ -154,7 +157,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
           {messages.map((m, i) =>
             m.role === "user" ? (
               <li key={i} className="flex justify-end">
-                <p dir={estArabe(m.texte) ? "rtl" : undefined} className="max-w-[85%] rounded-2xl rounded-br-sm bg-ink px-4 py-2.5 text-white">
+                <p dir={estArabe(m.texte) ? "rtl" : undefined} className="max-w-[85%] rounded-2xl rounded-br-sm bg-band px-4 py-2.5 text-white">
                   {m.texte}
                 </p>
               </li>
@@ -165,7 +168,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
                   <ul className="mt-3 divide-y divide-rule border-y border-rule">
                     {URGENCES.map((u) => (
                       <li key={u.num} className="flex items-baseline gap-3 py-2">
-                        <a href={`tel:${u.num}`} className="w-16 font-mono text-2xl font-bold underline underline-offset-4">{u.num}</a>
+                        <a href={`tel:${u.num}`} className="w-16 font-mono text-2xl font-bold text-signal-text underline">{u.num}</a>
                         <span>{u.nom}{u.note && <span className="block text-xs text-muted">{u.note}</span>}</span>
                       </li>
                     ))}
@@ -178,7 +181,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
                 )}
                 {m.silence && m.wilaya && <div className="mt-3"><Silence nom={m.wilaya.nom} /></div>}
                 {m.lien && (
-                  <Link href={m.lien.href} className="mt-3 inline-block min-h-11 border border-ink px-4 py-2.5 text-sm font-semibold hover:bg-white/60">
+                  <Link href={m.lien.href} className={`mt-3 text-sm ${btnContour}`}>
                     {m.lien.label} →
                   </Link>
                 )}
@@ -194,7 +197,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
         className="border-t border-rule bg-paper px-4 pt-3"
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
       >
-        <div className="flex items-end gap-2 rounded-xl border border-rule bg-white p-2 focus-within:border-ink">
+        <div className="flex items-end gap-2 rounded-xl border border-rule bg-paper p-2 focus-within:border-vert focus-within:ring-[3px] focus-within:ring-vert-pale">
           <textarea
             ref={zone}
             value={texte}
@@ -211,7 +214,7 @@ export default function Assistant({ par }: { par: ParWilaya }) {
             type="submit"
             disabled={!texte.trim()}
             aria-label="Envoyer"
-            className="grid size-11 shrink-0 place-items-center rounded-lg bg-ink text-white disabled:opacity-40"
+            className="grid size-11 shrink-0 place-items-center rounded-lg bg-vert text-paper disabled:opacity-40"
           >
             <span aria-hidden="true" className="text-lg leading-none">↑</span>
           </button>
