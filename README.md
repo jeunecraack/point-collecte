@@ -23,7 +23,7 @@ Vercel.
 
 | Variable | Rôle | Si absente |
 |---|---|---|
-| `SHEET_CSV_URL` | Google Sheet publié en CSV, source vive | lecture de `data/points.csv` |
+| `SHEET_CSV_URL` | Google Sheet en CSV, source vive | défaut dans `next.config.ts` (Sheet de production) ; `SHEET_CSV_URL=` vide → `data/points.csv` |
 | `REVALIDATE_SECRET` | secret attendu par `POST /api/revalidate` | route désactivée (401) |
 | `ADMIN_SECRET` | mot de passe de `/admin` | page désactivée |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site, pour l'image OG des aperçus WhatsApp | aperçus sans image |
@@ -73,10 +73,12 @@ téléphone.**
    (sinon Sheets mange le zéro initial et reformate les dates).
 3. Données → Validation sur `code` : entier entre 1 et 58.
 4. Protéger la ligne d'en-têtes.
-5. Fichier → Partager → **Publier sur le web** → feuille `points`, format
-   CSV. Ou utiliser l'URL gviz :
-   `https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=points`
-6. Mettre cette URL dans `SHEET_CSV_URL`.
+5. Partager → Accès général → **Tous les utilisateurs disposant du lien**,
+   rôle **Lecteur**. Sans ça, Google renvoie 401 au serveur et le site
+   reste sur le CSV du dépôt.
+6. URL à mettre dans `SHEET_CSV_URL` :
+   `https://docs.google.com/spreadsheets/d/<ID>/export?format=csv`
+   (premier onglet ; ajouter `&gid=<id>` pour un autre onglet).
 
 Sheet injoignable, invalide ou vide → repli automatique sur
 `data/points.csv`, avec un `console.error`. Le site n'est jamais pire que
