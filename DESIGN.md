@@ -26,6 +26,19 @@ site d'une capture d'écran WhatsApp.
 - Animation d'apparition. Le contenu est là au premier octet.
 - Émoji dans l'interface (rendu variable, sens variable).
 
+## Arabe d'abord
+
+`/…` est en arabe, RTL, sans détection automatique ; `/fr/…` est la même
+page en français. La bascule est un simple lien (zéro JavaScript). Les
+données des fiches gardent leur langue d'origine : chaque nom, adresse et
+message porte `dir="auto"`, les numéros et codes sont toujours `dir="ltr"`.
+
+Typographie arabe : **jamais de `tracking`** (le letter-spacing déconnecte
+les lettres) ni de mono sur du texte arabe (la ligature casse). Les
+étiquettes mono/capitales/espacées n'existent qu'en français ; en arabe,
+sans-serif, chiffres tabulaires. Helpers `etq()`, `etqLarge()`, `data()`
+dans `lib/i18n.ts`.
+
 ## Le drapeau comme système
 
 Vert = vérifié, blanc = papier, rouge = urgence et rien d'autre. Pas de

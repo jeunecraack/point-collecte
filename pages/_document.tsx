@@ -1,8 +1,9 @@
 import { Head, Html, Main, NextScript } from "next/document";
 
+// Arabe d'abord : la racine est RTL ; les pages /fr posent dir="ltr" lang="fr" sur leur conteneur.
 export default function Document() {
   return (
-    <Html lang="fr">
+    <Html lang="ar" dir="rtl">
       <Head>
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />

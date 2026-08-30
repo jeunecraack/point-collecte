@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getPoints } from "@/lib/points";
+import { fichesParWilaya } from "@/lib/fiches";
 import { Bande, Marque, btnPlein } from "@/lib/ui";
 import { connexion, estAdmin, revalider } from "./actions";
 
@@ -9,13 +9,13 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
   const sp = await searchParams;
 
   if (!process.env.ADMIN_SECRET) {
-    return <main className="mx-auto max-w-2xl px-4 py-10"><Marque /><p className="mt-6">ADMIN_SECRET n'est pas configuré : page désactivée.</p></main>;
+    return <main lang="fr" dir="ltr" className="mx-auto max-w-2xl px-4 py-10"><Marque lang="fr" /><p className="mt-6">ADMIN_SECRET n'est pas configuré : page désactivée.</p></main>;
   }
 
   if (!(await estAdmin())) {
     return (
-      <main className="mx-auto max-w-sm px-4 py-10">
-        <Marque />
+      <main lang="fr" dir="ltr" className="mx-auto max-w-sm px-4 py-10">
+        <Marque lang="fr" />
         <h1 className="mt-6 text-xl font-extrabold tracking-tight">Admin</h1>
         {sp.refuse && <p role="alert" className="mt-3 bg-warm-bg px-3 py-2 text-warm">Secret refusé.</p>}
         <form action={connexion} className="mt-4 space-y-3">
@@ -27,10 +27,10 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
     );
   }
 
-  const rapport = await getPoints();
+  const { rapport, doublons } = await fichesParWilaya();
   return (
-    <>
-    <div className="mx-auto max-w-2xl px-4 py-3"><Marque /></div>
+    <div lang="fr" dir="ltr">
+    <div className="mx-auto max-w-2xl px-4 py-3"><Marque lang="fr" /></div>
     <Bande fine />
     <main className="mx-auto max-w-2xl px-4 pb-16 pt-5">
       <h1 className="text-2xl font-extrabold tracking-tight">Données</h1>
@@ -45,6 +45,7 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         </dd>
         <dt className="text-muted">Fiches valides</dt><dd>{rapport.total}</dd>
         <dt className="text-muted">Lignes rejetées</dt><dd>{rapport.rejets.length}</dd>
+        <dt className="text-muted">Doublons fusionnés</dt><dd>{doublons}{doublons > 0 && <span className="text-muted"> — même nom et commune, ou même numéro : une seule fiche affichée</span>}</dd>
         <dt className="text-muted">SHEET_CSV_URL</dt><dd>{process.env.SHEET_CSV_URL ? "défini" : "vide"}</dd>
         <dt className="text-muted">Signalements</dt>
         <dd>
@@ -79,6 +80,6 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         </table>
       )}
     </main>
-    </>
+    </div>
   );
 }

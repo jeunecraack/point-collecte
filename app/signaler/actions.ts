@@ -20,10 +20,11 @@ const Signalement = z.object({
  * dans les logs. Un humain rappelle, vérifie, puis saisit la ligne dans le Sheet.
  */
 export async function signaler(form: FormData) {
+  const page = form.get("lang") === "fr" ? "/fr/signaler" : "/signaler";
   // Robot : on fait comme si, on jette.
-  if (form.get("site")) redirect("/signaler?envoye=1");
+  if (form.get("site")) redirect(`${page}?envoye=1`);
   const r = Signalement.safeParse(Object.fromEntries(form));
-  if (!r.success) redirect("/signaler?erreur=1");
+  if (!r.success) redirect(`${page}?erreur=1`);
 
   const payload = { ...r.data, recu: new Date().toISOString() };
   const url = process.env.SIGNALEMENT_WEBHOOK_URL;
@@ -39,5 +40,5 @@ export async function signaler(form: FormData) {
     // /admin l'affiche en avertissement ; brancher SIGNALEMENT_WEBHOOK_URL (README) avant d'ouvrir le formulaire au public.
     console.log("[signalement]", JSON.stringify(payload));
   }
-  redirect("/signaler?envoye=1");
+  redirect(`${page}?envoye=1`);
 }

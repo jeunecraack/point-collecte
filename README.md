@@ -31,14 +31,28 @@ Vercel.
 
 ## Routes
 
+Arabe d'abord : l'URL sans préfixe est en arabe (RTL), `/fr/…` est la même
+page en français. La bascule est un lien ; aucune détection automatique.
+
 ```
-/                 accueil, numéros d'urgence, wilayas couvertes      pages/, ISR 60 s, zéro JS
-/[code]           58 pages wilaya, indexables — le parcours principal pages/, ISR 60 s, zéro JS
-/assistant        matching déterministe, aucun appel API              app/, données passées en props
-/signaler         formulaire → webhook ou logs, jamais le dataset     app/, Server Action
-/admin            lignes rejetées, origine, bouton de rafraîchissement app/, cookie ADMIN_SECRET
-/api/revalidate   POST { "secret": … } → régénère /, /assistant, 58 wilayas
+/  /fr                    accueil, numéros d'urgence, wilayas couvertes      pages/, ISR 60 s, zéro JS
+/[code]  /fr/[code]       58 pages wilaya, indexables, hreflang croisés      pages/, ISR 60 s, zéro JS
+/assistant  /fr/assistant matching déterministe, aucun appel API              app/, données passées en props
+/signaler  /fr/signaler   formulaire → webhook ou logs, jamais le dataset     app/, Server Action
+/admin                    rejets, doublons, origine, rafraîchissement (fr)    app/, cookie ADMIN_SECRET
+/api/revalidate           POST { "secret": … } → régénère toutes les pages
 ```
+
+Textes de l'interface dans `lib/i18n.ts` (`T.ar`, `T.fr`). Les données des
+fiches restent dans leur langue d'origine (`dir="auto"`).
+
+### Doublons
+
+Deux lignes du Sheet décrivant le même point — même nom et même commune
+(accents et casse ignorés), ou un numéro de téléphone en commun — donnent
+une seule fiche : la première (datée, ou la plus récente) est gardée, ses
+champs vides sont complétés par l'autre, « agréé » gagne si l'une l'est.
+`/admin` affiche le nombre de doublons fusionnés.
 
 Pourquoi deux routeurs : les pages de lecture sont dans `pages/` avec
 `unstable_runtimeJS: false`, ce qui les sert **sans un octet de

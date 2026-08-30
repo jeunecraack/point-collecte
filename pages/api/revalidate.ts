@@ -13,7 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const fourni = typeof req.body?.secret === "string" ? req.body.secret : "";
   if (!secret || !egal(fourni, secret)) return res.status(401).send("non");
 
-  const chemins = ["/", "/assistant", ...WILAYAS.map(({ code }) => `/${code}`)];
+  const ar = ["/", "/assistant", ...WILAYAS.map(({ code }) => `/${code}`)];
+  const chemins = [...ar, ...ar.map((p) => (p === "/" ? "/fr" : `/fr${p}`))];
   const r = await Promise.allSettled(chemins.map((p) => res.revalidate(p)));
   const echecs = chemins.filter((_, i) => r[i].status === "rejected");
   if (echecs.length) console.error("[revalidate] échecs:", echecs);

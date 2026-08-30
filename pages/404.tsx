@@ -8,7 +8,7 @@ export default function Introuvable() {
   return (
     <>
       <Head>
-        <title>Page introuvable — Points de collecte</title>
+        <title>404 — نقاط الجمع / Points de collecte</title>
         <meta name="robots" content="noindex" />
       </Head>
       <PageIntrouvable />

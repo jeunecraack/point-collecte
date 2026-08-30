@@ -7,9 +7,8 @@ export const metadata: Metadata = {
   metadataBase: site ? new URL(site) : undefined,
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   openGraph: { type: "website", images: [{ url: "/og.jpg", width: 1200, height: 630 }] },
-  title: "Points de collecte de dons — incendies Algérie",
-  description:
-    "Où déposer ses dons, maintenant, dans sa wilaya. Adresses vérifiées et datées.",
+  title: "نقاط جمع التبرعات — حرائق الجزائر",
+  description: "أين تودع تبرعاتك، الآن، في ولايتك. عناوين مؤكدة ومؤرخة.",
 };
 
 export const viewport: Viewport = {
@@ -19,9 +18,10 @@ export const viewport: Viewport = {
   themeColor: "#006233",
 };
 
+// Arabe d'abord : racine RTL ; les routes /fr posent dir="ltr" lang="fr" sur leur conteneur.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="ar" dir="rtl">
       <body>{children}</body>
     </html>
   );

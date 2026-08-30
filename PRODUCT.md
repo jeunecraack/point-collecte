@@ -105,13 +105,18 @@ dans le dépôt comme filet.
 ## Architecture
 
 ```
-/                        accueil, wilayas couvertes, numéros d'urgence
-/[code]                  58 pages statiques, indexables — le parcours principal
-/assistant               interface conversationnelle, matching déterministe
-/signaler                formulaire de contribution
-/admin                   lignes rejetées, bouton de revalidation
+/                        accueil (arabe), wilayas couvertes, numéros d'urgence
+/[code]                  58 pages statiques en arabe, indexables — le parcours principal
+/fr, /fr/[code]          les mêmes en français ; bascule par lien, hreflang croisés
+/assistant, /fr/assistant  interface conversationnelle, matching déterministe
+/signaler, /fr/signaler  formulaire de contribution
+/admin                   lignes rejetées, doublons, bouton de revalidation (français)
 /api/revalidate          POST protégé par secret
 ```
+
+Arabe d'abord : l'URL sans préfixe est en arabe (RTL). Pas de détection de
+langue ; l'URL fait foi. Deux lignes du Sheet décrivant le même point
+(même nom et commune, ou même numéro) sont fusionnées en une fiche.
 
 `revalidate: 60` sur les pages de données. Une correction dans le Sheet
 apparaît en moins d'une minute, sans déploiement.
@@ -145,4 +150,4 @@ détectée (indique les alias manquants), lignes rejetées par semaine
 ## Hors périmètre v1
 
 Notifications, carte, filtrage par besoin, application mobile,
-multilinguisme complet de l'interface, historique des versions du dataset.
+historique des versions du dataset.

@@ -140,7 +140,16 @@ async function lireRepo(): Promise<Rapport> {
  * par une mauvaise manipulation, on retombe sur le CSV du repo.
  * Invariant : ne jamais servir moins que le dernier état connu comme bon.
  */
-export async function getPoints(): Promise<Rapport> {
+let cache: { depuis: number; rapport: Promise<Rapport> } | null = null;
+
+/** Une seule lecture du Sheet par processus et par minute : au build, 65 pages ne font plus 65 requêtes (Google répond 429). */
+export function getPoints(): Promise<Rapport> {
+  if (cache && Date.now() - cache.depuis < 60_000) return cache.rapport;
+  cache = { depuis: Date.now(), rapport: chargerPoints() };
+  return cache.rapport;
+}
+
+async function chargerPoints(): Promise<Rapport> {
   const url = process.env.SHEET_CSV_URL;
   if (!url) return lireRepo();
 

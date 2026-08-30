@@ -1,26 +1,21 @@
-import type { GetStaticPaths, GetStaticProps, PageConfig } from "next";
+import type { GetStaticPaths, PageConfig } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import { WILAYAS, wilayaParCode, type Wilaya } from "@/lib/wilayas";
-import { getPointsWilaya } from "@/lib/points";
-import { visibles, type Fiche } from "@/lib/fiches";
-import { Bande, BandeauUrgence, Entree, Marque, Silence, btnContour, dateFr, pluriel } from "@/lib/ui";
+import { WILAYAS } from "@/lib/wilayas";
+import type { Fiche } from "@/lib/fiches";
+import { propsWilaya, type PropsWilaya as Props } from "@/lib/props";
+import { dateLoc, dir, etq, lien, nomWilaya, t } from "@/lib/i18n";
+import { Bande, BandeauUrgence, Barre, Entree, Silence, btnContour } from "@/lib/ui";
 
 // Page servie sans un octet de JavaScript : adresses lisibles dès le premier paquet.
 export const config: PageConfig = { unstable_runtimeJS: false };
-
-type Props = { w: Wilaya; points: Fiche[] };
 
 export const getStaticPaths: GetStaticPaths = () => ({
   paths: WILAYAS.map(({ code }) => ({ params: { code } })),
   fallback: false,
 });
 
-export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const w = wilayaParCode(String(params?.code));
-  if (!w) return { notFound: true };
-  return { props: { w, points: visibles(await getPointsWilaya(w.code)) }, revalidate: 60 };
-};
+export const getStaticProps = propsWilaya("ar");
 
 /** Regroupe par commune, ordre alphabétique, « non renseignée » en dernier. L'ordre interne (datées d'abord) est conservé. */
 function parCommune(points: Fiche[]): [string, Fiche[]][] {
@@ -29,21 +24,26 @@ function parCommune(points: Fiche[]): [string, Fiche[]][] {
   return [...m].sort(([a], [b]) => (a === "" ? 1 : b === "" ? -1 : a.localeCompare(b, "fr")));
 }
 
-const ancre = (commune: string) => "c-" + (commune || "autres").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+const ancre = (commune: string) =>
+  "c-" + (commune || "autres").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
-export default function PageWilaya({ w, points }: Props) {
+export default function PageWilaya({ w, points, lang }: Props) {
+  const d = t(lang);
+  const nom = nomWilaya(lang, w);
+  const nomAutre = lang === "ar" ? w.nom : w.nomAr;
   const n = points.length;
   const groupes = parCommune(points);
   const communes = groupes.map(([c]) => c).filter(Boolean);
   const derniere = points[0]?.maj;
   const description = n
-    ? `${pluriel(n, "point")} de collecte à ${w.nom}${communes.length ? ` (${communes.slice(0, 6).join(", ")})` : ""}.${derniere ? ` Dernière vérification le ${dateFr(derniere)}.` : ""} Adresses et téléphones.`
-    : `Aucun point de collecte vérifié à ${w.nom} pour l'instant. Numéros d'urgence et orientation vers la Protection civile.`;
+    ? d.descWilaya(n, nom, communes.slice(0, 6).join(", "), derniere ? dateLoc(lang, derniere) : undefined)
+    : d.descWilayaVide(nom);
+  const chemin = `/${w.code}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: `Points de collecte de dons — ${w.nom}`,
+    name: d.titreWilaya(nom),
     numberOfItems: n,
     itemListElement: points.map((p, i) => ({
       "@type": "ListItem",
@@ -66,69 +66,62 @@ export default function PageWilaya({ w, points }: Props) {
   };
 
   return (
-    <>
+    <div lang={lang} dir={dir(lang)}>
       <Head>
-        <title>{`Points de collecte de dons — ${w.nom}`}</title>
+        <title>{d.titreWilaya(nom)}</title>
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content="#006233" />
-        <link rel="canonical" href={`/${w.code}`} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
-        />
+        <link rel="canonical" href={lien(lang, chemin)} />
+        <link rel="alternate" hrefLang="ar" href={lien("ar", chemin)} />
+        <link rel="alternate" hrefLang="fr" href={lien("fr", chemin)} />
+        <link rel="alternate" hrefLang="x-default" href={lien("ar", chemin)} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       </Head>
 
       <header>
-        <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
-          <Marque />
-          <Link href="/" className="font-mono text-xs uppercase tracking-wider text-muted hover:text-ink">
-            Toutes les wilayas
+        <Barre lang={lang} chemin={chemin}>
+          <Link href={lien(lang, "/")} className={`hidden text-xs text-muted hover:text-ink sm:inline ${etq(lang)}`}>
+            {d.toutesWilayas}
           </Link>
-        </div>
+        </Barre>
         <Bande>
           <div className="flex items-end gap-4">
-            <span aria-hidden="true" className="font-mono text-7xl font-bold leading-[.85] tracking-tighter">
-              {w.code}
-            </span>
+            <span aria-hidden="true" dir="ltr" className="font-mono text-7xl font-bold leading-[.85] tracking-tighter">{w.code}</span>
             <div className="pb-0.5">
               <h1 className="text-2xl font-extrabold leading-tight tracking-tight">
-                <span className="sr-only">Wilaya {w.code} — </span>
-                {w.nom}
+                <span className="sr-only">{lang === "ar" ? `ولاية ${w.code} — ` : `Wilaya ${w.code} — `}</span>
+                {nom}
               </h1>
-              <p dir="rtl" lang="ar" className="text-left text-lg text-white/85">{w.nomAr}</p>
+              <p lang={lang === "ar" ? "fr" : "ar"} dir={lang === "ar" ? "ltr" : "rtl"} className="text-start text-lg text-white/85">{nomAutre}</p>
             </div>
           </div>
           <p className="mt-3 text-sm text-white/90">
-            {n === 0
-              ? "Aucun point de collecte vérifié pour l'instant."
-              : `${pluriel(n, "point")} de collecte${derniere ? ` · dernière vérification le ${dateFr(derniere)}` : ""}`}
+            {n === 0 ? d.aucunPoint : `${d.nPoints(n)}${derniere ? ` · ${d.derniereVerif(dateLoc(lang, derniere))}` : ""}`}
           </p>
         </Bande>
       </header>
 
-      <BandeauUrgence compact />
+      <BandeauUrgence lang={lang} compact />
 
       <main className="mx-auto max-w-2xl px-4 pb-16">
         {n === 0 ? (
           <section className="py-8">
-            <h2 className="mb-3 text-xl font-extrabold tracking-tight">Rien de vérifié à {w.nom} pour l'instant</h2>
-            <Silence nom={w.nom} />
-            <p className="mt-6">
-              <Link href="/signaler" className={btnContour}>Signaler un point à {w.nom}</Link>
-            </p>
-            <p className="mt-3 text-sm text-muted">On vous rappelle pour vérifier avant de publier.</p>
+            <h2 className="mb-3 text-xl font-extrabold tracking-tight">{d.rienVerifie(nom)}</h2>
+            <Silence lang={lang} nom={nom} />
+            <p className="mt-6"><Link href={lien(lang, "/signaler")} className={btnContour}>{d.signalerA(nom)}</Link></p>
+            <p className="mt-3 text-sm text-muted">{d.rappelAvantPublication}</p>
           </section>
         ) : (
           <>
             {groupes.length > 1 && (
-              <nav aria-label="Communes" className="border-b border-rule py-4">
-                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">{pluriel(groupes.length, "commune")}</p>
+              <nav aria-label={d.communes} className="border-b border-rule py-4">
+                <p className={`text-[11px] text-muted ${etq(lang)}`}>{d.nCommunes(groupes.length)}</p>
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {groupes.map(([c, fs]) => (
                     <li key={c}>
                       <a href={`#${ancre(c)}`} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-rule px-3 text-sm hover:border-vert hover:text-vert">
-                        {c || "Commune non renseignée"}
+                        <span dir="auto">{c || d.communeInconnue}</span>
                         <span className="font-mono text-xs text-muted">{fs.length}</span>
                       </a>
                     </li>
@@ -139,14 +132,14 @@ export default function PageWilaya({ w, points }: Props) {
             {groupes.map(([c, fs]) => (
               <section key={c} id={groupes.length > 1 ? ancre(c) : undefined} className="scroll-mt-4">
                 {groupes.length > 1 && (
-                  <h2 className="mt-8 flex items-baseline gap-2 border-b-2 border-vert pb-1 text-base font-extrabold uppercase tracking-wide">
-                    {c || "Commune non renseignée"}
-                    <span className="font-mono text-xs font-normal text-muted">{pluriel(fs.length, "point")}</span>
+                  <h2 className={`mt-8 flex items-baseline gap-2 border-b-2 border-vert pb-1 text-base font-extrabold ${lang === "fr" ? "uppercase tracking-wide" : ""}`}>
+                    <span dir="auto">{c || d.communeInconnue}</span>
+                    <span className="text-xs font-normal text-muted tabular-nums">{d.nPointsCourt(fs.length)}</span>
                   </h2>
                 )}
                 <ol className="divide-y divide-rule">
                   {fs.map((p, i) => (
-                    <li key={i} className="py-6"><Entree p={p} sansCommune={groupes.length > 1} /></li>
+                    <li key={i} className="py-6"><Entree lang={lang} p={p} sansCommune={groupes.length > 1} /></li>
                   ))}
                 </ol>
               </section>
@@ -154,11 +147,9 @@ export default function PageWilaya({ w, points }: Props) {
           </>
         )}
         <footer className="mt-10 border-t border-rule pt-4 text-sm text-muted">
-          Une adresse a changé, un point a fermé ?{" "}
-          <Link href="/signaler" className="text-vert underline">Signalez-le</Link>. Rien n'est
-          publié sans un appel de vérification.
+          {d.footerFiche} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>. {d.rienSansAppel}
         </footer>
       </main>
-    </>
+    </div>
   );
 }
