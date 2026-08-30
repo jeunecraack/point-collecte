@@ -154,6 +154,26 @@ curl -X POST https://<domaine>/api/revalidate \
 
 ou le bouton de `/admin`.
 
+## Modération dans `/admin`
+
+Avec le compte de service configuré, `/admin` agit directement sur le Sheet
+(qui reste la seule source de vérité) :
+
+- **Signalements à traiter** : chaque signalement « à rappeler » avec le
+  contact à appeler. **Publier** ajoute la ligne dans l'onglet des points,
+  rangée selon les en-têtes existants (`Wilaya, Commune, Adresse,
+  Association, Num1…`), et marque le signalement « publié » ; **Rejeter** le
+  marque « rejeté » sans rien publier.
+- **Doublons fusionnés** : « Supprimer la ligne N, garder M » supprime la
+  doublure dans le Sheet.
+- **Lignes rejetées** : « Corriger dans le Sheet ↗ » ouvre le Sheet sur la
+  ligne exacte ; « Supprimer la ligne » la retire.
+
+Garde-fou : avant toute suppression, la ligne est relue dans le Sheet et
+doit contenir ce qui était affiché (nom, numéro) ; sinon rien n'est
+supprimé et l'admin le dit. Après chaque écriture, les pages sont
+régénérées immédiatement.
+
 ## Signalements — circuit de validation
 
 Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.

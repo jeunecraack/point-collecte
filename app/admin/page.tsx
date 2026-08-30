@@ -2,8 +2,12 @@ import type { Metadata } from "next";
 import { fichesParWilaya } from "@/lib/fiches";
 import { WILAYAS } from "@/lib/wilayas";
 import { Bande, Marque, btnContour, btnPlein } from "@/lib/ui";
-import { ONGLET, configSheets, idDepuisUrl } from "@/lib/sheets";
-import { connexion, deconnexion, estAdmin, revalider } from "./actions";
+import { ONGLET, configSheets, idDepuisUrl, lireSignalements, type Signalement } from "@/lib/sheets";
+import { connexion, deconnexion, estAdmin, lienLigne, publierSignalement, rejeterSignalement, revalider, supprimerLignePoints } from "./actions";
+
+const btnPetit = "min-h-9 border-[1.5px] border-vert px-3 text-xs font-semibold text-vert hover:bg-vert-pale";
+const btnDanger = "min-h-9 border-[1.5px] border-signal-text px-3 text-xs font-semibold text-signal-text hover:bg-signal hover:text-white";
+const SEP = "\u0001";
 
 export const metadata: Metadata = { title: "Admin — lignes rejetées", robots: { index: false } };
 
@@ -41,6 +45,16 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
 
   const { par, rapport, fusions } = await fichesParWilaya();
   const sheets = configSheets();
+  let signalements: Signalement[] = [];
+  let erreurSignalements = "";
+  if (sheets) {
+    try {
+      signalements = (await lireSignalements()).filter((s) => !s.statut || s.statut === "à rappeler");
+    } catch (e) {
+      erreurSignalements = e instanceof Error ? e.message : String(e);
+    }
+  }
+  const lienRejet = async (ligne: number) => (sheets ? lienLigne(ligne) : null);
   const idSheet = idDepuisUrl(process.env.SHEET_CSV_URL);
   const toutes = Object.values(par).flat();
   const parWilaya = WILAYAS.filter((w) => par[w.code]).map((w) => ({ w, n: par[w.code].length }));
@@ -84,6 +98,36 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         {sp.revalide === "ok" && <p role="status" className="mt-3 text-fresh">Fait : accueil, wilayas et assistant régénérés, en arabe et en français.</p>}
         {sp.revalide === "echec" && <p role="alert" className="mt-3 text-warm">Échec de /api/revalidate — voir les logs serveur.</p>}
         {sp.revalide === "sans-secret" && <p role="alert" className="mt-3 text-warm">REVALIDATE_SECRET n'est pas configuré.</p>}
+        {sp.fait && <p role="status" className="mt-3 bg-fresh-bg px-3 py-2 text-fresh">{sp.fait}</p>}
+        {sp.echec && <p role="alert" className="mt-3 bg-warm-bg px-3 py-2 text-warm">Rien n'a été fait : {sp.echec}</p>}
+
+        <h2 className="mt-10 text-lg font-extrabold tracking-tight">Signalements à traiter</h2>
+        <p className="mt-1 text-sm text-muted">Envoyés par le formulaire. Appelez la personne indiquée ; « Publier » ajoute la ligne dans l'onglet des points du Sheet, « Rejeter » la marque sans rien publier.</p>
+        {!sheets ? (
+          <p className="mt-4 bg-warm-bg px-3 py-2 text-sm text-warm">Compte de service non configuré : les signalements vont dans les logs Vercel et ne peuvent pas être traités ici. Voir le README, section « Compte de service Google ».</p>
+        ) : erreurSignalements ? (
+          <p role="alert" className="mt-4 bg-warm-bg px-3 py-2 text-sm text-warm">Lecture impossible : {erreurSignalements}</p>
+        ) : signalements.length === 0 ? (
+          <p className="mt-4 text-fresh">Aucun en attente.</p>
+        ) : (
+          <ul className="mt-4 divide-y divide-rule border-y border-rule">
+            {signalements.map((s) => (
+              <li key={s.ligne} className="grid gap-2 py-4 sm:grid-cols-[1fr_auto]">
+                <div className="text-sm">
+                  <p><span className="font-mono text-xs text-muted">ligne {s.ligne} · {s.recu.slice(0, 10)}</span></p>
+                  <p dir="auto" className="mt-1 font-semibold">{s.nom || s.adresse} <span className="font-normal text-muted">— {s.wilaya || s.code}{s.commune ? ` · ${s.commune}` : ""}</span></p>
+                  {s.adresse && s.nom && <p dir="auto">{s.adresse}</p>}
+                  {s.tel && <p className="font-mono">{s.tel}</p>}
+                  <p className="mt-1 text-muted">À rappeler : <span dir="auto" className="text-ink">{s.contact_nom}</span> · <a href={`tel:${s.contact_tel}`} className="font-mono text-vert underline">{s.contact_tel}</a></p>
+                </div>
+                <div className="flex gap-2 sm:flex-col">
+                  <form action={publierSignalement}><input type="hidden" name="ligne" value={s.ligne} /><button type="submit" className={btnPetit}>Publier</button></form>
+                  <form action={rejeterSignalement}><input type="hidden" name="ligne" value={s.ligne} /><button type="submit" className={btnDanger}>Rejeter</button></form>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
 
         <h2 className="mt-10 text-lg font-extrabold tracking-tight">Fiches par wilaya</h2>
         <table className="mt-4 w-full border-collapse text-sm">
@@ -104,15 +148,27 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
           <p className="mt-4 text-fresh">Aucune. Toutes les lignes passent.</p>
         ) : (
           <table className="mt-4 w-full border-collapse text-sm">
-            <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Ligne</th><th className="py-2 pr-4">Raison</th><th className="py-2">Aperçu</th></tr></thead>
+            <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Ligne</th><th className="py-2 pr-4">Raison</th><th className="py-2 pr-4">Aperçu</th><th className="py-2">Actions</th></tr></thead>
             <tbody>
-              {rapport.rejets.map((r) => (
+              {await Promise.all(rapport.rejets.map(async (r) => (
                 <tr key={r.ligne} className="border-b border-rule">
                   <td className="py-2 pr-4 font-mono font-bold text-vert">{r.ligne}</td>
                   <td className="py-2 pr-4">{r.raison}</td>
-                  <td dir="auto" className="py-2 text-muted">{r.apercu || "—"}</td>
+                  <td dir="auto" className="py-2 pr-4 text-muted">{r.apercu || "—"}</td>
+                  <td className="py-2">
+                    <div className="flex flex-wrap gap-2">
+                      {(await lienRejet(r.ligne)) && <a href={(await lienRejet(r.ligne))!} rel="noopener" className={btnPetit + " inline-flex items-center"}>Corriger dans le Sheet ↗</a>}
+                      {sheets && rapport.origine === "sheet" && (
+                        <form action={supprimerLignePoints}>
+                          <input type="hidden" name="ligne" value={r.ligne} />
+                          <input type="hidden" name="attendus" value={r.apercu.split(" · ").join(SEP)} />
+                          <button type="submit" className={btnDanger}>Supprimer la ligne</button>
+                        </form>
+                      )}
+                    </div>
+                  </td>
                 </tr>
-              ))}
+              )))}
             </tbody>
           </table>
         )}
@@ -123,14 +179,25 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
           <p className="mt-4 text-fresh">Aucun.</p>
         ) : (
           <table className="mt-4 w-full border-collapse text-sm">
-            <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Gardée</th><th className="py-2 pr-4">Doublure</th><th className="py-2 pr-4">Point</th><th className="py-2">Raison</th></tr></thead>
+            <thead><tr className="border-b border-vert text-left font-mono text-xs uppercase tracking-wider text-muted"><th className="py-2 pr-4">Gardée</th><th className="py-2 pr-4">Doublure</th><th className="py-2 pr-4">Point</th><th className="py-2 pr-4">Raison</th><th className="py-2">Action</th></tr></thead>
             <tbody>
               {fusions.map((f) => (
                 <tr key={`${f.gardee}-${f.doublure}`} className="border-b border-rule">
                   <td className="py-2 pr-4 font-mono font-bold text-vert">{f.gardee}</td>
                   <td className="py-2 pr-4 font-mono text-warm">{f.doublure}</td>
                   <td dir="auto" className="py-2 pr-4">{f.nom}</td>
-                  <td className="py-2 font-mono text-xs text-muted">{f.raison}</td>
+                  <td className="py-2 pr-4 font-mono text-xs text-muted">{f.raison}</td>
+                  <td className="py-2">
+                    {sheets && rapport.origine === "sheet" ? (
+                      <form action={supprimerLignePoints}>
+                        <input type="hidden" name="ligne" value={f.doublure} />
+                        <input type="hidden" name="attendus" value={[f.nom, ...(f.raison.match(/\d{8,}/g) ?? [])].join(SEP)} />
+                        <button type="submit" className={btnDanger}>Supprimer la ligne {f.doublure}, garder {f.gardee}</button>
+                      </form>
+                    ) : (
+                      <span className="text-xs text-muted">compte de service requis</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

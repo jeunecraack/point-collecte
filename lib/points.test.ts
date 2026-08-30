@@ -86,3 +86,10 @@ test("Association « / » → le lieu (Adresse) devient le nom ; « / » ailleur
   expect(r.points["31"]?.[0]?.tel).toBe("");
   expect(r.rejets[0]?.raison).toMatch(/^nom/);
 });
+
+test("numérotation : une ligne vide au milieu du Sheet compte", () => {
+  const csv = "code,nom\n06,PLACEHOLDER A\n,\n\n06,PLACEHOLDER B\n99,PLACEHOLDER C\n";
+  const r = parserCsv(csv, "repo");
+  expect(r.points["06"]?.map((p) => [p.nom, p.ligne])).toEqual([["PLACEHOLDER A", 2], ["PLACEHOLDER B", 5]]);
+  expect(r.rejets.map((x) => x.ligne)).toEqual([6]);
+});

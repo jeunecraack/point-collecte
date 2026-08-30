@@ -96,9 +96,11 @@ function remapper(brut: Record<string, string>): Record<string, string> {
 }
 
 export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
+  // skipEmptyLines: false — une ligne vide au milieu du Sheet compte dans la numérotation,
+  // sinon « supprimer la ligne 12 » viserait la mauvaise ligne.
   const { data } = Papa.parse<Record<string, string>>(texte, {
     header: true,
-    skipEmptyLines: true,
+    skipEmptyLines: false,
     // « Agréé » → « agree » : les accents des en-têtes sont ignorés.
     transformHeader: (h) => h.trim().toLowerCase().normalize("NFD").replace(/\p{M}/gu, ""),
   });
@@ -109,6 +111,7 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
   let wilayaPrecedente = "";
 
   data.forEach((brut, i) => {
+    if (Object.values(brut).every((v) => !(v ?? "").trim())) return; // ligne vide : comptée, ignorée
     const ligne = remapper(brut);
     // Cellule Wilaya fusionnée dans le Sheet : vide à l'export → on hérite de la ligne au-dessus.
     if (!ligne.code.trim()) ligne.code = wilayaPrecedente;
@@ -142,6 +145,8 @@ async function lireRepo(): Promise<Rapport> {
  * Invariant : ne jamais servir moins que le dernier état connu comme bon.
  */
 let cache: { depuis: number; rapport: Promise<Rapport> } | null = null;
+/** Après une écriture dans le Sheet : la prochaine lecture repart de zéro. */
+export const invaliderCache = () => { cache = null; };
 
 /** Une seule lecture du Sheet par processus et par minute : au build, 65 pages ne font plus 65 requêtes (Google répond 429). */
 export function getPoints(): Promise<Rapport> {
