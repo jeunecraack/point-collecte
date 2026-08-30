@@ -99,9 +99,14 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
   const points: ParDept = {};
   const rejets: Rapport["rejets"] = [];
   let total = 0;
+  let wilayaPrecedente = "";
 
   data.forEach((brut, i) => {
-    const r = PointSchema.safeParse(remapper(brut));
+    const ligne = remapper(brut);
+    // Cellule Wilaya fusionnée dans le Sheet : vide à l'export → on hérite de la ligne au-dessus.
+    if (!ligne.code.trim()) ligne.code = wilayaPrecedente;
+    else wilayaPrecedente = ligne.code;
+    const r = PointSchema.safeParse(ligne);
     if (!r.success) {
       const e = r.error.issues[0];
       rejets.push({ ligne: i + 2, raison: `${e.path.join(".")}: ${e.message}` });

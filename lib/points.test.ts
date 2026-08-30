@@ -56,3 +56,10 @@ test("lien Maps hors domaine Google → vidé", () => {
   const csv = "code,nom,maps,maj,source\n06,PLACEHOLDER,javascript:alert(1),2026-08-30,PLACEHOLDER\n";
   expect(parserCsv(csv, "repo").points["06"]?.[0]?.maps).toBe("");
 });
+
+test("cellule Wilaya fusionnée : les lignes vides héritent de la précédente", () => {
+  const csv = "Wilaya,Association,maj,source\nORAN,PLACEHOLDER A,2026-08-30,PLACEHOLDER\n,PLACEHOLDER B,2026-08-30,PLACEHOLDER\n,PLACEHOLDER C,2026-08-30,PLACEHOLDER\nBEJAIA,PLACEHOLDER D,2026-08-30,PLACEHOLDER\n";
+  const r = parserCsv(csv, "sheet");
+  expect(r.points["31"]?.map((p) => p.nom)).toEqual(["PLACEHOLDER A", "PLACEHOLDER B", "PLACEHOLDER C"]);
+  expect(r.points["06"]?.map((p) => p.nom)).toEqual(["PLACEHOLDER D"]);
+});

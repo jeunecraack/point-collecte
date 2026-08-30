@@ -31,6 +31,9 @@ Les en-têtes des bénévoles sont acceptés tels quels et remappés :
 | `Date` / `Date de vérification` | `maj` |
 | `Vérifié par` / `Vérificateur` | `source` |
 
+Une cellule `Wilaya` vide hérite de la ligne au-dessus (cellules
+fusionnées). Une cellule `Association` vide est rejetée.
+
 Deux colonnes **doivent** exister, sans elles la ligne est rejetée
 (invariants 2 et 5) : `maj` (date de vérification, `AAAA-MM-JJ`) et
 `source` (qui a appelé et confirmé).
