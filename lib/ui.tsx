@@ -100,7 +100,7 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
           {[p.type !== "Point de collecte" ? p.type : "", p.commune].filter(Boolean).join(" · ")}
         </p>
       )}
-      {p.adresse && <p className={`mt-2 leading-snug ${compact ? "" : "text-lg"}`}>{p.adresse}</p>}
+      {p.adresse && p.adresse !== p.nom && <p className={`mt-2 leading-snug ${compact ? "" : "text-lg"}`}>{p.adresse}</p>}
       <dl className="mt-3">
         {p.horaires && (
           <Ligne label="Horaires"><span className="font-mono text-sm">{p.horaires}</span></Ligne>

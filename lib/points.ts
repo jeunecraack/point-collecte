@@ -82,7 +82,13 @@ const COLONNES = Object.keys(PointSchema.shape) as (keyof Point)[];
 
 function remapper(brut: Record<string, string>): Record<string, string> {
   const r: Record<string, string> = Object.fromEntries(COLONNES.map((c) => [c, ""]));
-  for (const [k, v] of Object.entries(brut)) r[ALIAS_COLONNES[k] ?? k] = v ?? "";
+  for (const [k, v] of Object.entries(brut)) {
+    // « / » et « - » : convention des bénévoles pour « rien ».
+    const val = (v ?? "").trim();
+    r[ALIAS_COLONNES[k] ?? k] = /^[\/\-–—]+$/.test(val) ? "" : val;
+  }
+  // Pas d'association : le lieu (colonne Adresse) sert de nom, ex. une pharmacie ou une mosquée.
+  if (!r.nom && r.adresse) r.nom = r.adresse;
   // « BEJAIA », « Tizi Ouzou », « بجاية » → code, via le même matching que l'assistant.
   if (r.code && !/^\s*\d{1,2}\s*$/.test(r.code)) r.code = findWilaya(r.code)?.code ?? r.code;
   return r;

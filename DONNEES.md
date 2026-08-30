@@ -32,7 +32,8 @@ Les en-têtes des bénévoles sont acceptés tels quels et remappés :
 | `Vérifié par` / `Vérificateur` | `source` |
 
 Une cellule `Wilaya` vide hérite de la ligne au-dessus (cellules
-fusionnées). Une cellule `Association` vide est rejetée.
+fusionnées). `/` ou `-` valent « vide ». Sans `Association`, la colonne `Adresse` sert de
+nom du lieu (pharmacie, mosquée…). Sans les deux, la ligne est rejetée.
 
 Deux colonnes **doivent** exister, sans elles la ligne est rejetée
 (invariants 2 et 5) : `maj` (date de vérification, `AAAA-MM-JJ`) et

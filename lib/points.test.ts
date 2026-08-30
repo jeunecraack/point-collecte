@@ -63,3 +63,12 @@ test("cellule Wilaya fusionnée : les lignes vides héritent de la précédente"
   expect(r.points["31"]?.map((p) => p.nom)).toEqual(["PLACEHOLDER A", "PLACEHOLDER B", "PLACEHOLDER C"]);
   expect(r.points["06"]?.map((p) => p.nom)).toEqual(["PLACEHOLDER D"]);
 });
+
+test("Association « / » → le lieu (Adresse) devient le nom ; « / » ailleurs → vide", () => {
+  const csv = "Wilaya,Commune,Adresse,Association,Num1,maj,source\nORAN,PLACEHOLDER,PLACEHOLDER LIEU,/,/,2026-08-30,PLACEHOLDER\nORAN,PLACEHOLDER,/,/,,2026-08-30,PLACEHOLDER\n";
+  const r = parserCsv(csv, "sheet");
+  expect(r.total).toBe(1);
+  expect(r.points["31"]?.[0]?.nom).toBe("PLACEHOLDER LIEU");
+  expect(r.points["31"]?.[0]?.tel).toBe("");
+  expect(r.rejets[0]?.raison).toMatch(/^nom/);
+});
