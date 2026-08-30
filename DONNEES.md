@@ -16,7 +16,7 @@ dégradé, et c'est aussi le mode de développement local.
 Colonnes exactes, en première ligne, en minuscules :
 
 ```
-code, nom, type, commune, adresse, tel, horaires, besoins, agree, maj, source
+code, nom, type, commune, adresse, tel, horaires, agree, maj, source
 ```
 
 Les en-têtes des bénévoles sont acceptés tels quels et remappés :

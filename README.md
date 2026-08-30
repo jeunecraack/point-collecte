@@ -78,7 +78,7 @@ le runtime App Router). L'interactif reste dans `app/`.
 Un seul CSV, en-têtes en minuscules :
 
 ```
-code, nom, type, commune, adresse, tel, horaires, besoins, agree, maj, source
+code, nom, type, commune, adresse, tel, horaires, agree, maj, source
 ```
 
 Les en-têtes des bénévoles sont aussi acceptés : `Wilaya` (nom ou numéro)
@@ -150,12 +150,12 @@ ou le bouton de `/admin`.
 Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
 
 1. La personne remplit le formulaire (wilaya, lieu, adresse, horaires,
-   besoins, et surtout le nom et le téléphone de quelqu'un qui répond sur
+   et surtout le nom et le téléphone de quelqu'un qui répond sur
    place). Un champ caché piège les robots.
 2. Le serveur valide les champs (zod) et **ajoute une ligne à l'onglet
    `signalements`** du Sheet (créé automatiquement avec ses en-têtes :
-   `recu, code, wilaya, commune, nom, adresse, tel, horaires, besoins,
-   contact_nom, contact_tel, statut, lang`). Sans compte de service, il
+   `recu, code, wilaya, commune, nom, adresse, tel, horaires, contact_nom,
+   contact_tel, statut, lang`). Sans compte de service, il
    passe par `SIGNALEMENT_WEBHOOK_URL` ; sans webhook, par les logs Vercel.
 3. Un bénévole **appelle** la personne indiquée, confirme l'adresse et les
    horaires.
@@ -199,7 +199,7 @@ pas possible :
 function doPost(e) {
   const feuille = SpreadsheetApp.openById("ID_DU_SHEET_PRIVE").getSheetByName("signalements");
   const d = JSON.parse(e.postData.contents);
-  feuille.appendRow([d.recu, d.code, d.commune, d.nom, d.adresse, d.tel, d.horaires, d.besoins, d.contact_nom, d.contact_tel, "à rappeler"]);
+  feuille.appendRow([d.recu, d.code, d.commune, d.nom, d.adresse, d.tel, d.horaires, d.contact_nom, d.contact_tel, "à rappeler"]);
   return ContentService.createTextOutput("ok");
 }
 ```

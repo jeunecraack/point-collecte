@@ -90,7 +90,6 @@ Une seule table, un CSV. Colonnes exactes, en-têtes en minuscules :
 | `adresse` | non | peut contenir des virgules, le CSV est cité |
 | `tel` | non | zéro initial restauré si Sheets l'a mangé |
 | `horaires` | non | |
-| `besoins` | non | valeurs séparées par des virgules |
 | `agree` | non | lu (fusion des doublons), **jamais affiché** — pas de certification |
 | `tel2`, `tel3` | non | numéros supplémentaires (`Num2`, `Num3`) |
 | `maps` | non | lien Google Maps uniquement, sinon ignoré |

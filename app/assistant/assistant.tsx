@@ -30,7 +30,7 @@ const couvertes = (lang: Lang, par: ParWilaya) =>
   WILAYAS.filter((w) => par[w.code]).slice(0, 6).map((w) => nomWilaya(lang, w));
 
 /**
- * `memo` : la wilaya du message précédent. « 15 » puis « quoi donner » → besoins à Tizi Ouzou.
+ * `memo` : la wilaya du message précédent. « 15 » puis « quoi donner » → réponse pour Tizi Ouzou.
  * Une wilaya citée dans le message courant remplace toujours la mémoire.
  */
 function repondre(lang: Lang, q: string, par: ParWilaya, memo: Wilaya | null): Reponse & { wilaya?: Wilaya } {
@@ -55,10 +55,11 @@ function repondre(lang: Lang, q: string, par: ParWilaya, memo: Wilaya | null): R
       return { texte: d.urgenceReponse, urgences: true, wilaya, propositions: wilaya ? d.propWilaya(nom).slice(0, 2) : couvertes(lang, par) };
 
     case "quoi": {
-      const besoins = [...new Set(fiches.flatMap((p) => p.besoins.split(",")).map((b) => b.trim()).filter(Boolean))];
-      if (wilaya && besoins.length) return { texte: d.besoinsA(nom, besoins.join(", ")), wilaya, fiches, lien: versWilaya, propositions: d.propApresPoints(nom).slice(1) };
-      if (wilaya && fiches.length) return { ...points(), texte: d.quoiGenerique + d.pointsA(fiches.length, nom) };
-      return wilaya ? { texte: d.quoiGenerique + d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() } : sansWilaya(d.quoiGenerique + d.demandeWilaya);
+      // Pas de colonne besoins dans les données : conseil général, puis les points de la wilaya.
+      if (wilaya && fiches.length) return { ...points(), texte: d.quoiGenerique + d.pointsA(fiches.length, nom), propositions: d.propApresPoints(nom).slice(1) };
+      return wilaya
+        ? { texte: d.quoiGenerique + d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() }
+        : sansWilaya(d.quoiGenerique + d.demandeWilaya);
     }
 
     case "argent":

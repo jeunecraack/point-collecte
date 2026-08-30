@@ -183,15 +183,6 @@ export function Entree({ lang, p, compact = false, sansCommune = false }: { lang
             <a href={p.maps} rel="noopener" className="inline-block min-h-11 py-2 text-vert underline">{d.ouvrirMaps}</a>
           </Ligne>
         )}
-        {p.besoins && (
-          <Ligne lang={lang} label={d.besoins}>
-            <ul className="flex flex-wrap gap-1.5">
-              {p.besoins.split(",").map((b) => b.trim()).filter(Boolean).map((b) => (
-                <li key={b} dir="auto" className="rounded-sm border border-rule px-2 py-0.5 text-sm">{b}</li>
-              ))}
-            </ul>
-          </Ligne>
-        )}
         {p.source && <Ligne lang={lang} label={d.source}><span dir="auto" className="text-sm text-muted">{p.source}</span></Ligne>}
       </dl>
     </article>
