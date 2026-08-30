@@ -60,7 +60,12 @@ export function findWilaya(q: string): Wilaya | null {
       }
     }
   }
-  return meilleur?.w ?? null;
+  if (meilleur) return meilleur.w;
+
+  // Un nombre seul, « 15 » ou « 06 », suffit : c'est ainsi que les gens désignent leur wilaya.
+  // Après les noms, pour que « 5 rue x a bejaia » donne Béjaïa et non Batna.
+  const seul = f.match(/ 0?(\d{1,2}) /);
+  return (seul && wilayaParCode(seul[1])) ?? null;
 }
 
 export type Intention =
@@ -80,28 +85,28 @@ export type Intention =
 const LEXIQUE: [Intention, string][] = [
   [
     "urgence",
-    "urgence secours pompier pompiers protection civile numero numeros feu incendie appeler samu ambulance نجدة طوارئ حريق",
+    "urgence secours pompier pompiers protection civile numero numeros feu incendie appeler samu ambulance نجدة طوارئ حريق النار نار حرائق اسعاف الحماية المدنية ارقام رقم",
   ],
   [
     "quoi",
-    "quoi que donner besoin besoins liste utile materiel produit produits necessaire manque نعطي",
+    "quoi que donner besoin besoins liste utile materiel produit produits necessaire manque نعطي ماذا اش واش نتبرع اتبرع تبرع احتياجات حاجة ينقص يلزم",
   ],
   [
     "argent",
-    "argent money virement ccp rib compte bancaire financier cash cheque baridimob مال فلوس",
+    "argent money virement ccp rib compte bancaire financier cash cheque baridimob مال فلوس دراهم حساب تحويل",
   ],
-  ["sang", "sang transfusion cts donneur globules دم"],
+  ["sang", "sang transfusion cts donneur globules دم الدم بالدم"],
   [
     "benevole",
-    "benevole benevolat volontaire volontariat aider participer inscrire equipe متطوع",
+    "benevole benevolat volontaire volontariat aider participer inscrire equipe متطوع تطوع اتطوع نتطوع التطوع نساعد اساعد مساعدة",
   ],
   [
     "ajouter",
-    "ajouter signaler nouveau corriger erreur mettre jour responsable organise",
+    "ajouter signaler nouveau corriger erreur mettre jour responsable organise اضافة ابلاغ اضيف نضيف تصحيح خطا",
   ],
   [
     "ou",
-    "ou point points collecte depot deposer adresse pres proche apporter livrer نقطة اين وين",
+    "ou point points collecte depot deposer adresse pres proche apporter livrer نقطة نقاط اين وين فين عنوان نودع اودع جمع",
   ],
 ];
 

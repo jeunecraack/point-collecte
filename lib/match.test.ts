@@ -23,6 +23,14 @@ describe("findWilaya", () => {
     ["oran", "31"],
     ["Algérie", null],
     ["wilaya 99", null],
+    // un nombre seul suffit
+    ["15", "15"],
+    ["06", "06"],
+    ["je suis a 16", "16"],
+    ["99", null],
+    ["2026", null],
+    // le nom l'emporte sur un nombre
+    ["5 rue placeholder a bejaia", "06"],
   ];
   for (const [q, code] of cas) {
     test(`${JSON.stringify(q)} → ${code}`, () => {
@@ -40,6 +48,11 @@ describe("detectIntent", () => {
     ["je veux etre benevole", "benevole"],
     ["don d argent", "argent"],
     ["bonjour", null],
+    // arabe
+    ["فيه حريق", "urgence"],
+    ["واش نتبرع", "quoi"],
+    ["نحب نتطوع", "benevole"],
+    ["وين نودع", "ou"],
   ];
   for (const [q, intention] of cas) {
     test(`${JSON.stringify(q)} → ${intention}`, () => {

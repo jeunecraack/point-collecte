@@ -1,10 +1,12 @@
 import { Head, Html, Main, NextScript } from "next/document";
+import { SCRIPT_THEME_TETE } from "@/lib/theme";
 
 // Arabe d'abord : la racine est RTL ; les pages /fr posent dir="ltr" lang="fr" sur leur conteneur.
 export default function Document() {
   return (
     <Html lang="ar" dir="rtl">
       <Head>
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_THEME_TETE }} />
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta property="og:type" content="website" />

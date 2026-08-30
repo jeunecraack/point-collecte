@@ -17,6 +17,9 @@ site d'une capture d'écran WhatsApp.
 
 ## Interdits
 
+- Toute formule de certification : « vérifié », « certifié », « agréé »,
+  badge officiel. Le site recense, il ne garantit pas.
+
 - Dégradés, couleurs fluo, ombres portées décoratives, glassmorphism.
 - Polices web, bibliothèques d'icônes, bibliothèques de composants.
 - Images, à une exception : l'emblème (`public/emblem.png`, 14 Ko, détouré,
@@ -63,7 +66,11 @@ croissant ni d'étoile : on prend les couleurs, pas l'emblème d'État.
 | `warm` / `warm-bg` | `#8A5A00` / `#FBEBC2` | `#F2C14E` / `#3D2A00` | vérifié il y a 3 à 9 jours |
 
 Au-delà de 9 jours il n'y a pas de couleur : la fiche n'existe plus.
-Le mode sombre suit `prefers-color-scheme`, sans bouton.
+**Clair d'abord.** Le sombre est un choix explicite : bouton « Mode sombre »
+dans la barre, mémorisé dans `localStorage`, appliqué par un script inline
+de quelques octets avant le premier rendu (`lib/theme.ts`). Pas de
+`prefers-color-scheme` : le propriétaire veut la même première impression
+pour tout le monde.
 
 ## Signature : deux bandes
 
@@ -96,7 +103,7 @@ système embarque des fontes arabes correctes sur toutes les plateformes.
 ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ rouge
 14 Protection civile · 16 SAMU · 17 Police · 1055 Gendarmerie
 ──────────────────────────────────────────────
-● Vérifié le 30 août — aujourd'hui  ✓ AGRÉÉ PAR L'ÉTAT (plein vert)
+● Mis à jour le 30 août — aujourd'hui
 Nom du point
 Commune
 Adresse en gros, lisible à bout de bras

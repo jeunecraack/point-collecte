@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import type { Fiche } from "./fiches";
 import { type Lang, data, dateLoc, etq, etqLarge, lien, t } from "./i18n";
+import { SCRIPT_THEME_BOUTON } from "./theme";
 
 /** Seules données factuelles autorisées en dur : numéros nationaux, vérifiés. Libellés dans lib/i18n.ts. */
 export const URGENCES = ["14", "16", "17", "1055"] as const;
@@ -31,26 +32,57 @@ export function Langue({ lang, chemin }: { lang: Lang; chemin: string }) {
 export function Marque({ lang, surBande = false }: { lang: Lang; surBande?: boolean }) {
   return (
     <Link href={lien(lang, "/")} className={`inline-flex items-center gap-2.5 hover:underline ${surBande ? "text-white" : ""}`}>
-      <picture>
-        {!surBande && <source srcSet="/emblem-white.png" media="(prefers-color-scheme: dark)" />}
-        <img src={surBande ? "/emblem-white.png" : "/emblem.png"} alt="" width={36} height={42} className="h-[42px] w-auto" />
-      </picture>
-      <span className="text-sm font-semibold leading-tight">{t(lang).marque}</span>
+      {surBande ? (
+        <img src="/emblem-white.png" alt="" width={36} height={42} className="h-[42px] w-auto" />
+      ) : (
+        <>
+          <img src="/emblem.png" alt="" width={36} height={42} className="emb-clair h-[42px] w-auto" />
+          <img src="/emblem-white.png" alt="" width={36} height={42} className="emb-sombre h-[42px] w-auto" />
+        </>
+      )}
+      <span className="whitespace-nowrap text-sm font-semibold leading-tight">{t(lang).marque}</span>
     </Link>
   );
 }
 
-/** Barre blanche du haut : marque, lien optionnel, bascule de langue. */
+/** Bouton clair/sombre : branché par un script inline, sans bundle. Affiche le mode vers lequel on bascule. */
+export function Theme({ lang }: { lang: Lang }) {
+  const d = t(lang);
+  return (
+    <>
+      <button
+        type="button"
+        data-theme-toggle=""
+        data-clair={d.modeClair}
+        data-sombre={d.modeSombre}
+        aria-pressed="false"
+        aria-label={d.changerLangue === "Changer de langue" ? "Changer de thème" : "تغيير المظهر"}
+        className="min-h-9 whitespace-nowrap rounded-full border border-rule px-3 text-xs font-semibold text-muted hover:text-ink"
+      >
+        {d.modeSombre}
+      </button>
+      <script dangerouslySetInnerHTML={{ __html: SCRIPT_THEME_BOUTON }} />
+    </>
+  );
+}
+
+/** Barre blanche du haut : marque, lien optionnel, thème, bascule de langue. */
 export function Barre({ lang, chemin, children }: { lang: Lang; chemin: string; children?: ReactNode }) {
   return (
     <div className="mx-auto flex max-w-2xl items-center justify-between gap-3 px-4 py-3">
       <Marque lang={lang} />
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {children}
+        <Theme lang={lang} />
         <Langue lang={lang} chemin={chemin} />
       </div>
     </div>
   );
+}
+
+/** Avertissement de non-responsabilité, au pied de chaque page publique. */
+export function Avertissement({ lang }: { lang: Lang }) {
+  return <p className="mt-10 border-t border-rule pt-4 text-sm text-muted">{t(lang).avertissement}</p>;
 }
 
 /** La bande verte : la signature. Pleine sur l'accueil et les pages wilaya, filet de 6 px ailleurs. */
@@ -107,16 +139,7 @@ export function Pastille({ lang, maj, f }: { lang: Lang } & Pick<Fiche, "maj" | 
   return (
     <span className={`inline-flex items-center gap-2 rounded-sm px-2 py-1 text-xs ${data(lang)} ${tone}`}>
       <span aria-hidden="true" className="size-2 rounded-full bg-current" />
-      <span>{d.verifieLe(dateLoc(lang, maj), d.age(f.jours))}</span>
-    </span>
-  );
-}
-
-/** Badge « Agréé par l'État » : plein vert, uniquement si la colonne `agree` de la fiche est renseignée. */
-export function Agree({ lang }: { lang: Lang }) {
-  return (
-    <span className={`inline-flex items-center gap-1.5 bg-vert px-2 py-1 text-[11px] font-bold text-paper ${etq(lang)}`}>
-      <span aria-hidden="true">✓</span> {t(lang).agree}
+      <span>{d.majLe(dateLoc(lang, maj), d.age(f.jours))}</span>
     </span>
   );
 }
@@ -135,10 +158,7 @@ export function Entree({ lang, p, compact = false, sansCommune = false }: { lang
   const d = t(lang);
   return (
     <article>
-      <span className="flex flex-wrap items-center gap-2">
-        <Pastille lang={lang} maj={p.maj} f={p.f} />
-        {p.agree && <Agree lang={lang} />}
-      </span>
+      <Pastille lang={lang} maj={p.maj} f={p.f} />
       <h3 dir="auto" className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
       {((p.commune && !sansCommune) || p.type !== "Point de collecte") && (
         <p dir="auto" className="text-sm text-muted">

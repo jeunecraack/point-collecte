@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { SCRIPT_THEME_TETE } from "@/lib/theme";
 
 const site = process.env.NEXT_PUBLIC_SITE_URL;
 
@@ -21,7 +22,10 @@ export const viewport: Viewport = {
 // Arabe d'abord : racine RTL ; les routes /fr posent dir="ltr" lang="fr" sur leur conteneur.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: SCRIPT_THEME_TETE }} />
+      </head>
       <body>{children}</body>
     </html>
   );

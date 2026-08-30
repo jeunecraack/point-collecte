@@ -5,7 +5,7 @@ import { WILAYAS } from "@/lib/wilayas";
 import type { Fiche } from "@/lib/fiches";
 import { propsWilaya, type PropsWilaya as Props } from "@/lib/props";
 import { dateLoc, dir, etq, lien, nomWilaya, t } from "@/lib/i18n";
-import { Bande, BandeauUrgence, Barre, Entree, Silence, btnContour } from "@/lib/ui";
+import { Avertissement, Bande, BandeauUrgence, Barre, Entree, Silence, btnContour } from "@/lib/ui";
 
 // Page servie sans un octet de JavaScript : adresses lisibles dès le premier paquet.
 export const config: PageConfig = { unstable_runtimeJS: false };
@@ -97,7 +97,7 @@ export default function PageWilaya({ w, points, lang }: Props) {
             </div>
           </div>
           <p className="mt-3 text-sm text-white/90">
-            {n === 0 ? d.aucunPoint : `${d.nPoints(n)}${derniere ? ` · ${d.derniereVerif(dateLoc(lang, derniere))}` : ""}`}
+            {n === 0 ? d.aucunPoint : `${d.nPoints(n)}${derniere ? ` · ${d.derniereMaj(dateLoc(lang, derniere))}` : ""}`}
           </p>
         </Bande>
       </header>
@@ -146,8 +146,11 @@ export default function PageWilaya({ w, points, lang }: Props) {
             ))}
           </>
         )}
-        <footer className="mt-10 border-t border-rule pt-4 text-sm text-muted">
-          {d.footerFiche} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>. {d.rienSansAppel}
+        <footer>
+          <Avertissement lang={lang} />
+          <p className="mt-3 text-sm text-muted">
+            {d.footerFiche} <Link href={lien(lang, "/signaler")} className="text-vert underline">{d.signalezLe}</Link>. {d.rienSansAppel}
+          </p>
         </footer>
       </main>
     </div>

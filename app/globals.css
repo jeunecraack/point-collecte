@@ -29,8 +29,8 @@
   --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
+/* Clair d'abord. Le sombre est un choix explicite (bouton), mémorisé dans localStorage, posé sur <html data-theme="dark"> avant le premier rendu. */
+:root[data-theme="dark"] {
     --color-paper: #0f1913;
     --color-surface: #16241c;
     --color-ink: #eaf2ec;
@@ -45,7 +45,7 @@
     --color-fresh-bg: #16412a;
     --color-warm: #f2c14e;
     --color-warm-bg: #3d2a00;
-  }
+    color-scheme: dark;
 }
 
 @layer base {
@@ -54,11 +54,15 @@
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-text-size-adjust: 100%;
-    color-scheme: light dark;
+    color-scheme: light;
   }
   .font-mono {
     font-variant-numeric: tabular-nums;
   }
+  /* Emblème : couleur en clair, blanc en sombre. Deux <img>, l'une masquée. */
+  .emb-sombre { display: none; }
+  :root[data-theme="dark"] .emb-clair { display: none; }
+  :root[data-theme="dark"] .emb-sombre { display: inline; }
   a {
     text-underline-offset: 4px;
   }

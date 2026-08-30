@@ -4,7 +4,7 @@ import Link from "next/link";
 import { WILAYAS } from "@/lib/wilayas";
 import { propsAccueil, type PropsAccueil as Props } from "@/lib/props";
 import { dir, etq, etqLarge, lien, nomWilaya, t } from "@/lib/i18n";
-import { Bande, BandeauUrgence, Barre, Pastille } from "@/lib/ui";
+import { Avertissement, Bande, BandeauUrgence, Barre, Pastille } from "@/lib/ui";
 
 export const config: PageConfig = { unstable_runtimeJS: false };
 
@@ -99,6 +99,7 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
             ))}
           </ul>
         </details>
+        <Avertissement lang={lang} />
       </main>
     </div>
   );

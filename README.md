@@ -47,7 +47,16 @@ page en français. La bascule est un lien ; aucune détection automatique.
 ```
 
 Textes de l'interface dans `lib/i18n.ts` (`T.ar`, `T.fr`). Les données des
-fiches restent dans leur langue d'origine (`dir="auto"`).
+fiches restent dans leur langue d'origine (`dir="auto"`). Mode clair par
+défaut ; bouton « Mode sombre » mémorisé dans le navigateur (script inline,
+pas de bundle).
+
+### Assistant
+
+Matching déterministe (`lib/match.ts`) : nom de wilaya en français, arabe
+ou alias, `w15`, `wilaya 15`, ou simplement `15`. L'assistant retient la
+wilaya d'un message à l'autre et propose l'étape suivante en boutons
+(wilayas couvertes, « quoi donner à … », « bénévole à … », « signaler »).
 
 ### Doublons
 
@@ -77,8 +86,8 @@ Les en-têtes des bénévoles sont aussi acceptés : `Wilaya` (nom ou numéro)
 `Localisation Maps` → `maps`, `Agree` (OUI/NON) → `agree`, `Date` → `maj`,
 `Vérifié par` → `source`. Détail dans [`DONNEES.md`](DONNEES.md).
 
-`agree` : « oui » (ou n'importe quoi sauf vide, `non`, `no`, `0`) affiche le
-badge vert « Agréé par l'État » sur la fiche. `code` 1–58 et `nom` ≥ 3 caractères sont obligatoires. `maj` (`AAAA-MM-JJ`)
+`agree` est lu mais jamais affiché : le site ne certifie rien (avertissement
+de non-responsabilité au pied de chaque page). `code` 1–58 et `nom` ≥ 3 caractères sont obligatoires. `maj` (`AAAA-MM-JJ`)
 et `source` sont facultatives : une fiche datée disparaît après 9 jours,
 une fiche sans date est affichée « non datée » et reste jusqu'à ce que la
 ligne soit retirée. Une ligne invalide est ignorée et apparaît dans

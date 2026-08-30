@@ -6,7 +6,8 @@ import { analyser } from "@/lib/match";
 import type { Wilaya } from "@/lib/wilayas";
 import type { Fiche, ParWilaya } from "@/lib/fiches";
 import { type Lang, dir, lien, nomWilaya, t } from "@/lib/i18n";
-import { Bande, Barre, Entree, Silence, btnContour } from "@/lib/ui";
+import { WILAYAS } from "@/lib/wilayas";
+import { Avertissement, Bande, Barre, Entree, Silence, btnContour } from "@/lib/ui";
 
 /**
  * Invariant 1 : espace de sortie fermé. Un message est soit un texte écrit dans lib/i18n.ts,
@@ -19,57 +20,88 @@ type Reponse = {
   fiches?: Fiche[];
   silence?: true;
   lien?: { href: string; label: string };
+  /** Messages proposés après cette réponse : l'étape suivante en un geste. */
+  propositions: string[];
 };
 type Message = { role: "user"; texte: string } | ({ role: "assistant" } & Reponse);
 
-function repondre(lang: Lang, q: string, par: ParWilaya): Reponse {
+/** Wilayas couvertes, comme propositions quand on ne sait pas encore où est la personne. */
+const couvertes = (lang: Lang, par: ParWilaya) =>
+  WILAYAS.filter((w) => par[w.code]).slice(0, 6).map((w) => nomWilaya(lang, w));
+
+/**
+ * `memo` : la wilaya du message précédent. « 15 » puis « quoi donner » → besoins à Tizi Ouzou.
+ * Une wilaya citée dans le message courant remplace toujours la mémoire.
+ */
+function repondre(lang: Lang, q: string, par: ParWilaya, memo: Wilaya | null): Reponse & { wilaya?: Wilaya } {
   const d = t(lang);
-  const { wilaya, intention } = analyser(q);
+  const a = analyser(q);
+  const wilaya = a.wilaya ?? memo ?? undefined;
+  const intention = a.intention;
   const nom = wilaya ? nomWilaya(lang, wilaya) : "";
   const fiches = wilaya ? (par[wilaya.code] ?? []) : [];
   const versWilaya = wilaya ? { href: lien(lang, `/${wilaya.code}`), label: d.pageWilaya(nom) } : undefined;
+  const sansWilaya = (texte: string): Reponse => ({ texte, propositions: [...couvertes(lang, par), ...d.propGenerales().slice(0, 1)] });
 
   const points = (): Reponse => {
-    if (!wilaya) return { texte: d.demandeWilaya };
-    if (!fiches.length) return { texte: d.rienA(nom), wilaya, silence: true, lien: versWilaya };
-    return { texte: d.pointsA(fiches.length, nom), wilaya, fiches, lien: versWilaya };
+    if (!wilaya) return sansWilaya(d.demandeWilaya);
+    if (!fiches.length) return { texte: d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() };
+    return { texte: d.pointsA(fiches.length, nom), wilaya, fiches, lien: versWilaya, propositions: d.propApresPoints(nom) };
   };
 
   // « urgence » est testée en premier : « le feu chez moi » reçoit le 14, pas une liste.
   switch (intention) {
     case "urgence":
-      return { texte: d.urgenceReponse, urgences: true };
+      return { texte: d.urgenceReponse, urgences: true, wilaya, propositions: wilaya ? d.propWilaya(nom).slice(0, 2) : couvertes(lang, par) };
 
     case "quoi": {
       const besoins = [...new Set(fiches.flatMap((p) => p.besoins.split(",")).map((b) => b.trim()).filter(Boolean))];
-      if (wilaya && besoins.length) return { texte: d.besoinsA(nom, besoins.join(", ")), wilaya, fiches, lien: versWilaya };
-      return { texte: d.quoiGenerique + (wilaya ? d.rienA(nom) : d.demandeWilaya) };
+      if (wilaya && besoins.length) return { texte: d.besoinsA(nom, besoins.join(", ")), wilaya, fiches, lien: versWilaya, propositions: d.propApresPoints(nom).slice(1) };
+      if (wilaya && fiches.length) return { ...points(), texte: d.quoiGenerique + d.pointsA(fiches.length, nom) };
+      return wilaya ? { texte: d.quoiGenerique + d.rienA(nom), wilaya, silence: true, lien: versWilaya, propositions: d.propApresVide() } : sansWilaya(d.quoiGenerique + d.demandeWilaya);
     }
 
     case "argent":
-      return { texte: d.argent };
+      return { texte: d.argent, wilaya, propositions: wilaya ? d.propWilaya(nom) : d.propGenerales() };
 
     case "sang":
-      return { texte: d.sang };
+      return { texte: d.sang, wilaya, propositions: wilaya ? d.propWilaya(nom) : d.propGenerales() };
 
     case "benevole": {
-      const base = wilaya ? points() : { texte: d.demandeWilaya };
+      const base = wilaya ? points() : sansWilaya(d.demandeWilaya);
       return { ...base, texte: d.benevole + base.texte };
     }
 
     case "ajouter":
-      return { texte: d.ajouter, lien: { href: lien(lang, "/signaler"), label: d.signalerPoint } };
+      return { texte: d.ajouter, wilaya, lien: { href: lien(lang, "/signaler"), label: d.signalerPoint }, propositions: wilaya ? d.propWilaya(nom).slice(0, 2) : [] };
 
     case "ou":
     case null:
     default:
+      // Wilaya seule (« 15 », « بجاية ») : on montre les points et on propose la suite.
       return points();
   }
+}
+
+/** Messages proposés : un geste au lieu d'une phrase. Le texte est renvoyé tel quel dans le matching. */
+function Propositions({ items, onChoix }: { items: string[]; onChoix: (s: string) => void }) {
+  return (
+    <ul className="mt-4 flex flex-wrap gap-2">
+      {items.map((s) => (
+        <li key={s}>
+          <button type="button" onClick={() => onChoix(s)} className="min-h-11 rounded-full border-[1.5px] border-vert px-4 text-sm font-medium text-vert hover:bg-vert-pale">
+            {s}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya }) {
   const d = t(lang);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [memo, setMemo] = useState<Wilaya | null>(null);
   const [texte, setTexte] = useState("");
   const fin = useRef<HTMLDivElement>(null);
   const zone = useRef<HTMLTextAreaElement>(null);
@@ -82,7 +114,9 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
   const envoyer = (q: string) => {
     const s = q.trim();
     if (!s) return;
-    setMessages((m) => [...m, { role: "user", texte: s }, { role: "assistant", ...repondre(lang, s, par) }]);
+    const r = repondre(lang, s, par, memo);
+    if (r.wilaya) setMemo(r.wilaya);
+    setMessages((m) => [...m, { role: "user", texte: s }, { role: "assistant", ...r }]);
     setTexte("");
     zone.current?.focus();
   };
@@ -108,15 +142,7 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
           <div className="pt-6">
             <h1 className="text-lg font-extrabold tracking-tight">{d.assistant}</h1>
             <p className="mt-2 max-w-prose leading-relaxed text-muted">{d.introAssistant}</p>
-            <ul className="mt-5 flex flex-wrap gap-2">
-              {d.suggestions.map((s) => (
-                <li key={s}>
-                  <button type="button" onClick={() => envoyer(s)} className="min-h-11 rounded-full border-[1.5px] border-vert px-4 text-sm font-medium text-vert hover:bg-vert-pale">
-                    {s}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <Propositions items={[...couvertes(lang, par), ...d.suggestions]} onChoix={envoyer} />
           </div>
         )}
 
@@ -146,11 +172,13 @@ export default function Assistant({ lang, par }: { lang: Lang; par: ParWilaya })
                 )}
                 {m.silence && m.wilaya && <div className="mt-3"><Silence lang={lang} nom={nomWilaya(lang, m.wilaya)} /></div>}
                 {m.lien && <Link href={m.lien.href} className={`mt-3 text-sm ${btnContour}`}>{m.lien.label} →</Link>}
+                {i === messages.length - 1 && m.propositions.length > 0 && <Propositions items={m.propositions} onChoix={envoyer} />}
               </li>
             ),
           )}
         </ol>
         <div ref={fin} />
+        {messages.length === 0 && <Avertissement lang={lang} />}
       </div>
 
       <form onSubmit={onSubmit} className="border-t border-rule bg-paper px-4 pt-3" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>

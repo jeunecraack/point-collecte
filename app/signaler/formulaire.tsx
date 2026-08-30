@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { WILAYAS } from "@/lib/wilayas";
 import { type Lang, dir, etq, lien, nomWilaya, t } from "@/lib/i18n";
-import { Bande, Barre, btnPlein } from "@/lib/ui";
+import { Avertissement, Bande, Barre, btnPlein } from "@/lib/ui";
 import { signaler } from "./actions";
 
 const champ = "mt-1 block w-full border border-rule bg-paper px-3 py-2.5 text-[16px] outline-none focus:border-vert focus:ring-[3px] focus:ring-vert-pale";
@@ -77,7 +77,8 @@ export function Formulaire({ lang, sp }: { lang: Lang; sp: Record<string, string
 
           <button type="submit" className={`${btnPlein} w-full sm:w-auto`}>{d.envoyerVerif}</button>
         </form>
-        <p className="mt-8 text-sm text-muted">
+        <Avertissement lang={lang} />
+        <p className="mt-3 text-sm text-muted">
           <Link href={lien(lang, "/")} className="text-vert underline">{d.toutesWilayas}</Link>
         </p>
       </main>

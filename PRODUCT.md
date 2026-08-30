@@ -50,11 +50,13 @@ l'avance dans le code, soit une fiche issue du dataset. Il n'existe aucun
 chemin par lequel le système peut produire une adresse, un numéro ou un
 horaire qui ne figure pas dans les données. Aucune génération de texte.
 
-**2. Provenance visible.** *(assoupli le 2026-08-30, décision du
-propriétaire : le Sheet des bénévoles n'a pas de colonne source.)* La
-source est affichée quand elle existe. La règle humaine reste : un point
-n'est publiable qu'après un appel où quelqu'un a décroché et confirmé
-l'adresse et les horaires.
+**2. Aucune certification, aucune responsabilité.** *(décision du
+propriétaire, 2026-08-30.)* Le site recense ce que les bénévoles saisissent
+et le dit : « informations recensées par des bénévoles, à titre indicatif,
+sans garantie ni responsabilité — appelez avant de vous déplacer », au pied
+de chaque page. Aucun badge, aucune mention « vérifié », « certifié » ou
+« agréé ». Une date est une date de mise à jour, pas une garantie. La
+source est affichée quand elle existe.
 
 **3. Dégradation, jamais effondrement.** Une ligne invalide est ignorée,
 les autres passent. Un Google Sheet injoignable ou vidé provoque un repli
@@ -89,7 +91,7 @@ Une seule table, un CSV. Colonnes exactes, en-têtes en minuscules :
 | `tel` | non | zéro initial restauré si Sheets l'a mangé |
 | `horaires` | non | |
 | `besoins` | non | valeurs séparées par des virgules |
-| `agree` | non | non vide (sauf `non`/`no`/`0`) → badge « Agréé par l'État » |
+| `agree` | non | lu (fusion des doublons), **jamais affiché** — pas de certification |
 | `tel2`, `tel3` | non | numéros supplémentaires (`Num2`, `Num3`) |
 | `maps` | non | lien Google Maps uniquement, sinon ignoré |
 | `maj` | non | `AAAA-MM-JJ` strict si renseignée ; vide → fiche « non datée », jamais masquée |
@@ -115,7 +117,8 @@ dans le dépôt comme filet.
 ```
 
 Arabe d'abord : l'URL sans préfixe est en arabe (RTL). Pas de détection de
-langue ; l'URL fait foi. Deux lignes du Sheet décrivant le même point
+langue ; l'URL fait foi. Mode clair par défaut, sombre sur demande (bouton,
+mémorisé dans le navigateur). Deux lignes du Sheet décrivant le même point
 (même nom et commune, ou même numéro) sont fusionnées en une fiche.
 
 `revalidate: 60` sur les pages de données. Une correction dans le Sheet
@@ -128,6 +131,8 @@ Testables, à automatiser.
 - `bun test` passe, dont les 22 assertions de `lib/match.test.ts`.
 - Un CSV contenant 4 lignes valides et 4 lignes cassées sert 4 fiches et
   liste 4 rejets. Le site ne renvoie pas d'erreur.
+- `findWilaya("15")` → 15 : un nombre seul suffit ; l'assistant retient la
+  wilaya d'un message à l'autre et propose l'étape suivante en boutons.
 - `SHEET_CSV_URL` pointant vers une URL morte → les fiches du dépôt sont
   servies, un `console.error` est émis.
 - Un Sheet syntaxiquement valide mais vide → repli sur le dépôt.
