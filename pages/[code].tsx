@@ -5,7 +5,7 @@ import { WILAYAS } from "@/lib/wilayas";
 import type { Fiche } from "@/lib/fiches";
 import { propsWilaya, type PropsWilaya as Props } from "@/lib/props";
 import { dateLoc, dir, etq, lien, nomWilaya, t } from "@/lib/i18n";
-import { Avertissement, Bande, BandeauUrgence, Barre, Entree, Silence, btnContour } from "@/lib/ui";
+import { Avertissement, Bande, BandeauUrgence, Barre, Entree, Silence, btnContour, puceVive } from "@/lib/ui";
 
 // Page servie sans un octet de JavaScript : adresses lisibles dès le premier paquet.
 export const config: PageConfig = { unstable_runtimeJS: false };
@@ -120,9 +120,9 @@ export default function PageWilaya({ w, points, lang }: Props) {
                 <ul className="mt-2 flex flex-wrap gap-2">
                   {groupes.map(([c, fs]) => (
                     <li key={c}>
-                      <a href={`#${ancre(c)}`} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-rule px-3 text-sm hover:border-vert hover:text-vert">
+                      <a href={`#${ancre(c)}`} className={`${puceVive} min-h-9 px-3`}>
                         <span dir="auto">{c || d.communeInconnue}</span>
-                        <span className="font-mono text-xs text-muted">{fs.length}</span>
+                        <span className="font-mono text-xs font-bold text-signal-text">{fs.length}</span>
                       </a>
                     </li>
                   ))}
@@ -132,9 +132,9 @@ export default function PageWilaya({ w, points, lang }: Props) {
             {groupes.map(([c, fs]) => (
               <section key={c} id={groupes.length > 1 ? ancre(c) : undefined} className="scroll-mt-4">
                 {groupes.length > 1 && (
-                  <h2 className={`mt-8 flex items-baseline gap-2 border-b-2 border-vert pb-1 text-base font-extrabold ${lang === "fr" ? "uppercase tracking-wide" : ""}`}>
+                  <h2 className={`mt-8 flex items-baseline gap-2 border-b-2 border-signal-text pb-1 text-base font-extrabold ${lang === "fr" ? "uppercase tracking-wide" : ""}`}>
                     <span dir="auto">{c || d.communeInconnue}</span>
-                    <span className="text-xs font-normal text-muted tabular-nums">{d.nPointsCourt(fs.length)}</span>
+                    <span className="text-xs font-normal text-signal-text tabular-nums">{d.nPointsCourt(fs.length)}</span>
                   </h2>
                 )}
                 <ol className="divide-y divide-rule">

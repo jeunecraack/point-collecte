@@ -127,14 +127,8 @@ export function BandeauUrgence({ lang, compact = false }: { lang: Lang; compact?
 /** Pastille de fraîcheur. Une fiche « perime » n'arrive jamais ici : elle est exclue en amont. */
 export function Pastille({ lang, maj, f }: { lang: Lang } & Pick<Fiche, "maj" | "f">) {
   const d = t(lang);
-  if (f.niveau === "perime") return null;
-  if (f.niveau === "inconnu")
-    return (
-      <span className={`inline-flex items-center gap-2 rounded-sm bg-surface px-2 py-1 text-xs text-muted ${data(lang)}`}>
-        <span aria-hidden="true" className="size-2 rounded-full border border-current" />
-        <span>{d.nonDate}</span>
-      </span>
-    );
+  // Sans date : rien. Une pastille « non renseignée » n'apportait qu'un aveu, pas une information.
+  if (f.niveau === "perime" || f.niveau === "inconnu") return null;
   const tone = f.niveau === "frais" ? "bg-fresh-bg text-fresh" : "bg-warm-bg text-warm";
   return (
     <span className={`inline-flex items-center gap-2 rounded-sm px-2 py-1 text-xs ${data(lang)} ${tone}`}>
@@ -156,10 +150,11 @@ function Ligne({ lang, label, children }: { lang: Lang; label: string; children:
 /** Une entrée du registre. Tout ce qui est affiché vient de la fiche, rien d'autre. `dir="auto"` : chaque texte suit sa propre langue. */
 export function Entree({ lang, p, compact = false, sansCommune = false }: { lang: Lang; p: Fiche; compact?: boolean; sansCommune?: boolean }) {
   const d = t(lang);
+  const pastille = <Pastille lang={lang} maj={p.maj} f={p.f} />;
   return (
-    <article>
-      <Pastille lang={lang} maj={p.maj} f={p.f} />
-      <h3 dir="auto" className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
+    <article className="border-s-[3px] border-signal-text ps-3">
+      {pastille}
+      <h3 dir="auto" className={`font-extrabold leading-snug tracking-tight ${p.f.niveau === "inconnu" ? "" : "mt-3"} ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
       {((p.commune && !sansCommune) || p.type !== "Point de collecte") && (
         <p dir="auto" className="text-sm text-muted">
           {[p.type !== "Point de collecte" ? p.type : "", sansCommune ? "" : p.commune].filter(Boolean).join(" · ")}
@@ -226,6 +221,8 @@ export function Silence({ lang, nom }: { lang: Lang; nom: string }) {
 /** Boutons : un seul plein par écran, les autres en contour. Jamais rouges. */
 export const btnPlein = "inline-block min-h-11 bg-vert px-4 py-3 font-semibold text-paper hover:bg-vert-deep";
 export const btnContour = "inline-block min-h-11 border-[1.5px] border-vert px-4 py-2.5 font-semibold text-vert hover:bg-vert-pale";
+/** Puce vive : trait rouge, remplissage rouge au survol. Pour les choix (communes, propositions), jamais pour l'urgence. */
+export const puceVive = "inline-flex min-h-11 items-center gap-1.5 rounded-full border-[1.5px] border-signal-text px-4 text-sm font-medium text-ink hover:bg-signal hover:text-white";
 
 /** Page introuvable, bilingue, partagée entre pages/404 et app/not-found. Même perdu, on trouve le 14. */
 export function PageIntrouvable() {

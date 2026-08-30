@@ -51,7 +51,7 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
             <ol className="mt-2 divide-y divide-rule border-y border-rule">
               {couvertes.map(({ w, n, maj, f }) => (
                 <li key={w.code}>
-                  <Link href={lien(lang, `/${w.code}`)} className="flex items-start gap-4 border-s-4 border-transparent py-3 ps-2 hover:border-vert hover:bg-surface">
+                  <Link href={lien(lang, `/${w.code}`)} className="flex items-start gap-4 border-s-4 border-transparent py-3 ps-2 hover:border-signal-text hover:bg-surface">
                     <span aria-hidden="true" dir="ltr" className="w-12 shrink-0 font-mono text-3xl font-bold leading-none tracking-tighter">{w.code}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold leading-tight">
@@ -76,18 +76,18 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
         </section>
 
         <section className="mt-10 grid gap-3 sm:grid-cols-2">
-          <Link href={lien(lang, "/assistant")} className="block border-[1.5px] border-vert p-4 hover:bg-vert-pale">
+          <Link href={lien(lang, "/assistant")} className="block border-2 border-signal-text p-4 hover:bg-signal hover:text-white [&:hover_span]:text-white">
             <span className="block font-semibold">{d.poserQuestion}</span>
             <span className="mt-1 block text-sm text-muted">{d.poserQuestionNote}</span>
           </Link>
-          <Link href={lien(lang, "/signaler")} className="block border border-rule p-4 hover:bg-surface">
+          <Link href={lien(lang, "/signaler")} className="block border-2 border-vert p-4 hover:bg-vert-pale">
             <span className="block font-semibold">{d.signalerPoint}</span>
             <span className="mt-1 block text-sm text-muted">{d.signalerPointNote}</span>
           </Link>
         </section>
 
         <details className="mt-10">
-          <summary className={`cursor-pointer text-xs text-muted ${etq(lang)}`}>{d.toutes58}</summary>
+          <summary className={`inline-block cursor-pointer border-b-2 border-signal-text pb-1 text-xs text-ink ${etq(lang)}`}>{d.toutes58}</summary>
           <ul className="mt-3 grid grid-cols-2 gap-x-4 sm:grid-cols-3">
             {WILAYAS.map((w) => (
               <li key={w.code}>

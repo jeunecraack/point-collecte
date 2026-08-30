@@ -7,7 +7,7 @@ import type { Wilaya } from "@/lib/wilayas";
 import type { Fiche, ParWilaya } from "@/lib/fiches";
 import { type Lang, dir, lien, nomWilaya, t } from "@/lib/i18n";
 import { WILAYAS } from "@/lib/wilayas";
-import { Avertissement, Bande, Barre, Entree, Silence, btnContour } from "@/lib/ui";
+import { Avertissement, Bande, Barre, Entree, Silence, btnContour, puceVive } from "@/lib/ui";
 
 /**
  * Invariant 1 : espace de sortie fermé. Un message est soit un texte écrit dans lib/i18n.ts,
@@ -89,7 +89,7 @@ function Propositions({ items, onChoix }: { items: string[]; onChoix: (s: string
     <ul className="mt-4 flex flex-wrap gap-2">
       {items.map((s) => (
         <li key={s}>
-          <button type="button" onClick={() => onChoix(s)} className="min-h-11 rounded-full border-[1.5px] border-vert px-4 text-sm font-medium text-vert hover:bg-vert-pale">
+          <button type="button" onClick={() => onChoix(s)} className={puceVive}>
             {s}
           </button>
         </li>

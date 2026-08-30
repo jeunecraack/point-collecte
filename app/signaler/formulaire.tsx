@@ -62,7 +62,7 @@ export function Formulaire({ lang, sp }: { lang: Lang; sp: Record<string, string
             <input id="besoins" name="besoins" className={champ} autoComplete="off" />
           </div>
 
-          <fieldset className="border-t border-rule pt-4">
+          <fieldset className="border-t-2 border-signal-text pt-4">
             <legend className={`text-xs text-muted ${etq(lang)}`}>{d.personneSurPlace}</legend>
             <p className="mt-1 text-sm text-muted">{d.personneNote}</p>
             <div className="mt-3">

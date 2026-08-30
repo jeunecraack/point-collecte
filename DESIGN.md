@@ -61,11 +61,17 @@ croissant ni d'étoile : on prend les couleurs, pas l'emblème d'État.
 | `vert-deep` | `#014A27` | `#9BE0B7` | survol des boutons |
 | `vert-pale` | `#E3F1E8` | `#16412A` | anneau de focus, survol des contours |
 | `signal` | `#D21034` | `#B30E2C` | bandeau d'urgence — le seul rouge |
-| `signal-text` | `#D21034` | `#FF5C72` | numéros d'urgence dans l'assistant |
+| `signal-text` | `#D21034` | `#FF5C72` | **rouge vif en trait** : bordures des puces (communes, propositions), filet des fiches, cartes d'action, soulignés ; numéros d'urgence dans l'assistant. Jamais en aplat hors bandeau |
 | `fresh` / `fresh-bg` | `#014A27` / `#E3F1E8` | `#6FCF97` / `#16412A` | vérifié il y a ≤ 2 jours |
 | `warm` / `warm-bg` | `#8A5A00` / `#FBEBC2` | `#F2C14E` / `#3D2A00` | vérifié il y a 3 à 9 jours |
 
-Au-delà de 9 jours il n'y a pas de couleur : la fiche n'existe plus.
+Au-delà de 9 jours il n'y a pas de couleur : la fiche n'existe plus ; sans
+date, pas de pastille du tout.
+
+Vivacité : le rouge est autorisé en **trait** (1,5–3 px) sur les composants
+qu'on touche — puces, cartes, filets — et se remplit au survol. Le seul aplat
+rouge reste le bandeau d'urgence : c'est ce qui le garde reconnaissable.
+
 **Clair d'abord.** Le sombre est un choix explicite : bouton « Mode sombre »
 dans la barre, mémorisé dans `localStorage`, appliqué par un script inline
 de quelques octets avant le premier rendu (`lib/theme.ts`). Pas de
