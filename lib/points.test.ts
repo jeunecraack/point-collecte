@@ -61,9 +61,12 @@ test("date renseignée mais mal formée → rejet ; vide → non datée, jamais 
   expect(fraicheur("").niveau).toBe("inconnu");
 });
 
-test("lien Maps hors domaine Google → vidé", () => {
-  const csv = "code,nom,maps,maj,source\n06,PLACEHOLDER,javascript:alert(1),2026-08-30,PLACEHOLDER\n";
-  expect(parserCsv(csv, "repo").points["06"]?.[0]?.maps).toBe("");
+test("lien Maps : seuls les domaines Google, ancrés", () => {
+  const lire = (u: string) => parserCsv(`code,nom,maps\n06,PLACEHOLDER,${u}\n`, "repo").points["06"]![0].maps;
+  for (const u of ["https://maps.app.goo.gl/x", "https://www.google.com/maps/place/x", "https://google.dz/maps/x", "https://goo.gl/maps/x", "https://maps.google.com/x"])
+    expect(lire(u)).toBe(u);
+  for (const u of ["https://www.google.evil.com/maps/x", "https://maps.google.attacker.io/x", "https://maps.app.goo.gl.evil.com/x", "javascript:alert(1)", "http://maps.app.goo.gl/x", "https://example.com/?u=https://maps.app.goo.gl/"])
+    expect(lire(u)).toBe("");
 });
 
 test("cellule Wilaya fusionnée : les lignes vides héritent de la précédente", () => {

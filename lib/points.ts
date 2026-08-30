@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import Papa from "papaparse";
@@ -5,6 +6,9 @@ import { z } from "zod";
 import { findWilaya } from "./match";
 
 const str = (d = "") => z.string().trim().default(d);
+
+const MAPS =
+  /^https:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.)?google\.(com|dz|fr|co\.uk)\/maps|maps\.google\.(com|dz|fr))\//i;
 
 const PointSchema = z.object({
   code: z
@@ -20,8 +24,8 @@ const PointSchema = z.object({
   tel: str().transform(normaliserTel),
   tel2: str().transform(normaliserTel),
   tel3: str().transform(normaliserTel),
-  // Lien Google Maps : accepté seulement sur les domaines Maps, sinon ignoré.
-  maps: str().transform((v) => (/^https:\/\/(maps\.app\.goo\.gl|goo\.gl\/maps|(www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+)\//i.test(v) ? v : "")),
+  // Lien Google Maps : hôtes explicites, ancrés jusqu'au « / ». `google\.[a-z.]+` acceptait google.evil.com.
+  maps: str().transform((v) => (MAPS.test(v) ? v : "")),
   horaires: str(),
   besoins: str(),
   // Colonne `agree` (ou `agréé`) : toute valeur sauf vide / non / no / 0 → badge « Agréé par l'État ».
@@ -124,7 +128,10 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
 }
 
 async function lireRepo(): Promise<Rapport> {
-  const p = path.join(process.cwd(), "data", "points.csv");
+  // L'instantané quotidien du Sheet (.github/workflows/snapshot.yml) est le vrai filet ;
+  // data/points.csv (placeholders) ne sert qu'en son absence.
+  const snap = path.join(process.cwd(), "data", "sheet-snapshot.csv");
+  const p = existsSync(snap) ? snap : path.join(process.cwd(), "data", "points.csv");
   return parserCsv(await readFile(p, "utf8"), "repo");
 }
 
