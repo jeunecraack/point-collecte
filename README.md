@@ -52,10 +52,11 @@ le runtime App Router). L'interactif reste dans `app/`.
 Un seul CSV, en-têtes en minuscules :
 
 ```
-code, nom, type, commune, adresse, tel, horaires, besoins, maj, source
+code, nom, type, commune, adresse, tel, horaires, besoins, agree, maj, source
 ```
 
-`code` 1–58, `nom` ≥ 3 caractères, `maj` en `AAAA-MM-JJ`, `source` ≥ 4
+`agree` : « oui » (ou n'importe quoi sauf vide, `non`, `no`, `0`) affiche le
+badge vert « Agréé par l'État » sur la fiche. `code` 1–58, `nom` ≥ 3 caractères, `maj` en `AAAA-MM-JJ`, `source` ≥ 4
 caractères (qui a vérifié). Une ligne invalide est ignorée et apparaît
 dans `/admin` avec son numéro de ligne. Une fiche de plus de 9 jours
 n'est pas rendue du tout.

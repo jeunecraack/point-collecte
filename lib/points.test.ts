@@ -12,6 +12,15 @@ test("data/points.csv : 4 lignes valides + 4 cassées → 4 fiches, 4 rejets", (
   expect(r.rejets.map((x) => x.ligne)).toEqual([6, 7, 8, 9]);
   // le zéro initial mangé par Sheets est restauré
   expect(r.points["06"]?.[1]?.tel).toBe("0000000000");
+  // colonne agree : « oui » → true, vide → false
+  expect(r.points["06"]?.[0]?.agree).toBe(true);
+  expect(r.points["06"]?.[1]?.agree).toBe(false);
+});
+
+test("en-têtes accentués et valeurs négatives de agree", () => {
+  const csv = "code,nom,Agréé,maj,source\n06,PLACEHOLDER,non,2026-08-30,PLACEHOLDER\n06,PLACEHOLDER,x,2026-08-30,PLACEHOLDER\n";
+  const r = parserCsv(csv, "repo");
+  expect(r.points["06"]?.map((p) => p.agree)).toEqual([false, true]);
 });
 
 test("fraicheur : 11 jours → perime, donc exclue du rendu", () => {

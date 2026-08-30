@@ -19,6 +19,8 @@ const PointSchema = z.object({
   tel: str().transform(normaliserTel),
   horaires: str(),
   besoins: str(),
+  // Colonne `agree` (ou `agréé`) : toute valeur sauf vide / non / no / 0 → badge « Agréé par l'État ».
+  agree: str().transform((v) => v !== "" && !/^(non|no|false|0|-)$/i.test(v)),
   maj: z
     .string()
     .trim()
@@ -52,7 +54,8 @@ export function parserCsv(texte: string, origine: Rapport["origine"]): Rapport {
   const { data } = Papa.parse<Record<string, string>>(texte, {
     header: true,
     skipEmptyLines: true,
-    transformHeader: (h) => h.trim().toLowerCase(),
+    // « Agréé » → « agree » : les accents des en-têtes sont ignorés.
+    transformHeader: (h) => h.trim().toLowerCase().normalize("NFD").replace(/\p{M}/gu, ""),
   });
 
   const points: ParDept = {};

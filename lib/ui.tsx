@@ -68,6 +68,15 @@ export function Pastille({ maj, f }: Pick<Fiche, "maj" | "f">) {
   );
 }
 
+/** Badge « Agréé par l'État » : uniquement si la colonne `agree` de la fiche est renseignée. */
+export function Agree() {
+  return (
+    <span className="inline-flex items-center gap-1.5 border border-fresh px-2 py-1 font-mono text-xs font-bold uppercase tracking-wider text-fresh">
+      <span aria-hidden="true">✓</span> Agréé par l'État
+    </span>
+  );
+}
+
 function Ligne({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="grid grid-cols-[6.5rem_1fr] items-baseline gap-x-3 py-1">
@@ -81,7 +90,10 @@ function Ligne({ label, children }: { label: string; children: ReactNode }) {
 export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) {
   return (
     <article dir={estArabe(p.nom + p.adresse) ? "rtl" : undefined}>
-      <Pastille maj={p.maj} f={p.f} />
+      <span className="flex flex-wrap items-center gap-2">
+        <Pastille maj={p.maj} f={p.f} />
+        {p.agree && <Agree />}
+      </span>
       <h3 className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
       {(p.commune || p.type !== "Point de collecte") && (
         <p className="text-sm text-muted">

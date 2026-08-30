@@ -86,6 +86,7 @@ Une seule table, un CSV. Colonnes exactes, en-têtes en minuscules :
 | `tel` | non | zéro initial restauré si Sheets l'a mangé |
 | `horaires` | non | |
 | `besoins` | non | valeurs séparées par des virgules |
+| `agree` | non | non vide (sauf `non`/`no`/`0`) → badge « Agréé par l'État » |
 | `maj` | oui | `AAAA-MM-JJ` strict |
 | `source` | oui | ≥ 4 caractères — qui a vérifié |
 
