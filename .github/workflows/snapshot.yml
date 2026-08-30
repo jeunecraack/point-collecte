@@ -1,0 +1,20 @@
+name: snapshot-sheet
+on:
+  schedule:
+    - cron: "0 3 * * *"   # chaque nuit, 03:00 UTC
+  workflow_dispatch: {}
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Télécharger le Sheet
+        run: curl -sfL "https://docs.google.com/spreadsheets/d/1NHAMyZjovSNqKitL7A4khV-FlrRQXoPLi2r9FyLMpbg/export?format=csv" -o data/sheet-snapshot.csv
+      - name: Commiter si changement
+        run: |
+          git config user.name "snapshot"
+          git config user.email "snapshot@users.noreply.github.com"
+          git add data/sheet-snapshot.csv
+          git diff --cached --quiet || (git commit -m "Instantané du Sheet" && git push)

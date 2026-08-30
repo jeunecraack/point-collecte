@@ -27,7 +27,7 @@ Vercel.
 | `REVALIDATE_SECRET` | secret attendu par `POST /api/revalidate` | route désactivée (401) |
 | `ADMIN_SECRET` | mot de passe de `/admin` | page désactivée |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site, pour l'image OG des aperçus WhatsApp | aperçus sans image |
-| `SIGNALEMENT_WEBHOOK_URL` | reçoit les signalements en JSON (Apps Script, Make, Slack…) | les signalements vont dans les logs serveur, préfixe `[signalement]` |
+| `SIGNALEMENT_WEBHOOK_URL` | reçoit les signalements en JSON (voir « Signalements ») | les signalements vont dans les logs Vercel, **nom et téléphone compris** — `/admin` l'affiche en avertissement |
 
 ## Routes
 
@@ -88,8 +88,23 @@ téléphone.**
    (premier onglet ; ajouter `&gid=<id>` pour un autre onglet).
 
 Sheet injoignable, invalide ou vide → repli automatique sur
-`data/points.csv`, avec un `console.error`. Le site n'est jamais pire que
-le dernier état connu comme bon.
+`data/sheet-snapshot.csv` (instantané quotidien pris par
+`.github/workflows/snapshot.yml`, lançable à la main depuis l'onglet
+Actions) ou, à défaut, `data/points.csv`. Un `console.error` est émis. Le
+site n'est jamais pire que le dernier état connu comme bon.
+
+### Sécurité
+
+- Le lien de partage du Sheet doit donner le rôle **Lecteur** ; éditeurs
+  nommés uniquement ; historique des versions actif. C'est la mesure n° 1.
+- `ADMIN_SECRET` et `REVALIDATE_SECRET` : `openssl rand -base64 32`, deux
+  valeurs différentes. Changer `ADMIN_SECRET` révoque toutes les sessions.
+- En-têtes CSP / X-Frame-Options / nosniff / Referrer-Policy dans
+  `next.config.ts` ; comparaisons de secrets en temps constant ; frein de
+  800 ms sur échec de connexion ; cookie admin dérivé du secret (HMAC).
+- Incident « fausse adresse publiée » : Sheet → Historique des versions →
+  restaurer, puis `/admin` → Forcer le rafraîchissement, puis vérifier les
+  éditeurs.
 
 ### Rafraîchir sans attendre
 
@@ -104,12 +119,42 @@ curl -X POST https://<domaine>/api/revalidate \
 
 ou le bouton de `/admin`.
 
-## Signalements
+## Signalements — circuit de validation
 
-Le formulaire `/signaler` n'écrit jamais dans le dataset. Il envoie un
-JSON à `SIGNALEMENT_WEBHOOK_URL` (ou le loggue). Un bénévole rappelle la
-personne indiquée, confirme adresse et horaires, puis saisit la ligne
-dans le Sheet. Sans cet appel, rien n'est publié.
+Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
+
+1. La personne remplit le formulaire (wilaya, lieu, adresse, horaires,
+   besoins, et surtout le nom et le téléphone de quelqu'un qui répond sur
+   place). Un champ caché piège les robots.
+2. Le serveur valide les champs (zod) et envoie un JSON à
+   `SIGNALEMENT_WEBHOOK_URL`. Sans webhook, il l'écrit dans les logs Vercel.
+3. Un bénévole **appelle** la personne indiquée, confirme l'adresse et les
+   horaires.
+4. Si c'est confirmé, le bénévole **copie la ligne dans le Sheet public**.
+   Elle apparaît sur le site en moins d'une minute (ou tout de suite via
+   `/admin` → Forcer le rafraîchissement). Le numéro de la personne à
+   rappeler n'est jamais publié.
+
+Sans appel, rien n'est publié : la vérification humaine est le seul chemin
+vers le site.
+
+### Brancher le webhook (recommandé avant d'ouvrir le formulaire)
+
+Un second Sheet, **privé**, avec un onglet `signalements`. Extensions →
+Apps Script :
+
+```js
+function doPost(e) {
+  const feuille = SpreadsheetApp.openById("ID_DU_SHEET_PRIVE").getSheetByName("signalements");
+  const d = JSON.parse(e.postData.contents);
+  feuille.appendRow([d.recu, d.code, d.commune, d.nom, d.adresse, d.tel, d.horaires, d.besoins, d.contact_nom, d.contact_tel, "à rappeler"]);
+  return ContentService.createTextOutput("ok");
+}
+```
+
+Déployer → Application web → exécuter en tant que « Moi », accès « Tout
+le monde ». Copier l'URL `…/exec` dans `SIGNALEMENT_WEBHOOK_URL` (Vercel).
+Cette URL est un secret de fait : elle ne va pas dans le dépôt.
 
 ## Déploiement Vercel
 
