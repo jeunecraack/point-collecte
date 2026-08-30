@@ -111,7 +111,7 @@ function Ligne({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /** Une entrée du registre. Tout ce qui est affiché vient de la fiche, rien d'autre. */
-export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) {
+export function Entree({ p, compact = false, sansCommune = false }: { p: Fiche; compact?: boolean; sansCommune?: boolean }) {
   return (
     <article>
       <span className="flex flex-wrap items-center gap-2">
@@ -119,9 +119,9 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
         {p.agree && <Agree />}
       </span>
       <h3 dir={estArabe(p.nom) ? "rtl" : undefined} className={`mt-3 font-extrabold leading-snug tracking-tight ${compact ? "text-lg" : "text-xl"}`}>{p.nom}</h3>
-      {(p.commune || p.type !== "Point de collecte") && (
+      {((p.commune && !sansCommune) || p.type !== "Point de collecte") && (
         <p className="text-sm text-muted">
-          {[p.type !== "Point de collecte" ? p.type : "", p.commune].filter(Boolean).join(" · ")}
+          {[p.type !== "Point de collecte" ? p.type : "", sansCommune ? "" : p.commune].filter(Boolean).join(" · ")}
         </p>
       )}
       {p.adresse && p.adresse !== p.nom && (

@@ -22,9 +22,19 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   return { props: { w, points: visibles(await getPointsWilaya(w.code)) }, revalidate: 60 };
 };
 
+/** Regroupe par commune, ordre alphabétique, « non renseignée » en dernier. L'ordre interne (datées d'abord) est conservé. */
+function parCommune(points: Fiche[]): [string, Fiche[]][] {
+  const m = new Map<string, Fiche[]>();
+  for (const p of points) (m.get(p.commune) ?? m.set(p.commune, []).get(p.commune)!).push(p);
+  return [...m].sort(([a], [b]) => (a === "" ? 1 : b === "" ? -1 : a.localeCompare(b, "fr")));
+}
+
+const ancre = (commune: string) => "c-" + (commune || "autres").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+
 export default function PageWilaya({ w, points }: Props) {
   const n = points.length;
-  const communes = [...new Set(points.map((p) => p.commune).filter(Boolean))];
+  const groupes = parCommune(points);
+  const communes = groupes.map(([c]) => c).filter(Boolean);
   const derniere = points[0]?.maj;
   const description = n
     ? `${pluriel(n, "point")} de collecte à ${w.nom}${communes.length ? ` (${communes.slice(0, 6).join(", ")})` : ""}.${derniere ? ` Dernière vérification le ${dateFr(derniere)}.` : ""} Adresses et téléphones.`
@@ -110,11 +120,38 @@ export default function PageWilaya({ w, points }: Props) {
             <p className="mt-3 text-sm text-muted">On vous rappelle pour vérifier avant de publier.</p>
           </section>
         ) : (
-          <ol className="divide-y divide-rule">
-            {points.map((p, i) => (
-              <li key={i} className="py-6"><Entree p={p} /></li>
+          <>
+            {groupes.length > 1 && (
+              <nav aria-label="Communes" className="border-b border-rule py-4">
+                <p className="font-mono text-[11px] uppercase tracking-wider text-muted">{pluriel(groupes.length, "commune")}</p>
+                <ul className="mt-2 flex flex-wrap gap-2">
+                  {groupes.map(([c, fs]) => (
+                    <li key={c}>
+                      <a href={`#${ancre(c)}`} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-rule px-3 text-sm hover:border-vert hover:text-vert">
+                        {c || "Commune non renseignée"}
+                        <span className="font-mono text-xs text-muted">{fs.length}</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+            {groupes.map(([c, fs]) => (
+              <section key={c} id={groupes.length > 1 ? ancre(c) : undefined} className="scroll-mt-4">
+                {groupes.length > 1 && (
+                  <h2 className="mt-8 flex items-baseline gap-2 border-b-2 border-vert pb-1 text-base font-extrabold uppercase tracking-wide">
+                    {c || "Commune non renseignée"}
+                    <span className="font-mono text-xs font-normal text-muted">{pluriel(fs.length, "point")}</span>
+                  </h2>
+                )}
+                <ol className="divide-y divide-rule">
+                  {fs.map((p, i) => (
+                    <li key={i} className="py-6"><Entree p={p} sansCommune={groupes.length > 1} /></li>
+                  ))}
+                </ol>
+              </section>
             ))}
-          </ol>
+          </>
         )}
         <footer className="mt-10 border-t border-rule pt-4 text-sm text-muted">
           Une adresse a changé, un point a fermé ?{" "}
