@@ -60,7 +60,7 @@ export default function PageWilaya({ w, points }: Props) {
         <title>{`Points de collecte de dons — ${w.nom}`}</title>
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#f1f2f0" />
+        <meta name="theme-color" content="#006233" />
         <link rel="canonical" href={`/${w.code}`} />
         <script
           type="application/ld+json"

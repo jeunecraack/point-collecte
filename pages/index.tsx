@@ -36,7 +36,7 @@ export default function Accueil({ couvertes, total, recentes }: Props) {
         <title>Points de collecte de dons — incendies Algérie</title>
         <meta name="description" content="Où déposer ses dons, maintenant, dans sa wilaya. Adresses vérifiées par téléphone et datées. Numéros d'urgence." />
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-        <meta name="theme-color" content="#f1f2f0" />
+        <meta name="theme-color" content="#006233" />
         <link rel="canonical" href="/" />
       </Head>
 
