@@ -1,2 +1,2 @@
-/** Le formulaire de signalement reste accessible par URL mais n'est proposé nulle part tant que l'admin n'est pas en place. */
-export const SIGNALER_ACTIF = false;
+/** Le formulaire de signalement : proposé partout quand true, accessible seulement par URL quand false. */
+export const SIGNALER_ACTIF = true;
