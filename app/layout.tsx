@@ -25,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_THEME_TETE }} />
+        {process.env.VERCEL && <script defer src="/_vercel/insights/script.js" />}
       </head>
       <body>{children}</body>
     </html>

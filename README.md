@@ -229,6 +229,18 @@ Aucun appel réseau vers un domaine tiers depuis le navigateur : pas de
 police web, pas d'analytics. Seules images : l'emblème couleur (14 Ko) et
 sa version blanche (8 Ko). Mode sombre automatique (`prefers-color-scheme`).
 
+## Trafic et analytics
+
+Le site n'appelle aucun domaine tiers depuis le navigateur (CSP
+`connect-src 'self'`) : pas de Google Analytics. **Vercel Web Analytics**
+est servi par le domaine du site (`/_vercel/insights/script.js`), sans
+cookie ni bannière de consentement. La balise est dans `pages/_document.tsx`
+et `app/layout.tsx`, active seulement quand `VERCEL` est défini (rien en
+local). Pour l'allumer : projet Vercel → onglet **Analytics** → Enable,
+puis redéployer. Les pages vues, référents (Google, WhatsApp = « direct »),
+pays et appareils apparaissent dans cet onglet ; l'onglet **Observability**
+donne les requêtes, les régénérations ISR et les logs.
+
 ## Tests
 
 ```bash

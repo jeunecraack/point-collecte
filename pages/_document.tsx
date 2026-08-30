@@ -7,6 +7,8 @@ export default function Document() {
     <Html lang="ar" dir="rtl">
       <Head>
         <script dangerouslySetInnerHTML={{ __html: SCRIPT_THEME_TETE }} />
+        {/* Vercel Web Analytics : servi par notre propre domaine, sans cookie ; balise manuelle car ces pages n'ont pas de runtime React. Absent en local. */}
+        {process.env.VERCEL && <script defer src="/_vercel/insights/script.js" />}
         <link rel="icon" href="/favicon.ico" sizes="48x48" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta property="og:type" content="website" />
