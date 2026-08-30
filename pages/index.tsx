@@ -51,7 +51,7 @@ export default function Accueil({ couvertes, total, recentes, lang }: Props) {
             <ol className="mt-2 divide-y divide-rule border-y border-rule">
               {couvertes.map(({ w, n, maj, f }) => (
                 <li key={w.code}>
-                  <Link href={lien(lang, `/${w.code}`)} className="flex items-start gap-4 border-s-4 border-transparent py-3 ps-2 hover:border-signal-text hover:bg-surface">
+                  <Link href={lien(lang, `/${w.code}`)} className="flex items-start gap-4 border-s-4 border-signal-text py-3 ps-3 hover:bg-surface">
                     <span aria-hidden="true" dir="ltr" className="w-12 shrink-0 font-mono text-3xl font-bold leading-none tracking-tighter">{w.code}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-semibold leading-tight">
