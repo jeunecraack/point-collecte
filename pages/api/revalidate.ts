@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { WILAYAS } from "@/lib/wilayas";
+import { egal } from "@/lib/secret";
 
 /**
  * POST { secret } → régénère l'accueil, les 58 pages wilaya et l'assistant.
@@ -9,7 +10,8 @@ import { WILAYAS } from "@/lib/wilayas";
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") return res.status(405).end();
   const secret = process.env.REVALIDATE_SECRET;
-  if (!secret || req.body?.secret !== secret) return res.status(401).send("non");
+  const fourni = typeof req.body?.secret === "string" ? req.body.secret : "";
+  if (!secret || !egal(fourni, secret)) return res.status(401).send("non");
 
   const chemins = ["/", "/assistant", ...WILAYAS.map(({ code }) => `/${code}`)];
   const r = await Promise.allSettled(chemins.map((p) => res.revalidate(p)));

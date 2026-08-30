@@ -20,6 +20,8 @@ const Signalement = z.object({
  * dans les logs. Un humain rappelle, vérifie, puis saisit la ligne dans le Sheet.
  */
 export async function signaler(form: FormData) {
+  // Robot : on fait comme si, on jette.
+  if (form.get("site")) redirect("/signaler?envoye=1");
   const r = Signalement.safeParse(Object.fromEntries(form));
   if (!r.success) redirect("/signaler?erreur=1");
 
@@ -33,7 +35,8 @@ export async function signaler(form: FormData) {
     });
     if (!res.ok) console.error("[signaler] webhook", res.status);
   } else {
-    // ponytail: pas de webhook configuré → les logs Vercel font office de file.
+    // ponytail: sans webhook, les logs Vercel sont le seul chemin vers un humain — nom et téléphone compris.
+    // /admin l'affiche en avertissement ; brancher SIGNALEMENT_WEBHOOK_URL (README) avant d'ouvrir le formulaire au public.
     console.log("[signalement]", JSON.stringify(payload));
   }
   redirect("/signaler?envoye=1");

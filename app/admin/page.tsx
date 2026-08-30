@@ -46,6 +46,14 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         <dt className="text-muted">Fiches valides</dt><dd>{rapport.total}</dd>
         <dt className="text-muted">Lignes rejetées</dt><dd>{rapport.rejets.length}</dd>
         <dt className="text-muted">SHEET_CSV_URL</dt><dd>{process.env.SHEET_CSV_URL ? "défini" : "vide"}</dd>
+        <dt className="text-muted">Signalements</dt>
+        <dd>
+          {process.env.SIGNALEMENT_WEBHOOK_URL ? (
+            <span className="inline-flex items-center gap-2 bg-fresh-bg px-2 py-0.5 text-fresh"><span aria-hidden="true" className="size-2 rounded-full bg-current" />webhook branché</span>
+          ) : (
+            <span className="inline-flex items-center gap-2 bg-warm-bg px-2 py-0.5 text-warm"><span aria-hidden="true" className="size-2 rounded-full bg-current" />dans les logs Vercel, avec nom et téléphone — brancher SIGNALEMENT_WEBHOOK_URL</span>
+          )}
+        </dd>
         <dt className="text-muted">Lu le</dt><dd>{new Date().toLocaleString("fr-DZ")}</dd>
       </dl>
 

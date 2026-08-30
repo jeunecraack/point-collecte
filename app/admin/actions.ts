@@ -1,30 +1,33 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { egal, jetonAdmin, origineSite } from "@/lib/secret";
 
-// ponytail: le cookie porte le secret lui-même (httpOnly, secure). Suffisant pour
-// une page interne à quelques bénévoles ; passer à un jeton signé si ça grandit.
 export async function estAdmin() {
   const s = process.env.ADMIN_SECRET;
-  return !!s && (await cookies()).get("admin")?.value === s;
+  const c = (await cookies()).get("admin")?.value ?? "";
+  return !!s && egal(c, jetonAdmin(s));
 }
 
 export async function connexion(form: FormData) {
   const s = process.env.ADMIN_SECRET;
-  if (!s || form.get("secret") !== s) redirect("/admin?refuse=1");
-  (await cookies()).set("admin", s, { httpOnly: true, secure: true, sameSite: "strict", path: "/admin", maxAge: 12 * 3600 });
+  const saisi = String(form.get("secret") ?? "");
+  if (!s || !egal(saisi, s)) {
+    // Frein : chaque échec coûte 800 ms et une invocation. Avec un secret aléatoire de 32 octets, la force brute est hors de portée.
+    await new Promise((r) => setTimeout(r, 800));
+    redirect("/admin?refuse=1");
+  }
+  (await cookies()).set("admin", jetonAdmin(s), { httpOnly: true, secure: true, sameSite: "strict", path: "/admin", maxAge: 12 * 3600 });
   redirect("/admin");
 }
 
-/** Le bouton appelle /api/revalidate, comme le ferait un curl, sans exposer le secret au navigateur. */
+/** Le bouton appelle /api/revalidate sur l'origine de confiance, sans exposer le secret au navigateur. */
 export async function revalider() {
   if (!(await estAdmin())) redirect("/admin?refuse=1");
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) redirect("/admin?revalide=sans-secret");
-  const h = await headers();
-  const origine = `${h.get("x-forwarded-proto") ?? "http"}://${h.get("host")}`;
-  const res = await fetch(`${origine}/api/revalidate`, {
+  const res = await fetch(`${origineSite()}/api/revalidate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ secret }),

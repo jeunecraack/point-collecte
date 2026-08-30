@@ -37,6 +37,11 @@ export default async function Signaler({ searchParams }: { searchParams: Promise
       )}
 
       <form action={signaler} className="mt-6 space-y-4">
+        {/* Pot de miel : invisible pour les humains, rempli par les robots. */}
+        <div className="hidden" aria-hidden="true">
+          <label htmlFor="site">Site web</label>
+          <input id="site" name="site" tabIndex={-1} autoComplete="off" />
+        </div>
         <div>
           <label htmlFor="code" className={label}>Wilaya</label>
           <select id="code" name="code" required className={champ} defaultValue="">
