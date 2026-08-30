@@ -25,8 +25,9 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 export default function PageWilaya({ w, points }: Props) {
   const n = points.length;
   const communes = [...new Set(points.map((p) => p.commune).filter(Boolean))];
+  const derniere = points[0]?.maj;
   const description = n
-    ? `${pluriel(n, "point")} de collecte vérifié${n > 1 ? "s" : ""} à ${w.nom}${communes.length ? ` (${communes.join(", ")})` : ""}. Dernière vérification le ${dateFr(points[0].maj)}. Adresses, horaires et téléphones.`
+    ? `${pluriel(n, "point")} de collecte à ${w.nom}${communes.length ? ` (${communes.slice(0, 6).join(", ")})` : ""}.${derniere ? ` Dernière vérification le ${dateFr(derniere)}.` : ""} Adresses et téléphones.`
     : `Aucun point de collecte vérifié à ${w.nom} pour l'instant. Numéros d'urgence et orientation vers la Protection civile.`;
 
   const jsonLd = {
@@ -91,7 +92,7 @@ export default function PageWilaya({ w, points }: Props) {
           <p className="mt-3 text-sm text-white/90">
             {n === 0
               ? "Aucun point de collecte vérifié pour l'instant."
-              : `${pluriel(n, "point")} de collecte vérifié${n > 1 ? "s" : ""} · dernière vérification le ${dateFr(points[0].maj)}`}
+              : `${pluriel(n, "point")} de collecte${derniere ? ` · dernière vérification le ${dateFr(derniere)}` : ""}`}
           </p>
         </Bande>
       </header>

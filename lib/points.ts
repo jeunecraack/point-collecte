@@ -26,12 +26,10 @@ const PointSchema = z.object({
   besoins: str(),
   // Colonne `agree` (ou `agréé`) : toute valeur sauf vide / non / no / 0 → badge « Agréé par l'État ».
   agree: str().transform((v) => v !== "" && !/^(non|no|false|0|-)$/i.test(v)),
-  maj: z
-    .string()
-    .trim()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date attendue au format AAAA-MM-JJ"),
-  // Provenance obligatoire : un point sans source nommee ne peut pas etre servi.
-  source: z.string().trim().min(4, "source obligatoire : qui a verifie ce point ?"),
+  // Décision du 2026-08-30 : le Sheet des bénévoles n'a ni date ni source.
+  // Vide = accepté et affiché « non daté » ; renseigné = format strict, fraîcheur appliquée.
+  maj: str().refine((v) => v === "" || /^\d{4}-\d{2}-\d{2}$/.test(v), "date attendue au format AAAA-MM-JJ"),
+  source: str(),
 });
 
 export type Point = z.infer<typeof PointSchema>;
@@ -164,6 +162,7 @@ export async function getWilayasCouvertes(): Promise<string[]> {
 
 /** Âge d'une fiche, pour la pastille de fraîcheur. */
 export function fraicheur(maj: string) {
+  if (!maj) return { jours: -1, niveau: "inconnu" as const };
   const jours = Math.floor((Date.now() - new Date(maj).getTime()) / 864e5);
   if (Number.isNaN(jours)) return { jours: -1, niveau: "inconnu" as const };
   if (jours <= 2) return { jours, niveau: "frais" as const };

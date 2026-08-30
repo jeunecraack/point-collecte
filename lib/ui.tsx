@@ -74,7 +74,14 @@ export function BandeauUrgence({ compact = false }: { compact?: boolean }) {
 
 /** Pastille de fraîcheur. Une fiche « perime » n'arrive jamais ici : elle est exclue en amont. */
 export function Pastille({ maj, f }: Pick<Fiche, "maj" | "f">) {
-  if (f.niveau === "perime" || f.niveau === "inconnu") return null;
+  if (f.niveau === "perime") return null;
+  if (f.niveau === "inconnu")
+    return (
+      <span className="inline-flex items-center gap-2 rounded-sm bg-surface px-2 py-1 font-mono text-xs text-muted">
+        <span aria-hidden="true" className="size-2 rounded-full border border-current" />
+        <span>Date de vérification non renseignée</span>
+      </span>
+    );
   const age = f.jours === 0 ? "aujourd'hui" : f.jours === 1 ? "hier" : `il y a ${f.jours} j`;
   const tone = f.niveau === "frais" ? "bg-fresh-bg text-fresh" : "bg-warm-bg text-warm";
   return (
@@ -149,7 +156,7 @@ export function Entree({ p, compact = false }: { p: Fiche; compact?: boolean }) 
             </ul>
           </Ligne>
         )}
-        <Ligne label="Source"><span className="text-sm text-muted">{p.source}</span></Ligne>
+        {p.source && <Ligne label="Source"><span className="text-sm text-muted">{p.source}</span></Ligne>}
       </dl>
     </article>
   );

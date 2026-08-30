@@ -50,10 +50,11 @@ l'avance dans le code, soit une fiche issue du dataset. Il n'existe aucun
 chemin par lequel le système peut produire une adresse, un numéro ou un
 horaire qui ne figure pas dans les données. Aucune génération de texte.
 
-**2. Provenance obligatoire.** Une fiche sans colonne `source` renseignée
-n'est pas servie. Le schéma le rejette à la lecture. La règle humaine
-correspondante : un point n'est publiable qu'après un appel où quelqu'un
-a décroché et confirmé l'adresse et les horaires.
+**2. Provenance visible.** *(assoupli le 2026-08-30, décision du
+propriétaire : le Sheet des bénévoles n'a pas de colonne source.)* La
+source est affichée quand elle existe. La règle humaine reste : un point
+n'est publiable qu'après un appel où quelqu'un a décroché et confirmé
+l'adresse et les horaires.
 
 **3. Dégradation, jamais effondrement.** Une ligne invalide est ignorée,
 les autres passent. Un Google Sheet injoignable ou vidé provoque un repli
@@ -64,9 +65,11 @@ comme bon.
 dit, et on renvoie vers la Protection civile et le comité de wilaya du
 Croissant-Rouge. On ne comble jamais un trou par une supposition.
 
-**5. La fraîcheur est visible et contraignante.** Chaque fiche affiche sa
-date de vérification. Au-delà de 10 jours elle est masquée, pas grisée :
-une fiche périmée inspire confiance à tort, ce qui est pire qu'une absence.
+**5. La fraîcheur est visible et contraignante.** Une fiche datée affiche
+sa date ; au-delà de 10 jours elle est masquée, pas grisée. *(assoupli le
+2026-08-30 :)* une fiche **sans** date est servie avec la mention « date
+de vérification non renseignée » et n'expire pas — c'est aux bénévoles de
+retirer la ligne quand le point ferme.
 
 **6. Urgence avant tout le reste.** L'intention « urgence » est évaluée
 avant l'extraction de wilaya. Quelqu'un qui écrit « il y a le feu chez
@@ -89,8 +92,8 @@ Une seule table, un CSV. Colonnes exactes, en-têtes en minuscules :
 | `agree` | non | non vide (sauf `non`/`no`/`0`) → badge « Agréé par l'État » |
 | `tel2`, `tel3` | non | numéros supplémentaires (`Num2`, `Num3`) |
 | `maps` | non | lien Google Maps uniquement, sinon ignoré |
-| `maj` | oui | `AAAA-MM-JJ` strict |
-| `source` | oui | ≥ 4 caractères — qui a vérifié |
+| `maj` | non | `AAAA-MM-JJ` strict si renseignée ; vide → fiche « non datée », jamais masquée |
+| `source` | non | qui a vérifié, affichée si présente |
 
 Les en-têtes des bénévoles (`Wilaya`, `Association`, `Num1`…) sont remappés
 vers ce modèle à la lecture, voir `DONNEES.md`.

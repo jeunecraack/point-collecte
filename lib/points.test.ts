@@ -38,7 +38,7 @@ test("en-têtes du Sheet des bénévoles → modèle (Wilaya en nom, Num1..3, Ma
     "NULLE PART,,,,PLACEHOLDER ASSO,,,,,2026-08-30,PLACEHOLDER\n" +
     "ALGER,,,,PLACEHOLDER ASSO,,,,,,\n";
   const r = parserCsv(csv, "sheet");
-  expect(r.total).toBe(2);
+  expect(r.total).toBe(3);
   const b = r.points["06"]?.[0];
   expect(b?.nom).toBe("PLACEHOLDER ASSO");
   expect(b?.tel).toBe("0555000000");
@@ -47,9 +47,18 @@ test("en-têtes du Sheet des bénévoles → modèle (Wilaya en nom, Num1..3, Ma
   expect(b?.maps).toBe("https://maps.app.goo.gl/PLACEHOLDER");
   expect(b?.agree).toBe(true);
   expect(r.points["46"]?.[0]?.agree).toBe(false);
-  expect(r.rejets.map((x) => x.ligne)).toEqual([4, 5]);
+  expect(r.rejets.map((x) => x.ligne)).toEqual([4]);
   expect(r.rejets[0].raison).toMatch(/^code/);
-  expect(r.rejets[1].raison).toMatch(/^maj/);
+  // sans date ni source : acceptée, « non datée »
+  expect(r.points["16"]?.[0]?.maj).toBe("");
+  expect(fraicheur(r.points["16"]![0].maj).niveau).toBe("inconnu");
+});
+
+test("date renseignée mais mal formée → rejet ; vide → non datée, jamais périmée", () => {
+  const csv = "code,nom,maj\n06,PLACEHOLDER,30/08/2026\n06,PLACEHOLDER B,\n";
+  const r = parserCsv(csv, "repo");
+  expect(r.rejets.map((x) => x.raison)).toEqual(["maj: date attendue au format AAAA-MM-JJ"]);
+  expect(fraicheur("").niveau).toBe("inconnu");
 });
 
 test("lien Maps hors domaine Google → vidé", () => {

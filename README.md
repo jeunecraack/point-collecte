@@ -61,10 +61,11 @@ Les en-têtes des bénévoles sont aussi acceptés : `Wilaya` (nom ou numéro)
 `Vérifié par` → `source`. Détail dans [`DONNEES.md`](DONNEES.md).
 
 `agree` : « oui » (ou n'importe quoi sauf vide, `non`, `no`, `0`) affiche le
-badge vert « Agréé par l'État » sur la fiche. `code` 1–58, `nom` ≥ 3 caractères, `maj` en `AAAA-MM-JJ`, `source` ≥ 4
-caractères (qui a vérifié). Une ligne invalide est ignorée et apparaît
-dans `/admin` avec son numéro de ligne. Une fiche de plus de 9 jours
-n'est pas rendue du tout.
+badge vert « Agréé par l'État » sur la fiche. `code` 1–58 et `nom` ≥ 3 caractères sont obligatoires. `maj` (`AAAA-MM-JJ`)
+et `source` sont facultatives : une fiche datée disparaît après 9 jours,
+une fiche sans date est affichée « non datée » et reste jusqu'à ce que la
+ligne soit retirée. Une ligne invalide est ignorée et apparaît dans
+`/admin` avec son numéro de ligne.
 
 `data/points.csv` ne contient que des placeholders (`PLACEHOLDER A
 REMPLACER`, téléphones à zéros) : 4 lignes valides et 4 lignes cassées,

@@ -35,9 +35,10 @@ Une cellule `Wilaya` vide hérite de la ligne au-dessus (cellules
 fusionnées). `/` ou `-` valent « vide ». Sans `Association`, la colonne `Adresse` sert de
 nom du lieu (pharmacie, mosquée…). Sans les deux, la ligne est rejetée.
 
-Deux colonnes **doivent** exister, sans elles la ligne est rejetée
-(invariants 2 et 5) : `maj` (date de vérification, `AAAA-MM-JJ`) et
-`source` (qui a appelé et confirmé).
+`maj` (date de vérification, `AAAA-MM-JJ`) et `source` (qui a appelé)
+sont **facultatives** depuis le 2026-08-30 : sans date, la fiche est
+marquée « non renseignée » et n'expire jamais — retirez la ligne du Sheet
+quand un point ferme. Avec une date, la fiche disparaît après 10 jours.
 
 Puis Partager → Accès général → « Tous les utilisateurs disposant du
 lien », Lecteur.
