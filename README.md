@@ -27,7 +27,10 @@ Vercel.
 | `REVALIDATE_SECRET` | secret attendu par `POST /api/revalidate` | route désactivée (401) |
 | `ADMIN_SECRET` | mot de passe de `/admin` | page désactivée |
 | `NEXT_PUBLIC_SITE_URL` | URL publique du site, pour l'image OG des aperçus WhatsApp | aperçus sans image |
-| `SIGNALEMENT_WEBHOOK_URL` | reçoit les signalements en JSON (voir « Signalements ») | les signalements vont dans les logs Vercel, **nom et téléphone compris** — `/admin` l'affiche en avertissement |
+| `GOOGLE_SERVICE_ACCOUNT_EMAIL` | compte de service qui écrit les signalements dans le Sheet | voir `SIGNALEMENT_WEBHOOK_URL` |
+| `GOOGLE_PRIVATE_KEY` | clé privée PEM du compte de service (`\n` échappés acceptés) | idem |
+| `SIGNALEMENTS_SHEET_ID` | ID du Sheet qui reçoit l'onglet `signalements` | le Sheet public (déconseillé : ses onglets sont lisibles par quiconque a le lien) |
+| `SIGNALEMENT_WEBHOOK_URL` | solution de repli : reçoit les signalements en JSON | sans compte de service ni webhook, les signalements vont dans les logs Vercel, **nom et téléphone compris** — `/admin` l'affiche |
 
 ## Routes
 
@@ -140,8 +143,11 @@ Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
 1. La personne remplit le formulaire (wilaya, lieu, adresse, horaires,
    besoins, et surtout le nom et le téléphone de quelqu'un qui répond sur
    place). Un champ caché piège les robots.
-2. Le serveur valide les champs (zod) et envoie un JSON à
-   `SIGNALEMENT_WEBHOOK_URL`. Sans webhook, il l'écrit dans les logs Vercel.
+2. Le serveur valide les champs (zod) et **ajoute une ligne à l'onglet
+   `signalements`** du Sheet (créé automatiquement avec ses en-têtes :
+   `recu, code, wilaya, commune, nom, adresse, tel, horaires, besoins,
+   contact_nom, contact_tel, statut, lang`). Sans compte de service, il
+   passe par `SIGNALEMENT_WEBHOOK_URL` ; sans webhook, par les logs Vercel.
 3. Un bénévole **appelle** la personne indiquée, confirme l'adresse et les
    horaires.
 4. Si c'est confirmé, le bénévole **copie la ligne dans le Sheet public**.
@@ -152,10 +158,33 @@ Le formulaire `/signaler` n'écrit **jamais** dans le Sheet public.
 Sans appel, rien n'est publié : la vérification humaine est le seul chemin
 vers le site.
 
-### Brancher le webhook (recommandé avant d'ouvrir le formulaire)
+### Compte de service Google (10 min, une fois)
 
-Un second Sheet, **privé**, avec un onglet `signalements`. Extensions →
-Apps Script :
+1. [console.cloud.google.com](https://console.cloud.google.com) → un projet
+   → « API et services » → activer **Google Sheets API**.
+2. « Identifiants » → « Créer des identifiants » → **Compte de service** →
+   nom libre → Terminer. Ouvrir le compte → onglet « Clés » → « Ajouter une
+   clé » → JSON. Le fichier contient `client_email` et `private_key`.
+3. Dans Vercel : `GOOGLE_SERVICE_ACCOUNT_EMAIL` = `client_email`,
+   `GOOGLE_PRIVATE_KEY` = `private_key` (coller tel quel, les `\n` sont
+   acceptés).
+4. **Partager le Sheet cible avec `client_email`, rôle Éditeur.** C'est ce
+   partage qui autorise l'écriture — le compte n'a aucun autre droit.
+5. Recommandé : créer un **second Sheet, privé**, pour les signalements
+   (ils contiennent le nom et le téléphone de la personne à rappeler) et
+   mettre son ID dans `SIGNALEMENTS_SHEET_ID`. Sans cette variable,
+   l'onglet est créé dans le Sheet public, dont tous les onglets sont
+   lisibles par quiconque a le lien.
+
+L'onglet `signalements` et sa ligne d'en-têtes sont créés au premier
+signalement. La colonne `statut` (« à rappeler ») est la file d'attente des
+bénévoles : ils la passent à « vérifié » puis recopient la ligne dans
+l'onglet `points`.
+
+### Solution de repli : webhook
+
+Un script Apps Script sur un Sheet privé, si le compte de service n'est
+pas possible :
 
 ```js
 function doPost(e) {

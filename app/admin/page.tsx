@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { fichesParWilaya } from "@/lib/fiches";
 import { Bande, Marque, btnPlein } from "@/lib/ui";
+import { ONGLET, configSheets, idDepuisUrl } from "@/lib/sheets";
 import { connexion, estAdmin, revalider } from "./actions";
 
 export const metadata: Metadata = { title: "Admin — lignes rejetées", robots: { index: false } };
@@ -49,10 +50,12 @@ export default async function Admin({ searchParams }: { searchParams: Promise<Re
         <dt className="text-muted">SHEET_CSV_URL</dt><dd>{process.env.SHEET_CSV_URL ? "défini" : "vide"}</dd>
         <dt className="text-muted">Signalements</dt>
         <dd>
-          {process.env.SIGNALEMENT_WEBHOOK_URL ? (
+          {configSheets() ? (
+            <span className="inline-flex items-center gap-2 bg-fresh-bg px-2 py-0.5 text-fresh"><span aria-hidden="true" className="size-2 rounded-full bg-current" />onglet « {ONGLET} »{configSheets()!.id === idDepuisUrl(process.env.SHEET_CSV_URL) ? " du Sheet public — lisible par quiconque a le lien" : " d'un Sheet séparé"}</span>
+          ) : process.env.SIGNALEMENT_WEBHOOK_URL ? (
             <span className="inline-flex items-center gap-2 bg-fresh-bg px-2 py-0.5 text-fresh"><span aria-hidden="true" className="size-2 rounded-full bg-current" />webhook branché</span>
           ) : (
-            <span className="inline-flex items-center gap-2 bg-warm-bg px-2 py-0.5 text-warm"><span aria-hidden="true" className="size-2 rounded-full bg-current" />dans les logs Vercel, avec nom et téléphone — brancher SIGNALEMENT_WEBHOOK_URL</span>
+            <span className="inline-flex items-center gap-2 bg-warm-bg px-2 py-0.5 text-warm"><span aria-hidden="true" className="size-2 rounded-full bg-current" />dans les logs Vercel, avec nom et téléphone — configurer le compte de service (README)</span>
           )}
         </dd>
         <dt className="text-muted">Lu le</dt><dd>{new Date().toLocaleString("fr-DZ")}</dd>
