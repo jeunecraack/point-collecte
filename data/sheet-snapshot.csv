@@ -1,75 +1,110 @@
-Wilaya,Commune,Adresse,Localisation Maps,Association,Num1,Num2,Num3,Agree 
+WILAYA,COMMUNE,ADRESSE,LOCALISATION MAPS,ASSOCIATION,NUM1,NUM2,NUM3,AGREE
 ALGER,BELOUIZDAD - BELCOURT,Cercle Sportif CRB,https://maps.app.goo.gl/WHoRHcejh6Xifo1x9,جمعية القلوب الرحيمة,556714354,552310515,,OUI
 ALGER,BELOUIZDAD - BELCOURT,ساحة 11 ديسمبر المركز الثقافي لخضر رباح ,https://maps.app.goo.gl/qSbsmi9xaJPa2abT9,Sanabel Elkheir,553498248,540000020,674496048,OUI
 ALGER,BELOUIZDAD - BELCOURT,ساحة 11 ديسمبر المركز الثقافي لخضر رباح ,https://maps.app.goo.gl/qSbsmi9xaJPa2abT9,Chich Dir El Khir,664351125,,,OUI
+ALGER,BELOUIZDAD - BELCOURT,ش.ل.م عمارة ك الفوج الأول بلدية محمد بلوزداد مقر فوج النصر,https://maps.app.goo.gl/sBujbLQaE9HLung2A,الكشافة الاسلامية,777156125,,,OUI
 ALGER,BOUZAREAH,حي بوحمام (بجانب مسجد الاحسان),https://maps.app.goo.gl/i2mnJQwVcwYRnY8P7,الكشافة الاسلامية,549939849,782647003,,OUI
-ALGER,BOUZAREAH,Bouzareah,,organisation felicartis dz,558933521,,,OUI
+ALGER,BOUZAREAH,Bouzareah,https://maps.app.goo.gl/7krvWvssLSofGsLK9,organisation felicartis dz,558933521,,,OUI
+ALGER,BOUZAREAH,Bazard salhi,https://maps.app.goo.gl/7krvWvssLSofGsLK9,/,666596980,,,NON
 ALGER,ROUIBA,Placette du stade,https://maps.app.goo.gl/RsLL6XKst5QxfyiQ8,/,,,,NON
 ALGER,ROUIBA,Sbaat - Chef Amirou,https://maps.app.goo.gl/vvTooJGa4QrEPBGD6,جمعية ,540551544,,,OUI
 ALGER,EL BIAR,Ministere de la justice,https://maps.app.goo.gl/ZUeWy5vGhxAaKgsd7,,,,,NON
+ALGER,EL BIAR,"en face 
+Sonelgaz Sda Agence El Biar",https://maps.app.goo.gl/36oxj3khHBjxmbUm9,/,,,,NON
 ALGER,SIDI MHAMMED,APC - المجلس الشعبي البلدي,https://maps.app.goo.gl/492PQKcZPMgSLL5aA,المجلس الشعبي البلدي,,,,OUI
 ALGER,DRARIA,En face casa bella grillades,https://maps.app.goo.gl/kJZd6a6h7sGhvJ1p8,جمعية سواعد الاحسان,776512581,,,OUI
-ALGER,DRARIA,,,/,554669211,563540450,563795557,NON
 ALGER,DRARIA,Daboussi - Mosque Hamza,https://maps.app.goo.gl/9wQ2GS4x1eGMmp9k7,/,,,,NON
 ALGER,DRARIA,El achour et draria,,Associaction nour el amal,781302450,,,OUI
+ALGER,DRARIA,cite 617,https://maps.app.goo.gl/aoE5pWYW8gsw4f7X6,/,,,,NON
 ALGER,KOUBA,Gendarmerie - sortie bourouba,,Croissant rouge,550147483,563635922,561837094,OUI
 ALGER,KOUBA,En face Stade Ben omar,https://maps.app.goo.gl/19UKwoGmAS2jYwmw5,/,,,,NON
 ALGER,KOUBA,Les annasers,https://maps.app.goo.gl/Nzg6WWCtg7t4tPRXA,/,796062315,,,NON
+ALGER,KOUBA,"Villa 120 ferme PONS, Kouba 
+",https://maps.app.goo.gl/w5ruUKzoki7t8oiE7,Association piete et bienfaisance,542087613,560000840,,OUI
+ALGER,KOUBA,Garidi 2 arret de bus,https://maps.app.goo.gl/xYstFJAhxefAWiLt8,الكشافة الاسلامية,793216013,,,OUI
+ALGER,KOUBA,Supérette sifou joli vue,https://maps.app.goo.gl/vHTDsXo3jyQhZkAp7,/,783186861,,,NON
+ALGER,KOUBA,en face cem amir khaled (la croix),"
+https://maps.app.goo.gl/tMb75WNnjifwG99eA",/,,,,NON
 ALGER,BARAKI,Mosque Al Rahman,https://maps.app.goo.gl/KXNqP2ppEy2AW7M68,/,554075803,,,NON
 ALGER,BARAKI,Pharmacie Harkat,https://maps.app.goo.gl/toWZrUHnyYLePZr97,/,28482656,556500591,,NON
 ALGER,SIDI ABDELLAH,Pharmacie Derradji,https://maps.app.goo.gl/Eh3ACqyfnYY9qn2R7,/,553784059,,,NON
 ALGER,BIRKHADEM,Pharmacie Serapi,https://maps.app.goo.gl/vpqs4XMW3Vp9Xfij9,/,552104628,552679102,,NON
 ALGER,BIRKHADEM,"A cote de l'hôpital de Tixeraine
 ",https://maps.app.goo.gl/uQxSNJKzJxr4Z8cv6,/,557020518,,,NON
+ALGER,BIRKHADEM,"Groupe Elfidah birkhadem - Scouts Islamiques Algériens",https://maps.app.goo.gl/iccPE9REZggApupv7,الكشافة الاسلامية,791200592,,,OUI
+ALGER,BIRKHADEM,مسجد التوبة بئرخادم,https://maps.app.goo.gl/JoKPiDP82M87FefT8,/,,,,NON
 ALGER,BEN AKNOUN,Cercle sportif,https://maps.app.goo.gl/Lqzc7p7NC5fx6pHy9,/,770993207,,,NON
-ALGER,BAB EZZOUAR,Bab ezzouar,,جمعية شباب رائد ,774140045,553424540,,OUI
-ALGER,BAB EZZOUAR,5 juillet,https://maps.app.goo.gl/G8UX2DhScQ7Jmv6Z7,/,,,,NON
+ALGER,BAB EZZOUAR,5 juillet,https://maps.app.goo.gl/G8UX2DhScQ7Jmv6Z7,جمعية شباب رائد ,774140045,553424540,,OUI
+ALGER,BAB EZZOUAR,حي الصومام,https://maps.app.goo.gl/Tr1pbsALd1rHmKm88,/,797879113,,,NON
 ALGER,BIR MOURAD RAIS,COPMED - En face Seaal,https://maps.app.goo.gl/Hn7R3XFDcKAw9TATA,/,798785027,549571518,,NON
+ALGER,BIR MOURAD RAIS,Mosquee El Djihad El Akbar,https://maps.app.goo.gl/QgLRZYASeCRegegn8,الكشافة الاسلامية,676455871,,,OUI
+ALGER,BIR MOURAD RAIS,"مدرسة قرأنية - شيخ أحمد سحنون",https://maps.app.goo.gl/oysCg3xgk5fJ5u8B8,/,,,,NON
 ALGER,RUISSEAU ,Stade 20 aout ,https://maps.app.goo.gl/Zwd5ZXJHSz5fVZi87,/,780060119,,,NON
 ALGER,BORDJ EL BAHRI,Jardin Bordj El Bahri,https://maps.app.goo.gl/32FaigYQnKqbXoRD7,الكشافة الاسلامية,798584659,773083814,,OUI
 ALGER,BORDJ EL BAHRI,حي احدان,,/,796698263,,,NON
 ALGER,OULED FAYET,Rond point - Opera,https://maps.app.goo.gl/hMuWAaxK9Ptwh7Jp6,/,,,,NON
-ALGER,VAL D'HYDRA,/,,/,554669211,563540450,563795557,NON
-ALGER,SAID HAMDINE,/,,/,554669211,563540450,563795557,NON
-ALGER,CHERAGA,Hotel Emir,https://maps.app.goo.gl/rVKkzJtHFnfKjcCt5,/,554669211,563540450,563795557,NON
+ALGER,VAL D'HYDRA,Val d'hydra,,/,554669211,,,NON
+ALGER,SAID HAMDINE,Said hamdine,,/,,563540450,,NON
+ALGER,CHERAGA,Hotel Emir,https://maps.app.goo.gl/rVKkzJtHFnfKjcCt5,/,,,563795557,NON
 ALGER,CHERAGA,قاعة متعددة الرياضات الشهيد بلخضر الطاهر,https://maps.app.goo.gl/23r9GwAUQdTqUPGj7,/,,,,NON
 ALGER,CHERAGA,Power fitness,https://maps.app.goo.gl/oNdLekJFm91oP5Xn7,/,,,,NON
 ALGER,CHERAGA,Pharmacie Amara ,https://maps.app.goo.gl/ELgHTzvp49qF8q9D9,/,,,,NON
-ALGER,LES BANANIERS ,Mokhtar Zerhouni,https://maps.app.goo.gl/o4nz4GVEbD4TKGhm7,/,781399142,541007432,,NON
+ALGER,LES BANANIERS ,Mokhtar Zerhouni,https://maps.app.goo.gl/o4nz4GVEbD4TKGhm7,/,781399142,541007432,558724196,NON
 ALGER,REGHAIA,Centre ville en face poste police,https://maps.app.goo.gl/bLiyrYFmRaj6QBTX7,/,797549826,779093801,,NON
+ALGER,REGHAIA,Aadl el kerrouch reghaia,https://maps.app.goo.gl/LFUjg6EtpaA1Smq56,/,,,,NON
 ALGER,ZERALDA,متوسطة محمد خوجة,https://maps.app.goo.gl/gLEns2TEL7RuqnGy7,/,,,,NON
 ALGER,BAB EL OUED,KITANI,https://maps.app.goo.gl/cT22y6yR5KHCcJos5,/,,,,NON
 ALGER,HYDRA,Paradou,https://maps.app.goo.gl/iFYgSEQSGGhZt3Je9,/,799586528,,,NON
 ALGER,CHRARBA ,Cem chrarba,,جمعية اترك اثر,797101360,,,OUI
+ALGER,CHRARBA ,سوبيرات القدس,https://maps.app.goo.gl/1qNZHK8Dm6fZyBsFA,/,,,,NON
 ALGER,EL HARRACH,Placette,https://maps.app.goo.gl/4u3gbJrVkwPjbFob9,/,,,,NON
 ALGER,DERGANA,Cite 302,https://maps.app.goo.gl/b1kgehzpqf835yvz6,/,,,,NON
 ALGER,TASSALA MARJA ,Centre ville   ,https://maps.app.goo.gl/jsngu9CPWHRFrUBz5,/,,,,NON
 ALGER,DELY IBRAHIM,BDL,https://maps.app.goo.gl/CGhz7uPWZbVGVMNV7,/,,,,NON
-ALGER,SOUIDANIA,KENTINA,,/,,,,NON
-ALGER,BORDJ EL KIFFAN,Lido - Stade PTT,https://maps.app.goo.gl/tMJSR8Gordx7wZhu5,/,,,,NON
+ALGER,SOUIDANIA,Cité Cantine,https://maps.app.goo.gl/iWFHkzQaQXc3A7Ab6,/,,,,NON
+ALGER,BORDJ EL KIFFAN,Lido - Stade PTT,https://maps.app.goo.gl/2nvzjcbGRFKJuqTj9,/,562023042,,,NON
 ALGER,DOUERA,Devant stade douera,https://maps.app.goo.gl/EH9NgVuh38w39Kxn7,جمعية الارشاد و الاصلاح,554966571,,,OUI
 ALGER,BIRTOUTA,حي الشعيبية ,https://maps.app.goo.gl/pgjGDViwLCcAPMMq8,/,799804937,,,NON
 ALGER,HAMIZ,حي النصر,https://maps.app.goo.gl/WJxUGahiZKCGgUGw6,/,,,,NON
-ALGER,HUSSEIN DEY,Hussein dey,https://maps.app.goo.gl/BKEqnH9wQBUDzmR19,/,674782842,,,NON
+ALGER,HUSSEIN DEY,Animalerie Zoo Market,https://maps.app.goo.gl/BKEqnH9wQBUDzmR19,/,674782842,,,NON
+ALGER,HUSSEIN DEY,Hussein dey,https://maps.app.goo.gl/V8LUrLGmmyogTPYN9,/,,,,NON
 ALGER,MIRAMAR ,Miramar,,association el afak el djamil,540026194,,,OUI
 ALGER,DAR EL BEIDA,Dar El Beida,,Association لنرسم الابتسامة,554099915,665896559,,OUI
-TLEMCEN,كل البلديات ,دار الهلال باب الخميس,https://maps.app.goo.gl/C3HZiBnFJ1tpbAVt9,Croissant rouge ,771245106,551911294,,OUI
-TLEMCEN,TLEMCEN,بالقرب من البريد المركزي وسط المدينة,https://maps.app.goo.gl/MLXGK6UeVFbJpzKa6,El Baraka,659583139,,,OUI
+ALGER,BACHDJERAH,Bachdjerah,,/,560078266,556716117,551684473,NON
+ALGER,DAR EL BEIDA,مسجد الفتح,https://maps.app.goo.gl/WaCkbvuBFk1dBLD6A,,,,,NON
+ALGER,AIN NAADJA,"ابتدائية ابن خلدون",https://maps.app.goo.gl/N4BFJLVUnK5fTw2K6,l tayesser al khayri,668971397,,,OUI
+ALGER,AIN NAADJA,Cite 720 logements,https://maps.app.goo.gl/y9uZNS2rNkbQCqRW7,/,,,,NON
+ALGER,MOHAMMADIA,Safex,https://maps.app.goo.gl/Xms4PSeTWDg9No8UA,Association les mains de don,561972691,781761560,,OUI
+ALGER,reghaia,city les iris mosque tarek ben ziyad,,,559328377,,,NON
+ALGER,RAHMANIA,cité AADL Q18 à Rahmania,https://maps.app.goo.gl/NdTD4VudpPkYXcs69,/,,,,NON
+ALGER,Aïn Bénian,cite belle vue,https://maps.app.goo.gl/bSUnsmn493qNtjFo9,/,,,,NON
+ALGER,STAOUALI,"Centre ville - Place Gasmi Ali
+",https://maps.app.goo.gl/3GogXX5ZMoTpFZa68,الكشافة الاسلامية,555308338,,,OUI
+ALGER,DAR  EL BIEDA,Cité des Travailleurs,https://maps.app.goo.gl/hjBzGwssMkK28Q4N7,/,,,,NON
+ALGER,KHRAICIA ,مدرسة ابتدائية أحمد حيرش,https://maps.app.goo.gl/NUkkGtSi4MDejsw58,/,,,,NON
+ALGER,EUCALYPTUS,مسجد الشهيد منور الكاليتوس,https://maps.app.goo.gl/xYZ9ZSo9XPWuXAGH6,/,,,,NON
+TLEMCEN,كل البلديات ,دار الهلال باب الخميس,https://maps.app.goo.gl/C3HZiBnFJ1tpbAVt9,/,771245106,551911294,,OUI
+TLEMCEN,Centre ville,بالقرب من البريد المركزي وسط المدينة,https://maps.app.goo.gl/MLXGK6UeVFbJpzKa6,El Baraka,659583139,,,OUI
 TLEMCEN,OULED MIMOUN,,,El Baraka,656854070,,,OUI
 TLEMCEN,MERSA BEN MHIDI,,,El Baraka,553837022,,,OUI
 TLEMCEN,MEGHNIA,,,El Baraka,798668488,542654358,,OUI
+TLEMCEN,MEGHNIA,Croissant Rouge Algérien,https://maps.app.goo.gl/M2pskrY6DyQgfNN66,Croissant rouge,770 20 07 87,,,OUI
 TLEMCEN,SOUAHLIA,,,El Baraka,656506133,,,OUI
 TLEMCEN,BENI SNOUS,,,El Baraka,660031115,,,OUI
 TLEMCEN,OULED RIAH,,,El Baraka,676822727,,,OUI
 TLEMCEN,REMCHI,,,El Baraka,670311510,672915614,,OUI
 TLEMCEN,TLEMCEN,"شارع درار عبد الرحمان رقمTlemcen ,75",,جزائر الخير تلمسان ,55111904,,,OUI
-TLEMCEN,TLEMCEN,شارع بن عبد المالك رمضان، تلمسان.,,El Baraka,775964613,,,OUI
+TLEMCEN,TLEMCEN ,شارع بن عبد المالك رمضان، تلمسان.,,El Baraka,775964613,,,OUI
 MOSTAGANEM,CITE EL HOURIA,حي الحرية,https://maps.app.goo.gl/rz82hfCDAr7vhd1G9,الكشافة الاسلامية,669686082,,,OUI
 MOSTAGANEM,TOUAHRIA,"Mairie Touahria",https://maps.app.goo.gl/s5QcKxMVNmKertQ4A,/,,,,NON
 MOSTAGANEM,SIDI ALI,Rue de la Palestine (route de l'ancien bureau de poste central),https://maps.app.goo.gl/zyxnr5d12pCBmpok8,/,,,,NON
 CONSTANTINE,Nouvelle Ville,,https://maps.app.goo.gl/1uiZ1zZnCLeTZ2p66,Leo-Lion Club El Djoussour,555424829,540375749,0557203140⁩,OUI
-BEJAIA,BEJAIA,En face hotel royal,https://maps.app.goo.gl/9mySBMC1qQ5FzaBC6,El Baraka,553332675,,,OUI
-MASCARA,Ecole Akid طريق الرومان,,,/,,,,NON
+CONSTANTINE,AIN S'MARA,Rue Baadache M'barek l'axe principal du Boulevard Ali Djebbar.,https://maps.app.goo.gl/jMtEacrRpdD1gUm27,"الجمعية الخيرية دعاوي الخير",782343364,,,
+BEJAIA,BEJAIA,En face hotel royal,https://maps.app.goo.gl/9mySBMC1qQ5FzaBC6,El Baraka,553332675,,,
+BEJAIA,BEJAIA,en face Pièces détachées ARROUM,https://maps.app.goo.gl/vxVdH1pNTBTP1qMP6,/,,,,
+MASCARA,MASCARA,Ecole Akid طريق الرومان,,/,,,,NON
+MASCARA,المحمدية,طريق برباز مقابل مقهي كوموندو ,https://maps.app.goo.gl/WBCGJYDmsGwafgjX8,/,782270590,,,NON
+MASCARA,تيغنيف,تيغنيف,https://maps.app.goo.gl/dc5LdWmSVro4qqjx7,/,555477557,,,NON
 ORAN,ORAN,Pharmacie Benchouk,https://maps.app.goo.gl/cquetykFhEF9FFXB9,Croissant rouge ,774646723,,,OUI
 ORAN,AIN EL TURK,Boussville,https://maps.app.goo.gl/Q1SQx28FDBw7ZPZP8,/,,,,NON
 ORAN,ESSENIA,En face la fac,https://maps.app.goo.gl/eFo2NmNqJ6jdFdNY9,/,,,,NON
@@ -77,24 +112,56 @@ ORAN,El Berki,Centre commercial AZ Grand Oran,https://maps.app.goo.gl/9FE6gf6GUy
 ORAN,Hasnaoui,Rond Point Hasnaoui,https://maps.app.goo.gl/vuUx5ptLhDttUpHZA,/,,,,NON
 ORAN,ORAN,,,جزائر الخير وهران,549162411,,,OUI
 ORAN,ORAN,,,جمعية أيادي الخير,556394177,,,OUI
+ORAN,Les castors,Rond point Dar El Beida,https://maps.app.goo.gl/XnvpYhULzqrrgBfX8,/,,,,NON
+ORAN,ARZEW,مطعم الجيجلي,https://maps.app.goo.gl/65ATaj4d6TFrk8eWA,/,,,,NON
 EL OUED ,تكسبت,مكتب انصاف,https://maps.app.goo.gl/YPodce2bp6m2D5f89,/,775247998,,,NON
 TIZI OUZOU,Nouvelle Ville,"المدرسة الابتتدائية:
 دوكار سعيد",https://maps.app.goo.gl/7v4LBbZCjd1kVPk79,الكشافة الاسلامية,554392082,557287804,,OUI
+TIZI OUZOU,Draa-Ben-Khedda,دار الثقافة,https://maps.app.goo.gl/UibBRQyEVFReXyze8,,,,,NON
 AIN TIMOUNCHENT,BENI SAF,حي سي الطيب,https://maps.app.goo.gl/9BdJ1N3Zdorr4qWn7,El Baraka,561707590,,,OUI
-AIN TIMOUNCHENT,AIN TIMOUNCHENT,بجوار مسجد بجاوي,https://maps.app.goo.gl/dJJbo9gFZdZUPEgt9,El Baraka,550516279,,,OUI
-AIN TIMOUNCHENT,AIN TIMOUNCHENT,بجوار ثانوية بن دلة علي عين تموشنت ,,El Baraka,782597780,550516279,,OUI
+AIN TIMOUNCHENT,Centre ville,بجوار مسجد بجاوي,https://maps.app.goo.gl/dJJbo9gFZdZUPEgt9,El Baraka,550516279,,,OUI
+AIN TIMOUNCHENT,AIN TIMOUNCHENT,بجوار ثانوية بن دلة علي عين تموشنت ,,El Baraka,782597780,,,OUI
 MEDEA,MEDEA,Centre ville,,Croissant rouge,777865697,772093059,,NON
 BOUMERDES,BOUDOUAOU,Placette Boudouaou,https://maps.app.goo.gl/sBs4PVQUMj8Z4A1u9,جمعية ,667097917,542858981,,OUI
-BOUMERDES,BOUDOUAOU,Placette Boudouaou,,organisation felicartis dz,558933521,,,OUI
+BOUMERDES,BOUDOUAOU,Placette Boudouaou,https://maps.app.goo.gl/XnKQLzbp9nFtFC1K8,organisation felicartis dz,558933521,,,OUI
 BOUMERDES,OULED HEDADJ,Zaki style,https://maps.app.goo.gl/CEbfTd8G1F6gKqoD6,/,,,,NON
+BOUMERDES,BORDJ MENAIEL,Bordj Menaïel,,/,562377301,,,NON
+BOUMERDES,BOUMERDES,"Bâtiment 44, Boulevard de l'ALN",https://maps.app.goo.gl/KLaWebdMkFPZo8286,Croissant rouge,773209351,772197011,778644431,OUI
+BOUMERDES,OULED HEDADJ,aadl 1248 log,https://share.google/fz9zQC4uLuZePsKc3,/,,,,NON
 TIPAZA,BOUSMAIL,Centre ville,,/,,,,NON
-TIPAZA,KOLEA,,,جمعية الارشاد و الاصلاح,668028790,561817639,,NON
-MILIANA,MILIANA,,,Association basmat mohtaj,663996995,,,OUI
-BORDJ BOU ARRERIDJ,Centre ville,Centre ville,,/,,,,NON
-SIDI BEL ABBES,SIDI BEL ABBES,مجلس القضاء بجانب الملعب,https://maps.app.goo.gl/E6QcAMoSc9iv217w7,/,,,,NON
-CHLEF ,-,Centre ville ,https://maps.app.goo.gl/WDfTQTyJGtsPvh8V8,/,,,,NON
+TIPAZA,KOLEA,Centre ville,,جمعية الارشاد و الاصلاح,668028790,561817639,,NON
+TIPAZA,HAJOUT,HAJOUT VILLE,https://maps.app.goo.gl/GsQST9YwBYZ83afC7,/,564 680 197,,,NON
+TIPAZA,TIPAZA,جمعية الرحمة تيبازة في مدينة تيبازة بالرمز الجغرافي,https://maps.app.goo.gl/ukXhTtYs2qcU4KTX6,جمعية الرحمة تيبازة,,,,OUI
+AIN DEFLA,MILIANA,Centre ville,https://maps.app.goo.gl/qPtHnveisyG9wC5s6,Association basmat mohtaj,663996995,,,OUI
+AIN DEFLA,KHEMIS MILIANA,Centre ville,https://maps.app.goo.gl/2Z38dMUCMLYBDgDf7,/,,,,NON
+BORDJ BOU ARRERIDJ,BORDJ BOU ARRERIDJ,Centre ville,https://maps.app.goo.gl/HyVx5Qsrd9VZbfLz5,/,554603368,558274967,774443481,NON
+SIDI BEL ABBES,SIDI BEL ABBES,Centre ville ,https://maps.app.goo.gl/E6QcAMoSc9iv217w7,/,,,,NON
+SIDI BEL ABBES,"Stade 24 février 1956
+",Gare Routière de Miliana,https://maps.app.goo.gl/rDAGWQt5nkrVvG6Y8,/,,,,NON
+CHLEF ,SIDI AKKACHA,Centre ville ,https://maps.app.goo.gl/WDfTQTyJGtsPvh8V8,/,,,,NON
 SAIDA,SAIDA,قاعة الرياضة بوقادة مصطفى,https://maps.app.goo.gl/gEDg9CnVj1GAGUiQ8,جمعية نجوم سعيدة,,,,OUI
-BLIDA,BOUFARIK,,,associastion kafel el yatim كافل اليتيم,657198300,,,OUI
-BLIDA,GUEROUAOU,,,associastion kafel el yatim كافل اليتيم,775270609,,,OUI
-BLIDA,BLIDA,,,association tharwat bladi ,667307318,,,OUI
-ANNABA,ANNABA,,,Association Dons Annaba,781671064,,,OUI
+BLIDA,BOUFARIK,"40, Rue Colonel Ahmed Bougoura",https://maps.app.goo.gl/nquiVwWAct676tCXA,associastion kafel el yatim كافل اليتيم,657198300,553683520,,OUI
+BLIDA,BOUFARIK,Location elmoussafir,https://maps.app.goo.gl/uoVo2KEM3P81f5bEA,/,553591201,,,NON
+BLIDA,GUEROUAOU,"المسجد العتيق ڤرواو",https://maps.app.goo.gl/hEaewevGkkDwrpg29,associastion kafel el yatim كافل اليتيم,775270609,,,OUI
+BLIDA,BLIDA,Pompe a essence Bab Essebt,https://maps.app.goo.gl/iPtxqqCb7LBVbHZJ9,association tharwat bladi ,667307318,,,OUI
+BLIDA,LARBAA,Body fitness club larbaa,https://maps.app.goo.gl/YzVACg7uYo5UaAUj9,associastion kafel el yatim  كافل اليتيم,553536827,555595523,,OUI
+BLIDA,BOUINAN,ساحة الشهداء,https://maps.app.goo.gl/1m1zEhE3ndyTdXpz6,/,,,,NON
+BLIDA,BOUINAN,حي 890 مسكن حساينية,https://maps.app.goo.gl/dpQfBCnDHfrCMfPv6,/,,,,NON
+BLIDA,CHIFFA,"مسجد الفتح
+",https://maps.app.goo.gl/S3fQdG7JpVBF47pw8,/,,,,NON
+BLIDA,BENI MRAD,دوار ديار البحري,https://maps.app.goo.gl/u7CvVvkTQ2XZqWCPA,/,,,,NON
+BLIDA,SOUMAA,SOUMAA DJNINA,https://maps.app.goo.gl/TLndMfXRTbwEkRrs6,/,,,,NON
+BLIDA,JOINVILLE,مسجد عبد الحميد ابن باديس,https://maps.app.goo.gl/dqtPEMQdJjSBg5Qo8,/,,,,NON
+BLIDA,OULED YAICH,"المركز الثقافي - أولاد يعيش",https://maps.app.goo.gl/RuU6EeKxzcsupgxj7,/,,,,NON
+BECHAR,BECHAR,Place du 1er Novembre 1954,https://maps.app.goo.gl/WtzTNQP4FJyWx39J6,الجمعية الخيريه تواصل بشار,655637534,,,OUI
+ANNABA,ANNABA,Centre Ville,,Association,781671064,,,OUI
+SAIDA,BATNA,بزار أبو إياد,https://maps.app.goo.gl/RoWKoGiMNRYrcSBM9,/,,,,NON
+ILLIZI,ILLIZI,سبيرات حواس للتسوق,https://maps.app.goo.gl/RS72TdXgGAM31jt86,/,,,,NON
+BATNA,BATNA,Lotissement des Moudjahidines,https://maps.app.goo.gl/w23pa1wAGTgXguHWA,/,676818999,,,NON
+GUELMA,BELKHEIR," Cité El Hadj Mebarek, Route de Sedrata (RN 80)",https://maps.app.goo.gl/qGWXYVe5Kp3c3r6z6,/,,,,NON
+LAGHOUAT,HASSI RML,حي 80 مسكن حاسي الرمل، الاغواط,https://maps.app.goo.gl/6td9W6v3HooWnazt7,/,,,,NON
+BOUIRA,EL HACHIMIA,EL HACHIMIA,https://maps.app.goo.gl/nxySMjqL7AV9n8PSA,الكشافة الاسلامية,,,,OUI
+TIARET,TIARET,جمعية الطيبين الخيرية ,https://maps.app.goo.gl/rujoj9GgtiiBD6my9,جمعية الطيبين الخيرية ,669254540,,,OUI
+NAAMA,MECHERIA,بجانب المسجد العتيق,https://maps.app.goo.gl/Tpz1zrR6JzPPRRfS6,"جمعية آفاق الخيرية ""عياشي"" مشرية",555212231,,,OUI
+NAAMA,MECHERIA,نهج الاستقلال وسط المدينة,https://maps.app.goo.gl/VVMv6KiWZpUkNs2YA,جمعية أصدقاء المريض مشرية ,799530458,,,OUI
+SKIKDA,OUED LWAHCH,لجنة الاغاثة لجمعية العلماء المسلمين الجزائريين شعبة سكيكدة,https://maps.app.goo.gl/GuDRr1h5vH18uEPU8,لجنة الاغاثة لجمعية العلماء المسلمين الجزائريين شعبة سكيكدة,770177007,,,OUI
